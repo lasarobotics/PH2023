@@ -22,4 +22,16 @@ public class SparkMax extends CANSparkMax {
   public void set(double value, ControlType ctrl, double arbFeedforward, SparkMaxPIDController.ArbFFUnits arbFFUnits) {
     getPIDController().setReference(value, ctrl, PID_SLOT, arbFeedforward, arbFFUnits);
   }
+
+  public double getEncoderPosition() {
+    return getEncoder().getPosition();
+  }
+
+  public double getEncoderVelocity() {
+    return getEncoder().getVelocity();
+  }
+
+  public void resetEncoder() {
+    getEncoder().setPosition(0.0);
+  }
 }

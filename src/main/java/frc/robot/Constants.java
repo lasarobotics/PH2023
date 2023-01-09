@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,12 +18,43 @@ package frc.robot;
 public final class Constants {
   public static class Global {
     public static final double ROBOT_LOOP_PERIOD = 1.0 / 60.0;
+
+    // Motor RPMs, encoder values, and gear ratios
+    public static final int NEO_MAX_RPM = 5880;
+    public static final int NEO_ENCODER_TICKS_PER_ROTATION = 42;
   }
   
   public static class HID {
     public static final int PRIMARY_CONTROLLER_PORT = 0;
     public static final int SECONDARY_CONTROLLER_PORT = 1;
     public static final double CONTROLLER_DEADBAND = 0.1;
+  }
+
+  public static class Drive {
+    public static final double DRIVE_SLIP_RATIO = 0.08;
+    public static final double DRIVE_kP = 0.02;
+    public static final double DRIVE_kD = 0.0004;
+    public static final double DRIVE_TURN_SCALAR = 25.0;
+    public static final double DRIVE_LOOKAHEAD = 16;
+
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5, 1.0 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 2.0, 4.0 };
+    private static final double DRIVE_TRACTION_CONTROL_CURVE_X[] = { 0.0, 2.0, 4.0 };
+    private static final double DRIVE_TRACTION_CONTROL_CURVE_Y[] = { 0.0, 0.5, 1.0 };
+    private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0 };
+    private static final double DRIVE_TURN_INPUT_CURVE_Y[] = { 0.0, 0.008, 0.032, 0.072, 0.128, 0.200, 0.288, 0.392, 0.512, 0.768, 1.0 };
+
+    private static final SplineInterpolator SPLINE_INTERPOLATOR = new SplineInterpolator();
+    public static final PolynomialSplineFunction DRIVE_THROTTLE_INPUT_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_THROTTLE_INPUT_CURVE_X, DRIVE_THROTTLE_INPUT_CURVE_Y);
+    public static final PolynomialSplineFunction DRIVE_TRACTION_CONTROL_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_TRACTION_CONTROL_CURVE_X, DRIVE_TRACTION_CONTROL_CURVE_Y);
+    public static final PolynomialSplineFunction DRIVE_TURN_INPUT_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_TURN_INPUT_CURVE_X, DRIVE_TURN_INPUT_CURVE_Y);
+  }
+
+  public static class DriveHardware {
+    public static final int FRONT_LEFT_MOTOR_ID = 2;
+    public static final int FRONT_RIGHT_MOTOR_ID = 3;
+    public static final int REAR_LEFT_MOTOR_ID = 4;
+    public static final int REAR_RIGHT_MOTOR_ID = 5;
   }
 
   public static class AccessoryHardware {

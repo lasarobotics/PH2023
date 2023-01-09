@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,8 +24,19 @@ import frc.robot.utils.DataLogger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  private static final boolean REAL_HARDWARE = true;
+
   // The robot's subsystems and commands are defined here...
-  private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem();
+  private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(DriveSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                           Constants.HID.CONTROLLER_DEADBAND,
+                                                                           Constants.Drive.DRIVE_SLIP_RATIO,
+                                                                           Constants.Drive.DRIVE_kP,
+                                                                           Constants.Drive.DRIVE_kD, 
+                                                                           Constants.Drive.DRIVE_TURN_SCALAR,
+                                                                           Constants.Drive.DRIVE_LOOKAHEAD,
+                                                                           Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
+                                                                           Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
+                                                                           Constants.Drive.DRIVE_TURN_INPUT_CURVE);
 
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
@@ -36,6 +48,14 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    // Configure default commands
+    DRIVE_SUBSYSTEM.setDefaultCommand(
+      new RunCommand(
+        () -> DRIVE_SUBSYSTEM.teleopPID(PRIMARY_CONTROLLER.getLeftY(), PRIMARY_CONTROLLER.getRightX()),
+        DRIVE_SUBSYSTEM
+      )
+    );
+
     // Configure the trigger bindings
     configureBindings();
 
