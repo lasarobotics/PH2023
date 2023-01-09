@@ -74,11 +74,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   // Drive specs
   private static final double DRIVE_TRACK_WIDTH = 0.6;
   private static final double DRIVE_WHEEL_DIAMETER_METERS = 0.1524; // 6" wheels
-  private static final double DRIVE_GEAR_RATIO = 10.0;
+  private static final double DRIVE_GEAR_RATIO = 10.71;
   private static final double DRIVE_TICKS_PER_METER = (Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION * DRIVE_GEAR_RATIO) * (1 / (DRIVE_WHEEL_DIAMETER_METERS * Math.PI));
   private static final double DRIVE_METERS_PER_TICK = 1 / DRIVE_TICKS_PER_METER;
   private static final double DRIVE_METERS_PER_ROTATION = DRIVE_METERS_PER_TICK * Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION;
-  private static final double DRIVETRAIN_EFFICIENCY = 0.85;
+  private static final double DRIVETRAIN_EFFICIENCY = 0.9;
   private static final double DRIVE_MAX_LINEAR_SPEED = (Constants.Global.NEO_MAX_RPM / 60) * DRIVE_METERS_PER_ROTATION * DRIVETRAIN_EFFICIENCY;
 
   /**
