@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -366,6 +367,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_poseEstimator.update(m_navx.getRotation2d(), 
                            m_lMasterMotor.getEncoderPosition(),
                            m_rMasterMotor.getEncoderPosition());
+    Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
+    Pose2d camPose = result.getFirst();
+    double camPoseObsTime = result.getSecond();
+    if (camPose != null) m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
   }
 
   /**
