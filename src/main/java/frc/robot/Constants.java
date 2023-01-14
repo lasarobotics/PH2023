@@ -22,6 +22,7 @@ public final class Constants {
     // Motor RPMs, encoder values, and gear ratios
     public static final int NEO_MAX_RPM = 5880;
     public static final int NEO_ENCODER_TICKS_PER_ROTATION = 42;
+    public static final int REV_ENCODER_TICKS_PER_ROTATION = 8192;
   }
   
   public static class HID {

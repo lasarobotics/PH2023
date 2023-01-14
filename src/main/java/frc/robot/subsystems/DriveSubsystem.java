@@ -71,7 +71,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
  
   private double m_deadband = 0.0;
 
-  // Drive specs
+  // Drive specs, these numbers use the motor shaft encoder
   private static final double DRIVE_TRACK_WIDTH = 0.6;
   private static final double DRIVE_WHEEL_DIAMETER_METERS = 0.1524; // 6" wheels
   private static final double DRIVE_GEAR_RATIO = 10.71;
@@ -134,16 +134,16 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Only do this stuff if hardware is real
     if (drivetrainHardware.isHardwareReal) {
-      // Set position and velocity conversion factor
-      double conversionFactor = (DRIVE_WHEEL_DIAMETER_METERS * Math.PI) / DRIVE_GEAR_RATIO;
-      m_lMasterMotor.getEncoder().setPositionConversionFactor(conversionFactor);
-      m_lMasterMotor.getEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_rMasterMotor.getEncoder().setPositionConversionFactor(conversionFactor);
-      m_rMasterMotor.getEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_lSlaveMotor.getEncoder().setPositionConversionFactor(conversionFactor);
-      m_lSlaveMotor.getEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_rSlaveMotor.getEncoder().setPositionConversionFactor(conversionFactor);
-      m_rSlaveMotor.getEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      // Set position and velocity conversion factor, based on gearbox output shaft encoder
+      double conversionFactor = DRIVE_WHEEL_DIAMETER_METERS * Math.PI;
+      m_lMasterMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_lMasterMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_rMasterMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_rMasterMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_lSlaveMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_lSlaveMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_rSlaveMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_rSlaveMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
     }
 
     // Invert only right side
@@ -194,6 +194,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private void resetAngle() {
     m_navx.reset();
+  }
+
+  /**
+   * Reset left and right drive encoders
+   */
+  public void resetEncoders() {
+    m_lMasterMotor.resetAlternateEncoder();
+    m_rMasterMotor.resetAlternateEncoder();
   }
 
   @Override
@@ -376,29 +384,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
-  }
-
-  /**
-   * Returns the heading of the robot.
-   * @return the robot's heading in degrees, from 180 to 180
-   */
-  public double getHeading() {
-    return m_navx.getYaw();
-  }
-  
-  /**
-   * Zeros the heading of the robot
-   */
-  public void zeroHeading() {
-    resetAngle();
-  }
-
-  /**
-   * Reset left and right drive
-   */
-  public void resetEncoders() {
-    m_lMasterMotor.resetEncoder();
-    m_rMasterMotor.resetEncoder();
   }
 
   /**
