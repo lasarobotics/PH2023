@@ -11,8 +11,6 @@ import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
-import edu.wpi.first.math.MathUtil;
-
 /**
  * Automates the configuration of Spark PID and Smart Motion paramaters
  */
@@ -26,7 +24,6 @@ public class SparkPIDConfig {
 
   private boolean m_sensorPhase = false;
   private boolean m_invertMotor = false;
-  private double m_maxRPM = 0.0;
   private double m_kP = 0.0;
   private double m_kI = 0.0;
   private double m_kD = 0.0;
@@ -51,17 +48,17 @@ public class SparkPIDConfig {
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
-   * @param mechanicalEfficiency mechanical efficiency of mechanism [0.0, +1.0]
+   * @param kF feed-forward gain
    * @param tolerance tolerance of PID loop in ticks per 100ms
    */
   public SparkPIDConfig(boolean sensorPhase, boolean invertMotor, double maxRPM,
-                        double kP, double kI, double kD, double mechanicalEfficiency, double tolerance) {
+                        double kP, double kI, double kD, double kF, double tolerance) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
-    this.m_maxRPM = maxRPM * mechanicalEfficiency;
     this.m_kP = kP;
     this.m_kI = kI;
     this.m_kD = kD;
+    this.m_kF = kF;
     this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
 
     this.m_enableSoftLimits = false;
@@ -80,22 +77,22 @@ public class SparkPIDConfig {
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
-   * @param mechanicalEfficiency mechanical efficiency of mechanism [0.0, +1.0]
+   * @param kF feed-forward gain
    * @param tolerance tolerance of PID loop in ticks
    * @param velocity Smart Motion cruise velocity in RPM
    * @param accelerationRPMPerSec Smart Motion acceleration in RPM
    * @param accelStrategy Smart Motion acceleration strategy
    */
   public SparkPIDConfig(boolean sensorPhase, boolean invertMotor, double maxRPM,
-                        double kP, double kI, double kD, double mechanicalEfficiency, double tolerance, 
+                        double kP, double kI, double kD, double kF, double tolerance, 
                         double lowerLimit, double upperLimit, boolean enableSoftLimits,
                         double velocityRPM, double accelerationRPMPerSec, AccelStrategy accelStrategy) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
-    this.m_maxRPM = maxRPM * MathUtil.clamp(mechanicalEfficiency, 0.0, 1.0);
     this.m_kP = kP;
     this.m_kI = kI;
     this.m_kD = kD;
+    this.m_kF = kF;
     this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
     this.m_lowerLimit = lowerLimit;
     this.m_upperLimit = upperLimit;
@@ -136,7 +133,7 @@ public class SparkPIDConfig {
       spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     }
 
-    // Configure forward and reverse limit switches if required
+    // Configure forward and reverse limit switches if required, and disable soft limit
     if (forwardLimitSwitch) {
       spark.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(true);
       spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
@@ -153,12 +150,9 @@ public class SparkPIDConfig {
     pidController.setP(m_kP, PID_SLOT);
     pidController.setI(m_kI, PID_SLOT);
     pidController.setD(m_kD, PID_SLOT);
-    pidController.setOutputRange(-1.0, +1.0);
-
-    pidController.setIZone(m_tolerance * 2, PID_SLOT);
-
-    m_kF = 1 / m_maxRPM;
     pidController.setFF(m_kF, PID_SLOT);
+    pidController.setOutputRange(-1.0, +1.0);
+    pidController.setIZone(m_tolerance * 2, PID_SLOT);
 
     // Enable voltage compensation
     spark.enableVoltageCompensation(MAX_VOLTAGE);
@@ -169,6 +163,9 @@ public class SparkPIDConfig {
       pidController.setSmartMotionMaxAccel(m_accelerationRPMPerSec, PID_SLOT);
       pidController.setSmartMotionAccelStrategy(m_accelStrategy, PID_SLOT);
     }
+
+    // Write settings to onboard flash
+    spark.burnFlash();
   }
 
   /**
