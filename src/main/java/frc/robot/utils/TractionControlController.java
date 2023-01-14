@@ -13,7 +13,7 @@ public class TractionControlController {
   private final double MIN_SLIP_RATIO = 0.01;
   private final double MAX_SLIP_RATIO = 0.15;
 
-  private double m_slipRatio = 0.0;
+  private double m_optimalSlipRatio = 0.0;
   private double m_deadband = 0.0;
   private double m_maxLinearSpeed = 0.0;
   private boolean m_isEnabled = true;
@@ -23,14 +23,14 @@ public class TractionControlController {
 
   /**
    * Create an instance of TractionControlController
-   * @param slipRatio Desired slip ratio [+0.01, +0.15]
+   * @param optimalSlipRatio Desired slip ratio [+0.01, +0.15]
    * @param maxLinearSpeed maximum linear speed of robot (m/s)
    * @param deadband Deadband for controller input [+0.001, +0.1]
    * @param tractionControlCurve Expression characterising traction of the robot with "X" as the variable
    * @param throttleInputCurve Expression characterising throttle input with "X" as the variable
    */
-  public TractionControlController(double slipRatio, double maxLinearSpeed, double deadband, PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve) {
-    this.m_slipRatio = MathUtil.clamp(slipRatio, MIN_SLIP_RATIO, MAX_SLIP_RATIO);
+  public TractionControlController(double optimalSlipRatio, double maxLinearSpeed, double deadband, PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve) {
+    this.m_optimalSlipRatio = MathUtil.clamp(optimalSlipRatio, MIN_SLIP_RATIO, MAX_SLIP_RATIO);
     this.m_maxLinearSpeed = Math.floor(maxLinearSpeed * 1000) / 1000;
     this.m_deadband = MathUtil.clamp(deadband, MIN_DEADBAND, MAX_DEADBAND);
 
@@ -70,10 +70,13 @@ public class TractionControlController {
     speedRequest = Math.copySign(Math.floor(Math.abs(speedRequest) * 1000) / 1000, speedRequest) + 0.0;
     double requestedLinearSpeed = m_throttleInputMap.get(speedRequest);
 
+    // Apply basic traction control when driving straight
     if (!isTurning && m_isEnabled) {
+      // Check slip ratio
       double currentSlipRatio = (averageWheelSpeed - Math.abs(inertialVelocity)) / Math.abs(inertialVelocity);
-      if (currentSlipRatio > m_slipRatio)
-        requestedLinearSpeed = Math.copySign(m_slipRatio * inertialVelocity + inertialVelocity, requestedLinearSpeed);
+      // Limit wheel speed if slipping excessively
+      if (currentSlipRatio > m_optimalSlipRatio)
+        requestedLinearSpeed = Math.copySign(m_optimalSlipRatio * inertialVelocity + inertialVelocity, requestedLinearSpeed);
     }
 
     // Calculate optimal velocity and truncate value to 3 decimal places and clamp to maximum linear speed
