@@ -214,7 +214,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Create SmartDashboard indicators
    */
   public void smartDashboard() {
-    SmartDashboard.putBoolean("Traction Control", m_tractionControlController.isEnabled());
+    SmartDashboard.putBoolean("TC", m_tractionControlController.isEnabled());
   }
 
   /**
