@@ -75,8 +75,11 @@ public class SparkPIDConfig {
    * @param kD derivative gain
    * @param kF feed-forward gain
    * @param tolerance tolerance of PID loop in ticks
+   * @param lowerLimit lower soft limit
+   * @param upperLimit upper soft limit
+   * @param enableSoftLimits true to enable soft limits
    * @param velocity Smart Motion cruise velocity in RPM
-   * @param accelerationRPMPerSec Smart Motion acceleration in RPM
+   * @param accelerationRPMPerSec Smart Motion acceleration in RPM per second
    * @param accelStrategy Smart Motion acceleration strategy
    */
   public SparkPIDConfig(boolean sensorPhase, boolean invertMotor,
