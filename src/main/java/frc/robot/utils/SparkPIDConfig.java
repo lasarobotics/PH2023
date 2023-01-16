@@ -43,15 +43,13 @@ public class SparkPIDConfig {
    * USE FOR VELOCITY PID ONLY!
    * @param sensorPhase set sensor phase of encoder
    * @param invertMotor invert motor or not
-   * @param maxRPM max RPM of encoder
-   * @param ticksPerRotation number of ticks in one encoder revolution
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
    * @param kF feed-forward gain
    * @param tolerance tolerance of PID loop in ticks per 100ms
    */
-  public SparkPIDConfig(boolean sensorPhase, boolean invertMotor, double maxRPM,
+  public SparkPIDConfig(boolean sensorPhase, boolean invertMotor,
                         double kP, double kI, double kD, double kF, double tolerance) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
@@ -72,8 +70,6 @@ public class SparkPIDConfig {
    * USE FOR POSITION PID ONLY!
    * @param sensorPhase set sensor phase of encoder
    * @param invertMotor invert motor or not
-   * @param ticksPerRotation number of ticks in one encoder revolution
-   * @param maxRPM max RPM for this motor
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
@@ -83,7 +79,7 @@ public class SparkPIDConfig {
    * @param accelerationRPMPerSec Smart Motion acceleration in RPM
    * @param accelStrategy Smart Motion acceleration strategy
    */
-  public SparkPIDConfig(boolean sensorPhase, boolean invertMotor, double maxRPM,
+  public SparkPIDConfig(boolean sensorPhase, boolean invertMotor,
                         double kP, double kI, double kD, double kF, double tolerance, 
                         double lowerLimit, double upperLimit, boolean enableSoftLimits,
                         double velocityRPM, double accelerationRPMPerSec, AccelStrategy accelStrategy) {
