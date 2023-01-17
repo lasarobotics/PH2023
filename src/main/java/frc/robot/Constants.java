@@ -60,6 +60,13 @@ public final class Constants {
     public static final int REAR_RIGHT_MOTOR_ID = 5;
   }
 
+  public static class ArmHardware {
+    public static final int ARM_PIVOT_MASTER_ID = 6;
+    public static final int ARM_PIVOT_SLAVE_ID = 7;
+    public static final int ARM_TELESCOPE_MASTER_ID = 8;
+    public static final int ARM_TELESCOPE_SLAVE_ID = 9;
+  }
+
   public static class AccessoryHardware {
     public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
   }
