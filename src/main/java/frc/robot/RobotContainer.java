@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.PIDConstants;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,8 +34,14 @@ public class RobotContainer {
   private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(DriveSubsystem.initializeHardware(REAL_HARDWARE),
                                                                            Constants.HID.CONTROLLER_DEADBAND,
                                                                            Constants.Drive.DRIVE_SLIP_RATIO,
-                                                                           Constants.Drive.DRIVE_kP,
-                                                                           Constants.Drive.DRIVE_kD, 
+                                                                           new PIDConstants(
+                                                                            Constants.Drive.DRIVE_kP,
+                                                                            Constants.Drive.DRIVE_kD, 
+                                                                            0),
+                                                                           new PIDConstants(
+                                                                            Constants.Drive.DRIVE_kP,
+                                                                            Constants.Drive.DRIVE_kD, 
+                                                                            0),
                                                                            Constants.Drive.DRIVE_TURN_SCALAR,
                                                                            Constants.Drive.DRIVE_LOOKAHEAD,
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
