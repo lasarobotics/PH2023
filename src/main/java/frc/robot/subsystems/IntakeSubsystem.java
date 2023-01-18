@@ -4,16 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
 
-public class IntakeSubsystem {
+public class IntakeSubsystem extends SubsystemBase {
   public static class Hardware {
     private boolean isHardwareReal;
     private SparkMax wristMotor;
@@ -46,19 +44,19 @@ public class IntakeSubsystem {
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware intakeHardware = new Hardware(isHardwareReal,
                                            new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_PORT, MotorType.kBrushless),
-                                           new SparkMax(Constants.IntakeHardware.ROllER_MOTOR_PORT, MotorType.kBrushless));
+                                           new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_PORT, MotorType.kBrushless));
     return intakeHardware;
   }
 
   public void intake() {
-    rollerMotor.set(ControlMode.PercentOutput, +Constants.IntakeHardware.SPIN_MOTOR_SPEED);
+    m_rollerMotor.set(Constants.IntakeHardware.SPIN_MOTOR_SPEED);
   }
 
   public void outake() {
-    rollerMotor.set(ControlMode.PercentOutput, -Constants.IntakeHardware.SPIN_MOTOR_SPEED);
+    m_rollerMotor.set(-Constants.IntakeHardware.SPIN_MOTOR_SPEED);
   }
 
   public void stop() {
-    rollerMotor.stopMotor();
+    m_rollerMotor.stopMotor();
   }
 }
