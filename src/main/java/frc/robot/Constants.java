@@ -62,6 +62,12 @@ public final class Constants {
     public static final int REAR_RIGHT_MOTOR_ID = 5;
   }
 
+  public static class intakeHardware {
+    public static final int WRIST_MOTOR_PORT = 10;
+    public static final int ROLLER_MOTOR_PORT = 11;
+    public static final double SPIN_MOTOR_SPEED = 0.5;
+  }
+
   public static class AccessoryHardware {
     public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
   }
