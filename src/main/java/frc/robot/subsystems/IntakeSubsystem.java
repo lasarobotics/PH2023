@@ -58,7 +58,7 @@ public class IntakeSubsystem {
     rollerMotor.set(ControlMode.PercentOutput, -Constants.IntakeHardware.SPIN_MOTOR_SPEED);
   }
 
-  public stop() {
+  public void stop() {
     rollerMotor.stopMotor();
   }
 }
