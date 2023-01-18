@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.PIDConstants;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,6 +18,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -54,6 +56,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   private TurnPIDController m_turnPIDController;
+  private PIDController m_pitchPIDController;
   private TractionControlController m_tractionControlController;
   private DifferentialDrivePoseEstimator m_poseEstimator;
   private DifferentialDriveKinematics m_kinematics;
@@ -100,9 +103,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param throttleInputCurve Spline function characterising throttle input
    * @param turnInputCurve Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, double deadband, double slipRatio, double kP, double kD, double turnScalar, double lookAhead,
+  public DriveSubsystem(Hardware drivetrainHardware, double deadband, double slipRatio, PIDConstants turnPIDConstants, PIDConstants pitchPIDContants, double turnScalar, double lookAhead,
                         PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
-    m_turnPIDController = new TurnPIDController(kP, kD, turnScalar, lookAhead, deadband, turnInputCurve);
+    m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
+    m_pitchPIDController = new PIDController(pitchPIDContants.kP, pitchPIDContants.kI, pitchPIDContants.kD);
     m_tractionControlController = new TractionControlController(slipRatio, DRIVE_MAX_LINEAR_SPEED, deadband, tractionControlCurve, throttleInputCurve);
     m_kinematics = new DifferentialDriveKinematics(DRIVE_TRACK_WIDTH);
 
@@ -263,6 +267,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_lMasterMotor.set(speedOutput, ControlType.kDutyCycle, -turnOutput, ArbFFUnits.kPercentOut);
     m_rMasterMotor.set(speedOutput, ControlType.kDutyCycle, +turnOutput, ArbFFUnits.kPercentOut);
   }
+
+  public void autoBalance() {
+    double pitchOutput = m_pitchPIDController.calculate(getPitch());
+
+    m_lMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
+    m_rMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
+  }
+
 
   /**
    * Toggle traction control
@@ -437,6 +449,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public double getAngle() {
     return m_navx.getAngle();
+  }
+
+  public double getPitch() {
+    return m_navx.getPitch();
   }
 
   /**
