@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -43,17 +44,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware intakeHardware = new Hardware(isHardwareReal,
-                                           new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_PORT, MotorType.kBrushless),
-                                           new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_PORT, MotorType.kBrushless));
+                                           new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
+                                           new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless));
     return intakeHardware;
   }
 
   public void intake() {
-    m_rollerMotor.set(Constants.IntakeHardware.SPIN_MOTOR_SPEED);
+    m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   public void outake() {
-    m_rollerMotor.set(-Constants.IntakeHardware.SPIN_MOTOR_SPEED);
+    m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   public void stop() {
