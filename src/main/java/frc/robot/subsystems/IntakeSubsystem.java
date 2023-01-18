@@ -30,14 +30,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax m_wristMotor;
   private final SparkMax m_rollerMotor;
 
+
+  /**
+   * Create a new intake subsystem
+   * @param intakeHardware Intake hardware
+   */
   public IntakeSubsystem(Hardware intakeHardware) {
     this.m_wristMotor = intakeHardware.wristMotor;
     this.m_rollerMotor = intakeHardware.rollerMotor;
 
-    // Idk if I need to do this stuff
+    // Redundancy - restores motors to default (does so already within hardware PID)
     m_wristMotor.restoreFactoryDefaults();
     m_rollerMotor.restoreFactoryDefaults();
 
+    // Set motors to break
     m_wristMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -49,14 +55,23 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakeHardware;
   }
 
+  /**
+   * Intake game object
+   */
   public void intake() {
     m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
+  /**
+   * Outtake game object
+   */
   public void outake() {
     m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
+  /**
+   * Stops motor
+   */
   public void stop() {
     m_rollerMotor.stopMotor();
   }
