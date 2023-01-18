@@ -9,6 +9,8 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkPIDConfig;
 
