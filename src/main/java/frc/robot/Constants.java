@@ -10,6 +10,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.utils.PIDConstants;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -36,9 +37,9 @@ public final class Constants {
   }
 
   public static class Drive {
+    public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.002, 0.0, 0.0004, 0.0);
+    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.0, 0.0, 0.0, 0.0);
     public static final double DRIVE_SLIP_RATIO = 0.08;
-    public static final double DRIVE_kP = 0.02;
-    public static final double DRIVE_kD = 0.0004;
     public static final double DRIVE_TURN_SCALAR = 25.0;
     public static final double DRIVE_LOOKAHEAD = 16;
 

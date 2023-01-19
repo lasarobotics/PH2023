@@ -91,6 +91,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * NOTE: ONLY ONE INSTANCE SHOULD EXIST AT ANY TIME!
    * <p>
    * @param drivetrainHardware Hardware devices required by drivetrain
+   * @param turnPIDConstants PID values for turning
+   * @param pitchPIDConstants PID values for balancing
    * @param deadband Deadband for controller input [+0.001, +0.2]
    * @param slipRatio Slip ratio for traction control [+0.01, +0.15]
    * @param kP Proportional gain
@@ -103,10 +105,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param throttleInputCurve Spline function characterising throttle input
    * @param turnInputCurve Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, double deadband, double slipRatio, PIDConstants pidConstants, frc.robot.utils.PIDConstants pidConstants2, double turnScalar, double lookAhead,
+  public DriveSubsystem(Hardware drivetrainHardware, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
+                        double deadband, double slipRatio, double turnScalar, double lookAhead,
                         PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
-    m_turnPIDController = new TurnPIDController(pidConstants.kP, pidConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
-    m_pitchPIDController = new PIDController(pidConstants2.kP, pidConstants2.kD, pidConstants2.kF);
+    m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
+    m_pitchPIDController = new PIDController(pitchPIDConstants.kP, pitchPIDConstants.kD, pitchPIDConstants.kF);
     m_tractionControlController = new TractionControlController(slipRatio, DRIVE_MAX_LINEAR_SPEED, deadband, tractionControlCurve, throttleInputCurve);
     m_kinematics = new DifferentialDriveKinematics(DRIVE_TRACK_WIDTH);
 
@@ -451,6 +454,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     return m_navx.getAngle();
   }
 
+  /**
+   * Get DriveSubsystem pitch as detected by the navX MXP
+   * @return Current pitch angle
+   */
   public double getPitch() {
     return m_navx.getPitch();
   }
@@ -458,7 +465,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   /**
    * Reset DriveSubsystem PID
    */
-  private void resetDrivePID() {
+  public void resetDrivePID() {
     resetAngle();
     m_turnPIDController.setSetpoint(0.0);
     m_turnPIDController.reset();
