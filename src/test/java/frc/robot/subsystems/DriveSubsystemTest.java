@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.AdditionalMatchers;
+import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -235,5 +236,27 @@ public class DriveSubsystemTest {
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
     verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(+1.0, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+  }
+
+  @Test
+  @Order(12)
+  @DisplayName("Test if robot will autobalance when tipped forward")
+  public void balanceForwardTest() {
+    when(m_navx.getPitch()).thenReturn(30.0f);
+    m_driveSubsystem.autoBalance();
+    
+    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.lt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.lt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+  }
+
+  @Test
+  @Order(13)
+  @DisplayName("Test if robot will autobalance when tipped backward")
+  public void balanceBackwardTest() {
+    when(m_navx.getPitch()).thenReturn(-30.0f);
+    m_driveSubsystem.autoBalance();
+    
+    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.gt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.gt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
   }
 }
