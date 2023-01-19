@@ -32,16 +32,10 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(DriveSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                           Constants.Drive.DRIVE_TURN_PID,
+                                                                           Constants.Drive.DRIVE_BALANCE_PID,
                                                                            Constants.HID.CONTROLLER_DEADBAND,
                                                                            Constants.Drive.DRIVE_SLIP_RATIO,
-                                                                           new PIDConstants(
-                                                                            Constants.Drive.DRIVE_kP,
-                                                                            Constants.Drive.DRIVE_kD, 
-                                                                            0),
-                                                                           new PIDConstants(
-                                                                            Constants.Drive.DRIVE_kP,
-                                                                            Constants.Drive.DRIVE_kD, 
-                                                                            0),
                                                                            Constants.Drive.DRIVE_TURN_SCALAR,
                                                                            Constants.Drive.DRIVE_LOOKAHEAD,
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,

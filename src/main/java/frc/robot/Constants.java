@@ -7,6 +7,8 @@ package frc.robot;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
+import frc.robot.utils.PIDConstants;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -32,9 +34,9 @@ public final class Constants {
   }
 
   public static class Drive {
+    public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.002, 0.0, 0.0004, 0.0);
+    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.0, 0.0, 0.0, 0.0);
     public static final double DRIVE_SLIP_RATIO = 0.08;
-    public static final double DRIVE_kP = 0.02;
-    public static final double DRIVE_kD = 0.0004;
     public static final double DRIVE_TURN_SCALAR = 25.0;
     public static final double DRIVE_LOOKAHEAD = 16;
 
