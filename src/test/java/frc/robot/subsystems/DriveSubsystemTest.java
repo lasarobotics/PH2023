@@ -24,6 +24,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import frc.robot.Constants;
+import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkMax;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -55,15 +56,21 @@ public class DriveSubsystemTest {
 
     // Create DriveSubsystem object
     m_driveSubsystem = new DriveSubsystem(m_drivetrainHardware,
-                                          Constants.HID.CONTROLLER_DEADBAND,
-                                          Constants.Drive.DRIVE_SLIP_RATIO,
-                                          Constants.Drive.DRIVE_kP,
-                                          Constants.Drive.DRIVE_kD, 
-                                          Constants.Drive.DRIVE_TURN_SCALAR,
-                                          Constants.Drive.DRIVE_LOOKAHEAD,
-                                          Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
-                                          Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
-                                          Constants.Drive.DRIVE_TURN_INPUT_CURVE);
+                                              Constants.HID.CONTROLLER_DEADBAND,
+                                              Constants.Drive.DRIVE_SLIP_RATIO,
+                                              new PIDConstants(
+                                              Constants.Drive.DRIVE_kP,
+                                              Constants.Drive.DRIVE_kD, 
+                                              0),
+                                              new PIDConstants(
+                                              Constants.Drive.DRIVE_kP,
+                                              Constants.Drive.DRIVE_kD, 
+                                              0),
+                                              Constants.Drive.DRIVE_TURN_SCALAR,
+                                              Constants.Drive.DRIVE_LOOKAHEAD,
+                                              Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
+                                              Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
+                                              Constants.Drive.DRIVE_TURN_INPUT_CURVE);
   }
 
   @AfterEach
