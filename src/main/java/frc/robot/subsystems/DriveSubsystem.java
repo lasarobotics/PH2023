@@ -10,7 +10,6 @@ package frc.robot.subsystems;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.PIDConstants;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -28,6 +27,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkMax;
 import frc.robot.utils.TractionControlController;
 import frc.robot.utils.TurnPIDController;
@@ -103,10 +103,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param throttleInputCurve Spline function characterising throttle input
    * @param turnInputCurve Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, double deadband, double slipRatio, PIDConstants turnPIDConstants, PIDConstants pitchPIDContants, double turnScalar, double lookAhead,
+  public DriveSubsystem(Hardware drivetrainHardware, double deadband, double slipRatio, PIDConstants pidConstants, frc.robot.utils.PIDConstants pidConstants2, double turnScalar, double lookAhead,
                         PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
-    m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
-    m_pitchPIDController = new PIDController(pitchPIDContants.kP, pitchPIDContants.kI, pitchPIDContants.kD);
+    m_turnPIDController = new TurnPIDController(pidConstants.kP, pidConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
+    m_pitchPIDController = new PIDController(pidConstants2.kP, pidConstants2.kD, pidConstants2.kF);
     m_tractionControlController = new TractionControlController(slipRatio, DRIVE_MAX_LINEAR_SPEED, deadband, tractionControlCurve, throttleInputCurve);
     m_kinematics = new DifferentialDriveKinematics(DRIVE_TRACK_WIDTH);
 
