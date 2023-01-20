@@ -37,11 +37,12 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   // TODO: Change color targets to be accurate
   public enum GameObject {
-    Cone(new Color(0.0, 0.0, 0.0)), Cube(new Color(0.0, 0.0, 0.0));
+    Cone(Color.kYellow),
+    Cube(Color.kBlueViolet);
     
-    public Color color;
-    private GameObject(Color objectColor) {
-      color = objectColor;
+    public final Color color;
+    private GameObject(Color color) {
+      this.color = color;
     }
   }
 
@@ -49,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMax m_rollerMotor;
   private ColorSensorV3 m_colorSensor;
 
-  private final ColorMatch m_colorMatcher;
+  private ColorMatch m_colorMatcher;
 
   /**
    * Create a new intake subsystem
@@ -97,15 +98,14 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Identify game object
-   * @return GameObject, a Cone or Cube
+   * @return Game object, null if unidentified
    */
   public GameObject identifyObject() {
-    Color detectedColor = m_colorSensor.getColor();
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
 
     if (match.color == GameObject.Cone.color) return GameObject.Cone;
-    else if (match.color == GameObject.Cube.color) return GameObject.Cube;
-    else return null;
+    if (match.color == GameObject.Cube.color) return GameObject.Cube;
+    return null;
   }
 
   /**
@@ -113,8 +113,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Color, currently detected color by sensor
    */
   public Color readColor() {
-    Color detectedColor = m_colorSensor.getColor();
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
 
     return match.color;
   }
