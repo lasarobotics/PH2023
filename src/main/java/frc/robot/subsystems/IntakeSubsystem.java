@@ -7,7 +7,12 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -17,7 +22,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     private boolean isHardwareReal;
     private SparkMax wristMotor;
     private SparkMax rollerMotor;
-    private ColorSensorV3 m_colorSensor;
+    private ColorSensorV3 colorSensor;
 
     public Hardware(boolean isHardwareReal,
                     SparkMax wristMotor, 
@@ -26,22 +31,23 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
       this.isHardwareReal = isHardwareReal;
       this.wristMotor = wristMotor;
       this.rollerMotor = rollerMotor;
-      this.m_colorSensor = m_colorSensor;
+      this.colorSensor = m_colorSensor;
     }
   }
 
+  // TODO: Change color targets to be accurate
   public enum GameObject {
-    Cone(new Color(0.0, 0.0, 0.0)), Cube(new Color(0.0, 0.0, 0.0)); // TO-DO: Change color targets to be accurate
+    Cone(new Color(0.0, 0.0, 0.0)), Cube(new Color(0.0, 0.0, 0.0));
     
     public Color color;
-
-    public GameObject(Color objectColor) {
+    private GameObject(Color objectColor) {
       color = objectColor;
     }
   }
 
-  private final SparkMax m_wristMotor;
-  private final SparkMax m_rollerMotor;
+  private SparkMax m_wristMotor;
+  private SparkMax m_rollerMotor;
+  private ColorSensorV3 m_colorSensor;
 
   private final ColorMatch m_colorMatcher;
 
@@ -50,12 +56,12 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @param intakeHardware Intake hardware
    */
   public IntakeSubsystem(Hardware intakeHardware) {
-
-    this.m_colorMatcher = new ColorMatch();
     this.m_wristMotor = intakeHardware.wristMotor;
     this.m_rollerMotor = intakeHardware.rollerMotor;
+    this.m_colorSensor = intakeHardware.colorSensor;
+    this.m_colorMatcher = new ColorMatch();
 
-    // Redundancy - restores motors to default (does so already within hardware PID)
+    // Reset motors to default
     m_wristMotor.restoreFactoryDefaults();
     m_rollerMotor.restoreFactoryDefaults();
 
@@ -63,15 +69,15 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     m_wristMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
 
-    m_colorMatcher.addColorMatch(yellowTarget);
-    m_colorMatcher.addColorMatch(purpleTarget);
+    m_colorMatcher.addColorMatch(GameObject.Cone.color);
+    m_colorMatcher.addColorMatch(GameObject.Cube.color);
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware intakeHardware = new Hardware(isHardwareReal,
                                            new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
                                            new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless),
-                                           new ColorSensorV3(I2C.Port.kOnboard)); // TO-DO: Change to correct port
+                                           new ColorSensorV3(I2C.Port.kOnboard));
     return intakeHardware;
   }
 
@@ -94,19 +100,12 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @return GameObject, a Cone or Cube
    */
   public GameObject identifyObject() {
-    Color detectedColor = m_colorMSensor.getColor();
-
+    Color detectedColor = m_colorSensor.getColor();
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
-    if (match.color == GameObject.Cone.color) {
-      return GameObject.Cone;
-    }
-    else if (match.color == GameObject.Cube.color) {
-      return GameObject.Cube;
-    }
-    else {
-      return null;
-    }
+    if (match.color == GameObject.Cone.color) return GameObject.Cone;
+    else if (match.color == GameObject.Cube.color) return GameObject.Cube;
+    else return null;
   }
 
   /**
@@ -115,7 +114,6 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public Color readColor() {
     Color detectedColor = m_colorSensor.getColor();
-
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 
     return match.color;
@@ -132,6 +130,6 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public void close() {
     m_wristMotor.close();
     m_rollerMotor.close();
-    m_colorSensor.close();
+    m_colorSensor = null;
   }
 }
