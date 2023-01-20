@@ -25,7 +25,6 @@ public class SparkMax extends CANSparkMax {
    */
   public void set(double value, ControlType ctrl) {
     getPIDController().setReference(value, ctrl);
-    set(value);
   }
 
   /**

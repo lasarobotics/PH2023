@@ -198,13 +198,30 @@ public class DriveSubsystemTest {
 
   @Test
   @Order(10)
+  @DisplayName("Test if robot can maintain orientation using PID")
+  public void maintainOrientation() {
+    // Hardcode NAVX sensor return value for angle
+    when(m_navx.getAngle()).thenReturn(+20.0);
+
+    // Try to stay still
+    m_driveSubsystem.teleopPID(0.0, 0.0);
+
+    // Verify that left and right motors are being driven with expected values
+    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+                                         AdditionalMatchers.gt(0.0), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+                                         AdditionalMatchers.lt(0.0), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
+  }
+
+  @Test
+  @Order(11)
   @DisplayName("Test if robot can limit wheel slip")
   public void tractionControl() {
     // Hardcode NAVX sensor and encoders
     when(m_navx.getAngle()).thenReturn(0.0);
     when(m_navx.getVelocityY()).thenReturn((float)+0.5);
-    when(m_lMasterMotor.getEncoderVelocity()).thenReturn(+2.0);
-    when(m_rMasterMotor.getEncoderVelocity()).thenReturn(+2.0);
+    when(m_lMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
+    when(m_rMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
 
     // Try to drive at full throttle with traction control enabled
     m_driveSubsystem.enableTractionControl();
@@ -218,14 +235,14 @@ public class DriveSubsystemTest {
   }
 
   @Test
-  @Order(11)
+  @Order(12)
   @DisplayName("Test if robot can disable traction control")
   public void disableTractionControl() {
     // Hardcode NAVX sensor and encoders
     when(m_navx.getAngle()).thenReturn(0.0);
     when(m_navx.getVelocityY()).thenReturn((float)+0.5);
-    when(m_lMasterMotor.getEncoderVelocity()).thenReturn(+2.0);
-    when(m_rMasterMotor.getEncoderVelocity()).thenReturn(+2.0);
+    when(m_lMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
+    when(m_rMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
 
     // Try to drive at full throttle with traction control disabled
     m_driveSubsystem.disableTractionControl();
@@ -239,23 +256,31 @@ public class DriveSubsystemTest {
   }
 
   @Test
-  @Order(12)
-  @DisplayName("Test if robot will autobalance when tipped forward")
+  @Order(13)
+  @DisplayName("Test if robot will auto balance when tipped forward")
   public void balanceForwardTest() {
+    // Hardcode navX sensor
     when(m_navx.getPitch()).thenReturn(30.0f);
+
+    // Try to auto balance
     m_driveSubsystem.autoBalance();
     
+    // Verify that the left and right motors are being driven with the expected values
     verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.lt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
     verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.lt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
   }
 
   @Test
-  @Order(13)
-  @DisplayName("Test if robot will autobalance when tipped backward")
+  @Order(14)
+  @DisplayName("Test if robot will auto balance when tipped backward")
   public void balanceBackwardTest() {
+    // Hardcode navX sensor 
     when(m_navx.getPitch()).thenReturn(-30.0f);
+
+    // Try to auto balance
     m_driveSubsystem.autoBalance();
     
+    // Verify that left and right motors are being driven with the expected values
     verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.gt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
     verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.gt(0.0), ArgumentMatchers.eq(ControlType.kDutyCycle), AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
   }

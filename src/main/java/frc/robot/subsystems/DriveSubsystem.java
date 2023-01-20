@@ -360,8 +360,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getEncoderVelocity(), 
-                                            m_rMasterMotor.getEncoderVelocity());
+    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getAlternateEncoderVelocity(), 
+                                            m_rMasterMotor.getAlternateEncoderVelocity());
   }
 
   /**
@@ -369,7 +369,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return 
    */
   public double getAverageWheelSpeed() {
-    return Math.abs((m_lMasterMotor.getEncoderVelocity() + m_rMasterMotor.getEncoderVelocity()) / 2);
+    return Math.abs((m_lMasterMotor.getAlternateEncoderVelocity() + m_rMasterMotor.getAlternateEncoderVelocity()) / 2);
   }
 
   /**
