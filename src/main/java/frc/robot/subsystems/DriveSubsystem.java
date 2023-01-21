@@ -155,10 +155,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     }
 
     // Invert only right side
-    m_lMasterMotor.setInverted(false);
-    m_lSlaveMotor.setInverted(false);
-    m_rMasterMotor.setInverted(true);
-    m_rSlaveMotor.setInverted(true);
+    m_lMasterMotor.setInverted(true);
+    m_lSlaveMotor.setInverted(true);
+    m_rMasterMotor.setInverted(false);
+    m_rSlaveMotor.setInverted(false);
 
     // Enable voltage compensation
     m_lMasterMotor.enableVoltageCompensation(MAX_VOLTAGE);
@@ -167,9 +167,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rSlaveMotor.enableVoltageCompensation(MAX_VOLTAGE);
 
     // Initialise PID subsystem setpoint and input
-    m_navx.calibrate();
-    resetAngle();
-    m_turnPIDController.setSetpoint(0.0);
+    // m_navx.calibrate();
+    // resetAngle();
+    // m_turnPIDController.setSetpoint(0.0);
 
     // Set drive PID tolerance
     m_turnPIDController.setTolerance(TOLERANCE, 1);

@@ -92,8 +92,8 @@ public class RobotContainer {
    */
   public void robotInit() {
     // Initialize subsystems and start logging
-    DataLogger.getInstance().startLogging();
-    CommandScheduler.getInstance().schedule(DataLogger.LOGGING_COMMAND);
+    // DataLogger.getInstance().startLogging();
+    // CommandScheduler.getInstance().schedule(DataLogger.LOGGING_COMMAND);
     BlinkinLEDController.getInstance().setTeamColor();
   }
 
