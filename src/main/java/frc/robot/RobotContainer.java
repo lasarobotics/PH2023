@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 import frc.robot.utils.DataLogger;
-import frc.robot.utils.PIDConstants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
