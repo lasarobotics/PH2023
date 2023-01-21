@@ -7,7 +7,10 @@ package frc.robot;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
+import com.revrobotics.SparkMaxPIDController.AccelStrategy;
+
 import frc.robot.utils.PIDConstants;
+import frc.robot.utils.SparkPIDConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -53,12 +56,86 @@ public final class Constants {
     public static final PolynomialSplineFunction DRIVE_TURN_INPUT_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_TURN_INPUT_CURVE_X, DRIVE_TURN_INPUT_CURVE_Y);
   }
 
+  public static class Arm {
+    // Arm Pivot PID config
+    private static final double PIVOT_kP = 1.0;
+    private static final double PIVOT_kD = 0.0;
+    private static final double PIVOT_kI = 0.0;
+    private static final double PIVOT_kF = 0.0;
+    private static final double PIVOT_TOLERANCE = 10;
+    private static final double PIVOT_LOWER_LIMIT = 0;
+    private static final double PIVOT_UPPER_LIMIT = 3100;
+    private static final double PIVOT_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double PIVOT_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean PIVOT_SOFT_LIMITS = true;
+    private static final boolean PIVOT_SENSOR_PHASE = false;
+    private static final boolean PIVOT_INVERT_MOTOR = false;
+    private static final AccelStrategy PIVOT_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+  
+    
+    // Arm Pivot PID config
+    public static final SparkPIDConfig PIVOT_CONFIG = new SparkPIDConfig(PIVOT_SENSOR_PHASE, 
+                                                                         PIVOT_INVERT_MOTOR, 
+                                                                         PIVOT_kP,
+                                                                         PIVOT_kI,
+                                                                         PIVOT_kD,
+                                                                         PIVOT_kF,
+                                                                         PIVOT_TOLERANCE,
+                                                                         PIVOT_LOWER_LIMIT,
+                                                                         PIVOT_UPPER_LIMIT,
+                                                                         PIVOT_SOFT_LIMITS,
+                                                                         PIVOT_VELOCITY,
+                                                                         PIVOT_ACCELERATION,
+                                                                         PIVOT_ACCEL_STRATEGY);
+
+    // Arm Telescope PID config
+    private static final double TELESCOPE_kP = 1.0;
+    private static final double TELESCOPE_kI = 0.0;
+    private static final double TELESCOPE_kD = 0.0;
+    private static final double TELESCOPE_kF = 0.0;
+    private static final double TELESCOPE_TOLERANCE = 10;
+    private static final double TELESCOPE_LOWER_LIMIT = 0;
+    private static final double TELESCOPE_UPPER_LIMIT = 3100;
+    private static final double TELESCOPE_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double TELESCOPE_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean TELESCOPE_SOFT_LIMITS = true;
+    private static final boolean TELESCOPE_SENSOR_PHASE = false;
+    private static final boolean TELESCOPE_INVERT_MOTOR = false;
+    private static final AccelStrategy TELESCOPE_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+  
+    
+    // Arm Telescope PID config
+    public static final SparkPIDConfig TELESCOPE_CONFIG = new SparkPIDConfig(TELESCOPE_SENSOR_PHASE, 
+                                                                             TELESCOPE_INVERT_MOTOR, 
+                                                                             TELESCOPE_kP,
+                                                                             TELESCOPE_kI,
+                                                                             TELESCOPE_kD,
+                                                                             TELESCOPE_kF,
+                                                                             TELESCOPE_TOLERANCE,
+                                                                             TELESCOPE_LOWER_LIMIT,
+                                                                             TELESCOPE_UPPER_LIMIT,
+                                                                             TELESCOPE_SOFT_LIMITS,
+                                                                             TELESCOPE_VELOCITY,
+                                                                             TELESCOPE_ACCELERATION,
+                                                                             TELESCOPE_ACCEL_STRATEGY);
+  }
+
   public static class DriveHardware {
     public static final int FRONT_LEFT_MOTOR_ID = 2;
     public static final int FRONT_RIGHT_MOTOR_ID = 3;
     public static final int REAR_LEFT_MOTOR_ID = 4;
     public static final int REAR_RIGHT_MOTOR_ID = 5;
   }
+
+  public static class ArmHardware {
+    public static final int ARM_PIVOT_MASTER_ID = 6;
+    public static final int ARM_PIVOT_SLAVE_ID = 7;
+    public static final int ARM_TELESCOPE_MASTER_ID = 8;
+    public static final int ARM_TELESCOPE_SLAVE_ID = 9;
+  }
+
+
+
 
   public static class AccessoryHardware {
     public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
