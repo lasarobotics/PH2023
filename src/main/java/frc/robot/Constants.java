@@ -120,6 +120,10 @@ public final class Constants {
                                                                              TELESCOPE_ACCEL_STRATEGY);
   }
 
+  public static class Intake {
+    public static final double SPIN_MOTOR_SPEED = 0.5;
+  }
+
   public static class DriveHardware {
     public static final int FRONT_LEFT_MOTOR_ID = 2;
     public static final int FRONT_RIGHT_MOTOR_ID = 3;
@@ -134,8 +138,10 @@ public final class Constants {
     public static final int ARM_TELESCOPE_SLAVE_ID = 9;
   }
 
-
-
+  public static class IntakeHardware {
+    public static final int WRIST_MOTOR_ID = 10;
+    public static final int ROLLER_MOTOR_ID = 11;
+  }
 
   public static class AccessoryHardware {
     public static final int BLINKIN_LED_CONTROLLER_PORT = 0;
