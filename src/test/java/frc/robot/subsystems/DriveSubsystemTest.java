@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.AdditionalMatchers;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
 
 import com.kauailabs.navx.frc.AHRS;
