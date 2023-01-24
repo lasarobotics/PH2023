@@ -51,7 +51,7 @@ public class AutoTrajectory {
   public AutoTrajectory(DriveSubsystem driveSubsystem, String pathName, double maxVelocity, double maxAcceleration) {
     this.m_driveSubsystem = driveSubsystem;
 
-    m_pathplannerTrajectory = PathPlanner.loadPath(pathName, maxVelocity, maxAcceleration);
+    m_pathplannerTrajectory = PathPlanner.loadPath(pathName, PathPlanner.getConstraintsFromPath(pathName));
 
     RamseteController ramseteController = new RamseteController(kRamseteB, kRamseteZeta);
 
