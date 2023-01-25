@@ -69,7 +69,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private AHRS m_navx;
 
-  private final double TOLERANCE = 0.125;
+  private final int CURRENT_LIMIT = 55;
+  private final double TOLERANCE = 5.0;
   private final double MAX_VOLTAGE = 12.0;
   private final double VISION_AIM_DAMPENER = 0.9;
  
@@ -128,11 +129,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rMasterMotor.restoreFactoryDefaults();
     m_rSlaveMotor.restoreFactoryDefaults();
 
-    // Set all drive motors to brake
-    m_lMasterMotor.setIdleMode(IdleMode.kBrake);
-    m_lSlaveMotor.setIdleMode(IdleMode.kBrake);
-    m_rMasterMotor.setIdleMode(IdleMode.kBrake);
-    m_rSlaveMotor.setIdleMode(IdleMode.kBrake);
+    // Set all drive motors to coast
+    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
 
     // Make rear left motor controllers follow left master
     m_lSlaveMotor.follow(m_lMasterMotor);
@@ -154,7 +155,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       m_rSlaveMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
     }
 
-    // Invert only right side
+    // Invert only left side
     m_lMasterMotor.setInverted(true);
     m_lSlaveMotor.setInverted(true);
     m_rMasterMotor.setInverted(false);
@@ -166,10 +167,16 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rMasterMotor.enableVoltageCompensation(MAX_VOLTAGE);
     m_rSlaveMotor.enableVoltageCompensation(MAX_VOLTAGE);
 
+    // Enable current limit
+    m_lMasterMotor.setSmartCurrentLimit(CURRENT_LIMIT);
+    m_lSlaveMotor.setSmartCurrentLimit(CURRENT_LIMIT);
+    m_rMasterMotor.setSmartCurrentLimit(CURRENT_LIMIT);
+    m_rSlaveMotor.setSmartCurrentLimit(CURRENT_LIMIT);
+
     // Initialise PID subsystem setpoint and input
-    // m_navx.calibrate();
-    // resetAngle();
-    // m_turnPIDController.setSetpoint(0.0);
+    m_navx.calibrate();
+    resetAngle();
+    m_turnPIDController.setSetpoint(0.0);
 
     // Set drive PID tolerance
     m_turnPIDController.setTolerance(TOLERANCE, 1);

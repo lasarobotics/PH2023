@@ -19,6 +19,7 @@ import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
  * DataLogger
@@ -31,7 +32,7 @@ public class DataLogger {
   private static DataLogger m_logger = null;
   private static DataLog m_log;
   private static List<LogEntry> m_logEntries;
-  public static final Command LOGGING_COMMAND = new RunCommand(() -> m_logger.log());
+  public static final Command LOGGING_COMMAND = new RunCommand(() -> m_logger.log(), new Subsystem() {});
 
   public static class LogEntry {
     private DataLogEntry entry;

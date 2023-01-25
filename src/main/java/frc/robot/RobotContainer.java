@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 import frc.robot.utils.DataLogger;
@@ -77,6 +78,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
+    PRIMARY_CONTROLLER.a().onTrue(new TurnCommand(DRIVE_SUBSYSTEM));
   }
 
   /**
@@ -90,9 +92,7 @@ public class RobotContainer {
    * Initialize robot state
    */
   public void robotInit() {
-    // Initialize subsystems and start logging
-    // DataLogger.getInstance().startLogging();
-    // CommandScheduler.getInstance().schedule(DataLogger.LOGGING_COMMAND);
+    // Initialize subsystems
     BlinkinLEDController.getInstance().setTeamColor();
   }
 
@@ -107,6 +107,7 @@ public class RobotContainer {
    * Initialize robot for teleop
    */
   public void teleopInit() {
+    DRIVE_SUBSYSTEM.teleopInit();
     BlinkinLEDController.getInstance().setAllianceColorSolid();
   }
 
