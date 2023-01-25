@@ -132,10 +132,8 @@ public final class Constants {
   }
 
   public static class ArmHardware {
-    public static final int ARM_PIVOT_MASTER_ID = 6;
-    public static final int ARM_PIVOT_SLAVE_ID = 7;
-    public static final int ARM_TELESCOPE_MASTER_ID = 8;
-    public static final int ARM_TELESCOPE_SLAVE_ID = 9;
+    public static final int ARM_PIVOT_SHOULDER_ID = 6;
+    public static final int ARM_PIVOT_ELBOW_ID = 7;
   }
 
   public static class IntakeHardware {
