@@ -48,7 +48,7 @@ public class AutoTrajectory {
    * @param maxVelocity Maximum velocity of robot during path (m/s)
    * @param maxAcceleration Maximum acceleration of robot during path (m/s^2)
    */
-  public AutoTrajectory(DriveSubsystem driveSubsystem, String pathName, double maxVelocity, double maxAcceleration) {
+  public AutoTrajectory(DriveSubsystem driveSubsystem, String pathName) {
     this.m_driveSubsystem = driveSubsystem;
 
     m_pathplannerTrajectory = PathPlanner.loadPath(pathName, PathPlanner.getConstraintsFromPath(pathName));
