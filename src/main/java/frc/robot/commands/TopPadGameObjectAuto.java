@@ -5,17 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.utils.AutoTrajectory;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TopPadGameObjectAuto extends SequentialCommandGroup {
 
-  AutoTrajectory topPadGameObject1 = new AutoTrajectory("top_pad_game_object_1");
-  AutoTrajectory topPadGameObject2 = new AutoTrajectory("top_pad_game_object_2");
 
   /** Creates a new TopPadGameObjectAuto. */
-  public TopPadGameObjectAuto() {
+  public TopPadGameObjectAuto(DriveSubsystem driveSubsystem) {
+    AutoTrajectory topPadGameObject1 = new AutoTrajectory(driveSubsystem, "top_pad_game_object_1");
+    AutoTrajectory topPadGameObject2 = new AutoTrajectory(driveSubsystem, "top_pad_game_object_2");
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
