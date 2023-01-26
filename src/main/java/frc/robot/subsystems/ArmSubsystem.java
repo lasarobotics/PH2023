@@ -78,6 +78,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       // Initialize PID
       m_shoulderConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder());
       m_elbowConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder());
+
+      // Set conversion factor
+      double conversionFactor = 360;
+      m_shoulderMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_elbowMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
     }
   }
 
@@ -110,7 +115,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-   * 
+   * Calculate feed forward for arm
+   * @param armAngles Angle of upper arm and forearm
+   * @return Tuple of shoulder feed forward, elbow feed forward
    */
   private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
     return new Pair<Double,Double>(
