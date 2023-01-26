@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAnalogSensor.Mode;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -71,7 +70,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
-      // initialize PID
+      // Initialize PID
       m_shoulderConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder());
       m_elbowConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAnalog(Mode.kAbsolute));
     }
@@ -79,8 +78,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware armHardware = new Hardware(isHardwareReal,
-                                        new SparkMax(Constants.ArmHardware.ARM_PIVOT_SHOULDER_ID, MotorType.kBrushless),
-                                        new SparkMax(Constants.ArmHardware.ARM_PIVOT_ELBOW_ID, MotorType.kBrushless));
+                                        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MOTOR_ID, MotorType.kBrushless),
+                                        new SparkMax(Constants.ArmHardware.ARM_ELBOW_MOTOR_ID, MotorType.kBrushless));
     return armHardware;
   }
 
