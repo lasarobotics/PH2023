@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAnalogSensor.Mode;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -43,10 +44,15 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     }
   }
 
-  private SparkMax m_shoulderMotor, m_elbowMotor;
+  private SparkMax m_shoulderMotor;
+  private SparkMax m_elbowMotor;
 
   private SparkPIDConfig m_shoulderConfig;
   private SparkPIDConfig m_elbowConfig;
+
+  // TODO Change these to the actual arm lengths
+  private final double UPPERARM_LENGTH = 0.9144;
+  private final double FOREARM_LENGTH = 0.4445;
 
   private ArmState m_currentState;
 
@@ -83,6 +89,27 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     return armHardware;
   }
 
+  /**
+   * Calculate arm joint angles given end effector coordinate
+   * @param x horizontal coordinate of end effector relative to shoulder joint
+   * @param y vertical coordinate of end effector relative to shoulder joint
+   * @return Tuple of shoulder angle, elbow angle in degrees
+   */
+  private Pair<Double, Double> armIK(ArmState armState) {
+    double shoulderAngle = 0.0;
+    double elbowAngle = 0.0;
+
+    elbowAngle = Math.acos(
+      (Math.pow(armState.x, 2) + Math.pow(armState.y, 2) - Math.pow(UPPERARM_LENGTH, 2) - Math.pow(FOREARM_LENGTH, 2))
+      / 
+      (2 * UPPERARM_LENGTH * FOREARM_LENGTH)
+    );
+
+    shoulderAngle = Math.atan(armState.y / armState.x) - Math.atan((FOREARM_LENGTH * elbowAngle) / (UPPERARM_LENGTH + FOREARM_LENGTH * elbowAngle));
+
+    return new Pair<Double, Double>(Math.toDegrees(shoulderAngle), Math.toDegrees(elbowAngle));
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -90,15 +117,18 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Set desired arm state
-   * @param armState Arm state, which includes pivot and telescope position
+   * @param armState Arm state, which includes shoulder and elbow position
    */
   public void setArmState(ArmState armState) {
     // Update current state
     m_currentState = armState;
 
-    // Set telescope and pivot positions
-    m_shoulderMotor.set(0.0, ControlType.kSmartMotion);
-    m_elbowMotor.set(0.0, ControlType.kSmartMotion);
+    // Calculate arm angles
+    Pair<Double, Double> armAngles = armIK(armState);
+
+    // Set shoulder and elbow positions
+    m_shoulderMotor.set(armAngles.getFirst(), ControlType.kSmartMotion);
+    m_elbowMotor.set(armAngles.getSecond(), ControlType.kSmartMotion);
   }
 
   /**
