@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAnalogSensor.Mode;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -77,7 +77,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     if (armHardware.isHardwareReal) {
       // Initialize PID
       m_shoulderConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder());
-      m_elbowConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAnalog(Mode.kAbsolute));
+      m_elbowConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder());
     }
   }
 
@@ -109,6 +109,16 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     return new Pair<Double, Double>(Math.toDegrees(shoulderAngle), Math.toDegrees(elbowAngle));
   }
 
+  /**
+   * 
+   */
+  private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
+    return new Pair<Double,Double>(
+      UPPERARM_LENGTH * Math.cos(armAngles.getFirst()), 
+      FOREARM_LENGTH * Math.cos(armAngles.getSecond())
+    );
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -125,9 +135,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Calculate arm angles
     Pair<Double, Double> armAngles = armIK(armState);
 
+    // Calculate feed forward
+    Pair<Double, Double> feedForwards = calculateFF(armAngles);
+
     // Set shoulder and elbow positions
-    m_shoulderMotor.set(armAngles.getFirst(), ControlType.kSmartMotion);
-    m_elbowMotor.set(armAngles.getSecond(), ControlType.kSmartMotion);
+    m_shoulderMotor.set(armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage);
+    m_elbowMotor.set(armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage);
   }
 
   /**
