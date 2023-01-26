@@ -57,67 +57,65 @@ public final class Constants {
   }
 
   public static class Arm {
-    // Arm Pivot PID config
-    private static final double PIVOT_kP = 1.0;
-    private static final double PIVOT_kD = 0.0;
-    private static final double PIVOT_kI = 0.0;
-    private static final double PIVOT_kF = 0.0;
-    private static final double PIVOT_TOLERANCE = 10;
-    private static final double PIVOT_LOWER_LIMIT = 0;
-    private static final double PIVOT_UPPER_LIMIT = 3100;
-    private static final double PIVOT_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double PIVOT_ACCELERATION = Global.NEO_MAX_RPM;
-    private static final boolean PIVOT_SOFT_LIMITS = true;
-    private static final boolean PIVOT_SENSOR_PHASE = false;
-    private static final boolean PIVOT_INVERT_MOTOR = false;
-    private static final AccelStrategy PIVOT_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
-  
+    // Arm shoulder PID settings
+    private static final double SHOULDER_kP = 0.0;
+    private static final double SHOULDER_kD = 0.0;
+    private static final double SHOULDER_kI = 0.0;
+    private static final double SHOULDER_kF = 0.0;
+    private static final double SHOULDER_TOLERANCE = 2;
+    private static final double SHOULDER_LOWER_LIMIT = 0;
+    private static final double SHOULDER_UPPER_LIMIT = 175;
+    private static final double SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean SHOULDER_SOFT_LIMITS = true;
+    private static final boolean SHOULDER_SENSOR_PHASE = false;
+    private static final boolean SHOULDER_INVERT_MOTOR = false;
+    private static final AccelStrategy SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
     
-    // Arm Pivot PID config
-    public static final SparkPIDConfig PIVOT_CONFIG = new SparkPIDConfig(PIVOT_SENSOR_PHASE, 
-                                                                         PIVOT_INVERT_MOTOR, 
-                                                                         PIVOT_kP,
-                                                                         PIVOT_kI,
-                                                                         PIVOT_kD,
-                                                                         PIVOT_kF,
-                                                                         PIVOT_TOLERANCE,
-                                                                         PIVOT_LOWER_LIMIT,
-                                                                         PIVOT_UPPER_LIMIT,
-                                                                         PIVOT_SOFT_LIMITS,
-                                                                         PIVOT_VELOCITY,
-                                                                         PIVOT_ACCELERATION,
-                                                                         PIVOT_ACCEL_STRATEGY);
+    // Arm shoulder PID config
+    public static final SparkPIDConfig SHOULDER_CONFIG = new SparkPIDConfig(SHOULDER_SENSOR_PHASE, 
+                                                                            SHOULDER_INVERT_MOTOR, 
+                                                                            SHOULDER_kP,
+                                                                            SHOULDER_kI,
+                                                                            SHOULDER_kD,
+                                                                            SHOULDER_kF,
+                                                                            SHOULDER_TOLERANCE,
+                                                                            SHOULDER_LOWER_LIMIT,
+                                                                            SHOULDER_UPPER_LIMIT,
+                                                                            SHOULDER_SOFT_LIMITS,
+                                                                            SHOULDER_VELOCITY,
+                                                                            SHOULDER_ACCELERATION,
+                                                                            SHOULDER_ACCEL_STRATEGY);
 
-    // Arm Telescope PID config
-    private static final double TELESCOPE_kP = 1.0;
-    private static final double TELESCOPE_kI = 0.0;
-    private static final double TELESCOPE_kD = 0.0;
-    private static final double TELESCOPE_kF = 0.0;
-    private static final double TELESCOPE_TOLERANCE = 10;
-    private static final double TELESCOPE_LOWER_LIMIT = 0;
-    private static final double TELESCOPE_UPPER_LIMIT = 3100;
-    private static final double TELESCOPE_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double TELESCOPE_ACCELERATION = Global.NEO_MAX_RPM;
-    private static final boolean TELESCOPE_SOFT_LIMITS = true;
-    private static final boolean TELESCOPE_SENSOR_PHASE = false;
-    private static final boolean TELESCOPE_INVERT_MOTOR = false;
-    private static final AccelStrategy TELESCOPE_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
-  
+    // Arm elbow PID settings
+    private static final double ELBOW_kP = 1.0;
+    private static final double ELBOW_kI = 0.0;
+    private static final double ELBOW_kD = 0.0;
+    private static final double ELBOW_kF = 0.0;
+    private static final double ELBOW_TOLERANCE = 10;
+    private static final double ELBOW_LOWER_LIMIT = 0;
+    private static final double ELBOW_UPPER_LIMIT = 3100;
+    private static final double ELBOW_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean ELBOW_SOFT_LIMITS = true;
+    private static final boolean ELBOW_SENSOR_PHASE = false;
+    private static final boolean ELBOW_INVERT_MOTOR = false;
+    private static final AccelStrategy ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
     
-    // Arm Telescope PID config
-    public static final SparkPIDConfig TELESCOPE_CONFIG = new SparkPIDConfig(TELESCOPE_SENSOR_PHASE, 
-                                                                             TELESCOPE_INVERT_MOTOR, 
-                                                                             TELESCOPE_kP,
-                                                                             TELESCOPE_kI,
-                                                                             TELESCOPE_kD,
-                                                                             TELESCOPE_kF,
-                                                                             TELESCOPE_TOLERANCE,
-                                                                             TELESCOPE_LOWER_LIMIT,
-                                                                             TELESCOPE_UPPER_LIMIT,
-                                                                             TELESCOPE_SOFT_LIMITS,
-                                                                             TELESCOPE_VELOCITY,
-                                                                             TELESCOPE_ACCELERATION,
-                                                                             TELESCOPE_ACCEL_STRATEGY);
+    // Arm elbow PID config
+    public static final SparkPIDConfig ELBOW_CONFIG = new SparkPIDConfig(ELBOW_SENSOR_PHASE, 
+                                                                         ELBOW_INVERT_MOTOR, 
+                                                                         ELBOW_kP,
+                                                                         ELBOW_kI,
+                                                                         ELBOW_kD,
+                                                                         ELBOW_kF,
+                                                                         ELBOW_TOLERANCE,
+                                                                         ELBOW_LOWER_LIMIT,
+                                                                         ELBOW_UPPER_LIMIT,
+                                                                         ELBOW_SOFT_LIMITS,
+                                                                         ELBOW_VELOCITY,
+                                                                         ELBOW_ACCELERATION,
+                                                                         ELBOW_ACCEL_STRATEGY);
   }
 
   public static class Intake {
@@ -132,8 +130,8 @@ public final class Constants {
   }
 
   public static class ArmHardware {
-    public static final int ARM_PIVOT_SHOULDER_ID = 6;
-    public static final int ARM_PIVOT_ELBOW_ID = 7;
+    public static final int ARM_SHOULDER_MOTOR_ID = 6;
+    public static final int ARM_ELBOW_MOTOR_ID = 7;
   }
 
   public static class IntakeHardware {
