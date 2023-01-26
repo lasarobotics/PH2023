@@ -50,7 +50,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkPIDConfig m_shoulderConfig;
   private SparkPIDConfig m_elbowConfig;
 
-  // TODO Change these to the actual arm lengths
   private final double UPPERARM_LENGTH = 0.9144;
   private final double FOREARM_LENGTH = 0.4445;
 
