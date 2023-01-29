@@ -30,11 +30,16 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     }
   }
 
+  /**
+   * Arm States
+   * +X is below shoulder joint
+   * +Y is in front of robot
+   */
   public enum ArmState {
-    Stowed(0.0, 0.0),
-    Ground(0.0, 0.0),
-    Middle(0.0, 0.0),
-    High(0.0, 0.0);
+    Stowed(+0.498, +0.178),
+    Ground(+0.914, +0.922),
+    Middle(+0.026, +1.322),
+    High(-0.249, +1.331);
 
     public final double x;
     public final double y;
@@ -52,6 +57,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final double UPPERARM_LENGTH = 0.9144;
   private final double FOREARM_LENGTH = 0.4445;
+
+  private final double SHOULDER_FF = 0.0;
+  private final double ELBOW_FF = 0.0;
 
   private ArmState m_currentState;
 
@@ -109,20 +117,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       (2 * UPPERARM_LENGTH * FOREARM_LENGTH)
     );
 
-    shoulderAngle = Math.atan(armState.y / armState.x) - Math.atan((FOREARM_LENGTH * elbowAngle) / (UPPERARM_LENGTH + FOREARM_LENGTH * elbowAngle));
+    shoulderAngle = Math.atan(armState.y / armState.x) - Math.atan((FOREARM_LENGTH * Math.sin(elbowAngle)) / (UPPERARM_LENGTH + FOREARM_LENGTH * Math.cos(elbowAngle)));
+    if (armState.x < 0) shoulderAngle += Math.PI;
 
     return new Pair<Double, Double>(Math.toDegrees(shoulderAngle), Math.toDegrees(elbowAngle));
   }
 
   /**
    * Calculate feed forward for arm
-   * @param armAngles Angle of upper arm and forearm
+   * @param armAngles Angle of shoulder and elbow
    * @return Tuple of shoulder feed forward, elbow feed forward
    */
   private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
     return new Pair<Double,Double>(
-      UPPERARM_LENGTH * Math.cos(armAngles.getFirst()), 
-      FOREARM_LENGTH * Math.cos(armAngles.getSecond())
+      SHOULDER_FF * Math.cos(armAngles.getFirst()), 
+      ELBOW_FF * Math.cos(armAngles.getSecond())
     );
   }
 
