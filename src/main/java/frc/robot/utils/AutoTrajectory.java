@@ -144,7 +144,9 @@ public class AutoTrajectory {
    * @return Ramsete command that will stop when complete
    */
   public Command getCommandAndStop() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem).andThen(() -> m_driveSubsystem.stop(), m_driveSubsystem);
+    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
+               .andThen(m_ramseteCommand)
+               .andThen(() -> m_driveSubsystem.stop(), m_driveSubsystem);
   }
   
   /**
@@ -152,6 +154,7 @@ public class AutoTrajectory {
    * @return Ramsete command that does NOT stop when complete
    */
   public Command getCommand() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem);
+    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
+               .andThen(m_ramseteCommand);
   }
 }
