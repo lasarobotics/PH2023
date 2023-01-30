@@ -130,8 +130,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
     return new Pair<Double,Double>(
-      SHOULDER_FF * Math.cos(Math.toRadians(armAngles.getFirst())), 
-      ELBOW_FF * Math.cos(Math.toRadians(armAngles.getSecond()))
+      SHOULDER_FF * Math.cos(Math.toRadians(90 - armAngles.getFirst())), 
+      ELBOW_FF * Math.cos(Math.toRadians(90 - armAngles.getSecond()))
     );
   }
 

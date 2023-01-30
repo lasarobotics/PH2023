@@ -65,6 +65,6 @@ public class ArmSubsystemTest {
     verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(1.364, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                     AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(158.058, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
   }
 }
