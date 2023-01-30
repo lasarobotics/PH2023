@@ -125,13 +125,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Calculate feed forward for arm
-   * @param armAngles Angle of shoulder and elbow
+   * @param armAngles Angle of shoulder and elbow in degrees
    * @return Tuple of shoulder feed forward, elbow feed forward
    */
   private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
     return new Pair<Double,Double>(
-      SHOULDER_FF * Math.cos(armAngles.getFirst()), 
-      ELBOW_FF * Math.cos(armAngles.getSecond())
+      SHOULDER_FF * Math.cos(Math.toRadians(armAngles.getFirst())), 
+      ELBOW_FF * Math.cos(Math.toRadians(armAngles.getSecond()))
     );
   }
 
