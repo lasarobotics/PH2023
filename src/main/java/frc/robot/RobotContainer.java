@@ -14,8 +14,19 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.commands.TurnCommand;
+import frc.robot.commands.autonomous.BottomObject;
+import frc.robot.commands.autonomous.BottomObjectScore;
+import frc.robot.commands.autonomous.BottomPadObject;
+import frc.robot.commands.autonomous.MidObjectA;
+import frc.robot.commands.autonomous.MidObjectAScore;
+import frc.robot.commands.autonomous.MidObjectBScore;
+import frc.robot.commands.autonomous.MidPad;
+import frc.robot.commands.autonomous.MidPadObject;
+import frc.robot.commands.autonomous.TopObject;
+import frc.robot.commands.autonomous.TopObjectScore;
+import frc.robot.commands.autonomous.TopPadObjectAuto;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 
 /**
@@ -83,7 +94,18 @@ public class RobotContainer {
    * Add auto modes to chooser
    */
   private void autoModeChooser() {
-    m_automodeChooser.addOption("Do nothing", new SequentialCommandGroup());
+    m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
+    m_automodeChooser.addOption("Bottom object", new BottomObject(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Bottom object and score", new BottomObjectScore(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Bottom, pad, and object", new BottomPadObject(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Middle ObjectA", new MidObjectA(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Middle ObjectA & Score", new MidObjectAScore(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Middle ObjectB & Score", new MidObjectBScore(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Middle and Charging Station", new MidPad(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Mid, Pad, & Object", new MidPadObject(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Top Object", new TopObject(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Top Object & Score", new TopObjectScore(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Top, Pad, Object", new TopPadObjectAuto(DRIVE_SUBSYSTEM));
   }
 
   /**
