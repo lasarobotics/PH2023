@@ -11,16 +11,16 @@ import frc.robot.utils.AutoTrajectory;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TopObjectScore extends SequentialCommandGroup {
-  /** Creates a new TopObjectScore. */
-  public TopObjectScore(DriveSubsystem driveSubsystem) {
+public class MidObjectA extends SequentialCommandGroup {
+  /** Creates a new TopObject. */
+  public MidObjectA(DriveSubsystem driveSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    AutoTrajectory topObjectScore2a = new AutoTrajectory(driveSubsystem, "top_object_score_2a");
-    AutoTrajectory topObjectScore2b = new AutoTrajectory(driveSubsystem, "top_object_score_2b");
-    AutoTrajectory topObjectScore2c = new AutoTrajectory(driveSubsystem, "top_object_score_2c");
+    AutoTrajectory midObjectA1 = new AutoTrajectory(driveSubsystem, "mid_objecta_1");
+    AutoTrajectory midObjectA2 = new AutoTrajectory(driveSubsystem, "mid_objecta_1b");
     addCommands(
-      topObjectScore2a.getCommandAndStop(),topObjectScore2b.getCommandAndStop(), topObjectScore2c.getCommandAndStop()
+      midObjectA1.getCommandAndStop(),
+      midObjectA2.getCommandAndStop()
     );
   }
 }
