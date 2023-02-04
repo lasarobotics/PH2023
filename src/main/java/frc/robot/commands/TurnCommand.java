@@ -13,8 +13,9 @@ public class TurnCommand extends CommandBase {
   /** Creates a new TurnCommand. */
   public TurnCommand(DriveSubsystem driveSubsystem) {
     this.m_driveSubsystem = driveSubsystem;
+    
     // Use addRequirements() here to declare subsystem dependencies.
-
+    addRequirements(m_driveSubsystem);
   }
 
   // Called when the command is initially scheduled.

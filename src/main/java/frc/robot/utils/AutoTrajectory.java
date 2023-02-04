@@ -48,10 +48,10 @@ public class AutoTrajectory {
    * @param maxVelocity Maximum velocity of robot during path (m/s)
    * @param maxAcceleration Maximum acceleration of robot during path (m/s^2)
    */
-  public AutoTrajectory(DriveSubsystem driveSubsystem, String pathName, double maxVelocity, double maxAcceleration) {
+  public AutoTrajectory(DriveSubsystem driveSubsystem, String pathName) {
     this.m_driveSubsystem = driveSubsystem;
 
-    m_pathplannerTrajectory = PathPlanner.loadPath(pathName, maxVelocity, maxAcceleration);
+    m_pathplannerTrajectory = PathPlanner.loadPath(pathName, PathPlanner.getConstraintsFromPath(pathName));
 
     RamseteController ramseteController = new RamseteController(kRamseteB, kRamseteZeta);
 
@@ -144,7 +144,9 @@ public class AutoTrajectory {
    * @return Ramsete command that will stop when complete
    */
   public Command getCommandAndStop() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem).andThen(() -> m_driveSubsystem.stop(), m_driveSubsystem);
+    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
+               .andThen(m_ramseteCommand)
+               .andThen(() -> m_driveSubsystem.stop(), m_driveSubsystem);
   }
   
   /**
@@ -152,6 +154,7 @@ public class AutoTrajectory {
    * @return Ramsete command that does NOT stop when complete
    */
   public Command getCommand() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem);
+    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
+               .andThen(m_ramseteCommand);
   }
 }
