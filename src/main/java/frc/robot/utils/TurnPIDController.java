@@ -11,7 +11,7 @@ import frc.robot.Constants;
 public class TurnPIDController extends PIDController {
   private final double MIN_DEADBAND = 0.001;
   private final double MAX_DEADBAND = 0.2;
-  private final double FILTER_FACTOR = 1.0 / 2.0;
+  private final double FILTER_FACTOR = 1.0 / 3.0;
 
   private HashMap<Double, Double> m_turnInputMap = new HashMap<Double, Double>();
   private double m_turnScalar = 0.0;
