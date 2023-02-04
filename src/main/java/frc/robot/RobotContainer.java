@@ -120,6 +120,7 @@ public class RobotContainer {
    * Intialize robot for autonomous
    */
   public void autonomousInit() {
+    DRIVE_SUBSYSTEM.autonomousInit();
     BlinkinLEDController.getInstance().setAllianceColorSolid();
   }
 

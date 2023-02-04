@@ -70,14 +70,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private AHRS m_navx;
 
   private final int CURRENT_LIMIT = 55;
-  private final double TOLERANCE = 5.0;
+  private final double TOLERANCE = 0.125;
   private final double MAX_VOLTAGE = 12.0;
   private final double VISION_AIM_DAMPENER = 0.9;
  
   private double m_deadband = 0.0;
 
   // Drive specs, these numbers use the motor shaft encoder
-  private static final double DRIVE_TRACK_WIDTH = 0.6;
+  private static final double DRIVE_TRACK_WIDTH = 0.57221;
   private static final double DRIVE_WHEEL_DIAMETER_METERS = 0.1524; // 6" wheels
   private static final double DRIVE_GEAR_RATIO = 10.71;
   private static final double DRIVE_TICKS_PER_METER = (Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION * DRIVE_GEAR_RATIO) * (1 / (DRIVE_WHEEL_DIAMETER_METERS * Math.PI));
@@ -235,12 +235,25 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   /**
    * Initialize drive subsystem for autonomous
    */
-  public void autonomousInit() {}
+  public void autonomousInit() {
+     // Set all drive motors to coast
+     m_lMasterMotor.setIdleMode(IdleMode.kBrake);
+     m_lSlaveMotor.setIdleMode(IdleMode.kBrake);
+     m_rMasterMotor.setIdleMode(IdleMode.kBrake);
+     m_rSlaveMotor.setIdleMode(IdleMode.kBrake);
+  }
 
   /**
    * Initialize drive subsystem for teleop
    */
   public void teleopInit() {
+    // Set all drive motors to coast
+    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
+
+    // Reset drive PID
     resetDrivePID();
   }
 
