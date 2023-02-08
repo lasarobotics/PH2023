@@ -211,6 +211,32 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_navx.reset();
   }
 
+  public enum blueCubeShelf{
+    Top(1.9, 4.53),
+    Middle(1.9, 2.72),
+    Bottom(1.9, 0.92);
+
+    public final double x;
+    public final double y;
+    private blueCubeShelf(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+
+  public enum redCubeShelf{
+    Top(14.6, 4.53),
+    Middle(14.6, 2.72),
+    Bottom(14.6, 0.92);
+
+    public final double x;
+    public final double y;
+    private redCubeShelf(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+
   /**
    * Reset left and right drive encoders
    */
