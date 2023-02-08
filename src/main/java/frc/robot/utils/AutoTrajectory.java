@@ -28,10 +28,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class AutoTrajectory {
   // Ramsete Command values
-  private final double VOLTS_kS = 0.37608; 
-  private final double VOLT_SECONDS_PER_METER_kV = 2.8367;
-  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.23014;
-  private final double kP = 0.24178;
+  private final double VOLTS_kS = 0.74; 
+  private final double VOLT_SECONDS_PER_METER_kV = 2.4385;
+  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.29283;
+  private final double kP = 1;
   private final double kD = 0; 
   private final double kRamseteB = 2.0;
   private final double kRamseteZeta = 0.7;
@@ -54,6 +54,7 @@ public class AutoTrajectory {
     m_pathplannerTrajectory = PathPlanner.loadPath(pathName, PathPlanner.getConstraintsFromPath(pathName));
 
     RamseteController ramseteController = new RamseteController(kRamseteB, kRamseteZeta);
+    ramseteController.setEnabled(false);
 
     m_ramseteCommand = new RamseteCommand(
       m_pathplannerTrajectory, 
@@ -144,9 +145,12 @@ public class AutoTrajectory {
    * @return Ramsete command that will stop when complete
    */
   public Command getCommandAndStop() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
+    return new InstantCommand(() -> resetOdometry())
                .andThen(m_ramseteCommand)
-               .andThen(() -> m_driveSubsystem.stop(), m_driveSubsystem);
+               .andThen(() -> {
+                m_driveSubsystem.resetDrivePID();
+                m_driveSubsystem.stop();
+               });
   }
   
   /**
@@ -154,7 +158,10 @@ public class AutoTrajectory {
    * @return Ramsete command that does NOT stop when complete
    */
   public Command getCommand() {
-    return new InstantCommand(() -> resetOdometry(), m_driveSubsystem)
-               .andThen(m_ramseteCommand);
+    return new InstantCommand(() -> resetOdometry())
+               .andThen(m_ramseteCommand)
+               .andThen(() -> {
+                m_driveSubsystem.resetDrivePID();
+               });
   }
 }
