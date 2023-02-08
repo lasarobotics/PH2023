@@ -55,6 +55,32 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     }
   }
 
+  public enum BlueGrid {
+    One(1.9, 4.53),
+    Two(1.9, 2.72),
+    Three(1.9, 0.92);
+
+    public final double x;
+    public final double y;
+    private BlueGrid(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+
+  public enum RedGrid {
+    One(14.6, 4.53),
+    Two(14.6, 2.72),
+    Three(14.6, 0.92);
+
+    public final double x;
+    public final double y;
+    private RedGrid(double x, double y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+
   private TurnPIDController m_turnPIDController;
   private PIDController m_pitchPIDController;
   private TractionControlController m_tractionControlController;
@@ -72,6 +98,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final int CURRENT_LIMIT = 55;
   private final double TOLERANCE = 0.125;
   private final double MAX_VOLTAGE = 12.0;
+  private final double GRID_OFFSET = 0.0;
   private final double VISION_AIM_DAMPENER = 0.9;
  
   private double m_deadband = 0.0;
@@ -209,32 +236,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private void resetAngle() {
     m_navx.reset();
-  }
-
-  public enum blueCubeShelf{
-    Top(1.9, 4.53),
-    Middle(1.9, 2.72),
-    Bottom(1.9, 0.92);
-
-    public final double x;
-    public final double y;
-    private blueCubeShelf(double x, double y) {
-      this.x = x;
-      this.y = y;
-    }
-  }
-
-  public enum redCubeShelf{
-    Top(14.6, 4.53),
-    Middle(14.6, 2.72),
-    Bottom(14.6, 0.92);
-
-    public final double x;
-    public final double y;
-    private redCubeShelf(double x, double y) {
-      this.x = x;
-      this.y = y;
-    }
   }
 
   /**
