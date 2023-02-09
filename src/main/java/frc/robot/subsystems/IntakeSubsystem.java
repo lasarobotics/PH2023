@@ -16,119 +16,74 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
+import frc.robot.utils.SparkPIDConfig;
 
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public static class Hardware {
     private boolean isHardwareReal;
-    private SparkMax wristMotor;
-    private SparkMax rollerMotor;
-    private ColorSensorV3 colorSensor;
+    private SparkMax clawMotor;
 
     public Hardware(boolean isHardwareReal,
-                    SparkMax wristMotor, 
-                    SparkMax rollerMotor,
-                    ColorSensorV3 m_colorSensor) {
+                    SparkMax clawMotor) {
       this.isHardwareReal = isHardwareReal;
-      this.wristMotor = wristMotor;
-      this.rollerMotor = rollerMotor;
-      this.colorSensor = m_colorSensor;
+      this.clawMotor = clawMotor;
     }
   }
+  private SparkMax m_clawMotor;
 
-  // TODO: Change color targets to be accurate
-  public enum GameObject {
-    Cone(Color.kYellow),
-    Cube(Color.kBlueViolet);
-    
-    public final Color color;
-    private GameObject(Color color) {
-      this.color = color;
-    }
-  }
-
-  private SparkMax m_wristMotor;
-  private SparkMax m_rollerMotor;
-  private ColorSensorV3 m_colorSensor;
-
-  private ColorMatch m_colorMatcher;
+  private final int OPEN_POSITION = 0;
+  private final int CLOSE_POSITION = 1;
 
   /**
    * Create a new intake subsystem
    * @param intakeHardware Intake hardware
    */
-  public IntakeSubsystem(Hardware intakeHardware) {
-    this.m_wristMotor = intakeHardware.wristMotor;
-    this.m_rollerMotor = intakeHardware.rollerMotor;
-    this.m_colorSensor = intakeHardware.colorSensor;
-    this.m_colorMatcher = new ColorMatch();
+  public IntakeSubsystem(Hardware intakeHardware, SparkPIDConfig clawConfig) {
+    this.m_clawMotor = intakeHardware.clawMotor;
 
     // Reset motors to default
-    m_wristMotor.restoreFactoryDefaults();
-    m_rollerMotor.restoreFactoryDefaults();
+    m_clawMotor.restoreFactoryDefaults();
 
     // Set motors to break
-    m_wristMotor.setIdleMode(IdleMode.kBrake);
-    m_rollerMotor.setIdleMode(IdleMode.kBrake);
+    m_clawMotor.setIdleMode(IdleMode.kBrake);
 
-    m_colorMatcher.addColorMatch(GameObject.Cone.color);
-    m_colorMatcher.addColorMatch(GameObject.Cube.color);
+    if(intakeHardware.isHardwareReal) {
+      clawConfig.initializeSparkPID(m_clawMotor, m_clawMotor.getEncoder());
+
+      // Set conversion factor
+      double conversionFactor = 360;
+      m_clawMotor.getEncoder().setPositionConversionFactor(conversionFactor);
+    }
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
-    Hardware intakeHardware = new Hardware(isHardwareReal,
-                                           new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
-                                           new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless),
-                                           new ColorSensorV3(I2C.Port.kOnboard));
+    Hardware intakeHardware = new Hardware(isHardwareReal, new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless));
     return intakeHardware;
   }
 
   /**
    * Intake game object
    */
-  public void intake() {
-    m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+  public void openClaw() {
+    m_clawMotor.set(OPEN_POSITION, ControlType.kSmartMotion);
   }
 
   /**
    * Outtake game object
    */
-  public void outake() {
-    m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
-  }
-
-  /**
-   * Identify game object
-   * @return Game object, null if unidentified
-   */
-  public GameObject identifyObject() {
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
-
-    if (match.color == GameObject.Cone.color) return GameObject.Cone;
-    if (match.color == GameObject.Cube.color) return GameObject.Cube;
-    return null;
-  }
-
-  /**
-   * Read and return current color
-   * @return Color, currently detected color by sensor
-   */
-  public Color readColor() {
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
-
-    return match.color;
+  public void closeClaw() {
+    m_clawMotor.set(CLOSE_POSITION, ControlType.kSmartMotion);
   }
 
   /**
    * Stops motor
    */
   public void stop() {
-    m_rollerMotor.stopMotor();
+    m_clawMotor.stopMotor();
   }
 
   @Override
   public void close() {
-    m_wristMotor.close();
-    m_rollerMotor.close();
-    m_colorSensor = null;
+    m_clawMotor.close();
   }
 }

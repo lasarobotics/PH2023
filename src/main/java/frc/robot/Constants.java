@@ -120,6 +120,37 @@ public final class Constants {
 
   public static class Intake {
     public static final double SPIN_MOTOR_SPEED = 0.5;
+    // Intake PID settings
+    private static final double INTAKE_kP = 0.0;
+    private static final double INTAKE_kD = 0.0;
+    private static final double INTAKE_kI = 0.0;
+    private static final double INTAKE_kF = 0.0;
+    private static final double INTAKE_TOLERANCE = 2;
+    private static final double INTAKE_LOWER_LIMIT = 0;
+    private static final double INTAKE_UPPER_LIMIT = 175;
+    private static final double INTAKE_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double INTAKE_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean INTAKE_SOFT_LIMITS = true;
+    private static final boolean INTAKE_SENSOR_PHASE = false;
+    private static final boolean INTAKE_INVERT_MOTOR = false;
+    private static final AccelStrategy INTAKE_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    
+    // Arm shoulder PID config
+    public static final SparkPIDConfig INTAKE_CONFIG = new SparkPIDConfig(
+                                                                          INTAKE_SENSOR_PHASE,
+                                                                          INTAKE_INVERT_MOTOR,
+                                                                          INTAKE_kP,
+                                                                          INTAKE_kI,
+                                                                          INTAKE_kD,
+                                                                          INTAKE_kF,
+                                                                          INTAKE_TOLERANCE,
+                                                                          INTAKE_LOWER_LIMIT,
+                                                                          INTAKE_UPPER_LIMIT,
+                                                                          INTAKE_SOFT_LIMITS,
+                                                                          INTAKE_VELOCITY,
+                                                                          INTAKE_ACCELERATION,
+                                                                          INTAKE_ACCEL_STRATEGY);
+
   }
 
   public static class DriveHardware {

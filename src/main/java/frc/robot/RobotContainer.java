@@ -27,6 +27,7 @@ import frc.robot.commands.autonomous.TopObject;
 import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 
 /**
@@ -50,6 +51,8 @@ public class RobotContainer {
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
                                                                            Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
                                                                            Constants.Drive.DRIVE_TURN_INPUT_CURVE);
+
+  private static final IntakeSubsystem INTAKE_SUBSYTEM = new IntakeSubsystem(IntakeSubsystem.initializeHardware(REAL_HARDWARE), Constants.Intake.INTAKE_CONFIG);
 
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
@@ -88,6 +91,8 @@ public class RobotContainer {
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
     PRIMARY_CONTROLLER.a().onTrue(new TurnCommand(DRIVE_SUBSYSTEM));
+    PRIMARY_CONTROLLER.x().onTrue(new InstantCommand(() -> INTAKE_SUBSYTEM.openClaw(), INTAKE_SUBSYTEM));
+    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> INTAKE_SUBSYTEM.closeClaw(), INTAKE_SUBSYTEM));
   }
 
   /**
