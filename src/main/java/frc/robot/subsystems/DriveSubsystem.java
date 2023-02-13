@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -391,15 +392,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-   * Controls the left and right sides of the drive directly with voltages.
+   * Controls the left and right sides of the drive directly with velocities.
    * <p>
    * Only use this method to drive during autonomous!
-   * @param leftVolts Left voltage [-12, +12]
-   * @param rightVolts Right voltage [-12, +12]
+   * @param leftVelocity Left velocity in m/s
+   * @param rightVelocity Right velocity in m/s
    */
-  public void autoTankDriveVolts(double leftVolts, double rightVolts) {
-    m_lMasterMotor.setVoltage(leftVolts);
-    m_rMasterMotor.setVoltage(rightVolts);
+  public void autoTankDrive(double leftVelocity, double rightVelocity) {
+    m_lMasterMotor.set(m_tractionControlController.lookupVelocity(leftVelocity), ControlType.kDutyCycle);
+    m_rMasterMotor.set(m_tractionControlController.lookupVelocity(rightVelocity), ControlType.kDutyCycle);
   }
   
   /**

@@ -23,6 +23,7 @@ import frc.robot.commands.autonomous.MidObjectAScore;
 import frc.robot.commands.autonomous.MidObjectBScore;
 import frc.robot.commands.autonomous.MidPad;
 import frc.robot.commands.autonomous.MidPadObject;
+import frc.robot.commands.autonomous.TestAuto;
 import frc.robot.commands.autonomous.TopObject;
 import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
@@ -106,6 +107,7 @@ public class RobotContainer {
     m_automodeChooser.addOption("Top Object", new TopObject(DRIVE_SUBSYSTEM));
     m_automodeChooser.addOption("Top Object & Score", new TopObjectScore(DRIVE_SUBSYSTEM));
     m_automodeChooser.addOption("Top, Pad, Object", new TopPadObjectAuto(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Test", new TestAuto(DRIVE_SUBSYSTEM));
   }
 
   /**
