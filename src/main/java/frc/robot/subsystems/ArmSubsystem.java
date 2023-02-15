@@ -12,6 +12,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Arm;
 import frc.robot.utils.SparkMax;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -52,14 +53,24 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMax m_shoulderMotor;
   private SparkMax m_elbowMotor;
 
-  private SparkPIDConfig m_shoulderConfig;
-  private SparkPIDConfig m_elbowConfig;
+  private SparkPIDConfig m_shoulderMotionConfig;
+  private SparkPIDConfig m_shoulderPositionConfig;
+  private SparkPIDConfig m_elbowMotionConfig;
+  private SparkPIDConfig m_elbowPositionConfig;
+
+  private boolean shoulderInPositionMode = false;
+  private boolean elbowInPositionMode = false;
+
+  private final int MOTION_CONFIG_PID_SLOT = 0;
+  private final int POSITION_CONFIG_PID_SLOT = 1;
 
   private final double UPPERARM_LENGTH = 0.9144;
   private final double FOREARM_LENGTH = 0.4445;
 
   private final double SHOULDER_FF = 0.0;
   private final double ELBOW_FF = 0.0;
+
+  private Pair<Double, Double> m_armAngles;
 
   private ArmState m_currentState;
 
@@ -69,14 +80,22 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * NOTE: ONLY ONE INSTANCE SHOULD EXIST AT ANY TIME!
    * <p>
    * @param armHardware Hardwave devices required by arm
-   * @param shoulderConfig PID config for arm shoulder
-   * @param elbowConfig PID config for arm elbow
+   * @param shoulderConfigs Paired PID config for arm shoulder (First -> Motion Config, Second -> Position Config)
+   * @param elbowConfigs Paired PID config for arm elbow (First -> Motion Config, Second -> Position Config)
    */
-  public ArmSubsystem(Hardware armHardware, SparkPIDConfig shoulderConfig, SparkPIDConfig elbowConfig) {
+
+  public ArmSubsystem(Hardware armHardware, Pair<SparkPIDConfig, SparkPIDConfig> shoulderConfigs, Pair<SparkPIDConfig, SparkPIDConfig> elbowConfigs) {
     this.m_shoulderMotor = armHardware.shoulderMotor;
     this.m_elbowMotor = armHardware.elbowMotor;
-    m_currentState = ArmState.Stowed;
 
+    this.m_shoulderMotionConfig = shoulderConfigs.getFirst();
+    this.m_shoulderPositionConfig = shoulderConfigs.getSecond();
+    this.m_elbowMotionConfig = elbowConfigs.getFirst();
+    this.m_elbowPositionConfig = elbowConfigs.getSecond();
+
+    m_currentState = ArmState.Stowed;
+    m_armAngles = armIK(ArmState.Stowed);
+    
     // Set all arm motors to brake
     m_shoulderMotor.setIdleMode(IdleMode.kBrake);
     m_elbowMotor.setIdleMode(IdleMode.kBrake);
@@ -84,8 +103,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize PID
-      m_shoulderConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder());
-      m_elbowConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder());
+      m_shoulderMotionConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+      m_elbowMotionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+
+      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
+      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
 
       // Set conversion factor
       double conversionFactor = 360;
@@ -135,9 +157,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     );
   }
 
+  
+  public boolean isShoulderMotionComplete() {
+    return Math.abs(m_shoulderMotor.get()) >= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getFirst();
+  }
+
+
+  public boolean isElbowMotionComplete() {
+    return Math.abs(m_shoulderMotor.get()) >= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getSecond();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    this.shoulderInPositionMode = this.isShoulderMotionComplete();
+    this.elbowInPositionMode = this.isElbowMotionComplete();
   }
 
   /**
@@ -149,14 +183,20 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentState = armState;
 
     // Calculate arm angles
-    Pair<Double, Double> armAngles = armIK(armState);
+    m_armAngles = armIK(armState);
 
     // Calculate feed forward
-    Pair<Double, Double> feedForwards = calculateFF(armAngles);
+    Pair<Double, Double> feedForwards = calculateFF(m_armAngles);
 
     // Set shoulder and elbow positions
-    m_shoulderMotor.set(armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage);
-    m_elbowMotor.set(armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage);
+    if(this.shoulderInPositionMode)
+      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+    else
+      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    if(this.elbowInPositionMode)
+      m_elbowMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+    else
+      m_elbowMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
   }
 
   /**

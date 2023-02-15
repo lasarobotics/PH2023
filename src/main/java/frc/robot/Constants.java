@@ -57,6 +57,8 @@ public final class Constants {
   }
 
   public static class Arm {
+    public static final double MOTOR_END_VELOCITY_THRESHOLD = 0.01;
+
     // Arm shoulder PID settings
     private static final double SHOULDER_kP = 0.0;
     private static final double SHOULDER_kD = 0.0;
