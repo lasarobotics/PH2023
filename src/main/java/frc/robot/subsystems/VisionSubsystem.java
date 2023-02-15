@@ -78,7 +78,7 @@ public class VisionSubsystem {
   }
 
   public static VisionSubsystem getInstance() {
-    if (m_subsystem == null) m_subsystem = new VisionSubsystem(initializeHardware());
+    if (m_subsystem == null) m_subsystem = new VisionSubsystem(VisionSubsystem.initializeHardware());
     return m_subsystem;
   }
 
