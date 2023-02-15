@@ -82,6 +82,10 @@ public class VisionSubsystem {
     return m_subsystem;
   }
 
+  public AprilTagFieldLayout getAprilTagFieldLayout() {
+    return this.m_fieldLayout;
+  }
+
   public static Hardware initializeHardware() {
     Hardware visionHardware = new Hardware(new PhotonCamera(ForwardCamera.NAME), new PhotonCamera(ReverseCamera.NAME));
 
