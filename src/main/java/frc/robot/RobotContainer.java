@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.TurnCommand;
 import frc.robot.commands.autonomous.BottomObject;
 import frc.robot.commands.autonomous.BottomObjectScore;
 import frc.robot.commands.autonomous.BottomPadObject;
@@ -26,7 +25,10 @@ import frc.robot.commands.autonomous.MidPadObject;
 import frc.robot.commands.autonomous.TopObject;
 import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 
 /**
@@ -50,7 +52,12 @@ public class RobotContainer {
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
                                                                            Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
                                                                            Constants.Drive.DRIVE_TURN_INPUT_CURVE);
-
+  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE), 
+                                                                                                     Constants.Arm.SHOULDER_CONFIG,
+                                                                                                     Constants.Arm.ELBOW_CONFIG);
+                                                                                                      
+  private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(IntakeSubsystem.initializeHardware(REAL_HARDWARE));
+  
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
     new CommandXboxController(Constants.HID.PRIMARY_CONTROLLER_PORT);
@@ -87,7 +94,18 @@ public class RobotContainer {
    */
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
-    PRIMARY_CONTROLLER.a().onTrue(new TurnCommand(DRIVE_SUBSYSTEM));
+    
+    // Arm Positions
+    PRIMARY_CONTROLLER.a().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
+    PRIMARY_CONTROLLER.b().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
+    PRIMARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
+    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
+    
+    // Intake Controls
+    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
+    PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+    PRIMARY_CONTROLLER.rightTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
   }
 
   /**
