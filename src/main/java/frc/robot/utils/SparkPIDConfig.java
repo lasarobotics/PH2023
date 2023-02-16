@@ -167,6 +167,71 @@ public class SparkPIDConfig {
     spark.burnFlash();
   }
 
+
+  /**
+   * Initializes Spark Max PID and Smart Motion parameters
+   * @param spark Spark motor controller to apply settings to
+   * @param feedbackSensor Feedback device to use for Spark PID
+   * @param forwardLimitSwitch Enable forward limit switch
+   * @param reverseLimitSwitch Enable reverse limit switch
+   */
+  public void initializeSparkPID(CANSparkMax spark, MotorFeedbackSensor feedbackSensor, 
+                                 boolean forwardLimitSwitch, boolean reverseLimitSwitch, int PID_SLOT) {
+    // Reset Spark to default
+    spark.restoreFactoryDefaults();
+
+    // Get PID controller
+    SparkMaxPIDController pidController = spark.getPIDController();
+
+    // Configure feedback sensor and set sensor phase
+    pidController.setFeedbackDevice(feedbackSensor);
+    feedbackSensor.setInverted(m_sensorPhase);
+    
+    // Configure forward and reverse soft limits
+    if (m_enableSoftLimits) {
+      spark.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) m_upperLimit);
+      spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+      spark.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) m_lowerLimit);
+      spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    }
+
+    // Configure forward and reverse limit switches if required, and disable soft limit
+    if (forwardLimitSwitch) {
+      spark.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(true);
+      spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+    }
+    if (reverseLimitSwitch) {
+      spark.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen).enableLimitSwitch(true);
+      spark.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
+    }
+
+    // Invert motor if required
+    spark.setInverted(m_invertMotor);
+
+    // Configure PID values
+    pidController.setP(m_kP, PID_SLOT);
+    pidController.setI(m_kI, PID_SLOT);
+    pidController.setD(m_kD, PID_SLOT);
+    pidController.setFF(m_kF, PID_SLOT);
+    pidController.setOutputRange(-1.0, +1.0);
+    pidController.setIZone(m_tolerance * 2, PID_SLOT);
+
+    // Enable voltage compensation
+    spark.enableVoltageCompensation(MAX_VOLTAGE);
+
+    // Configure Smart Motion values
+    if (m_smartMotion) {  
+      pidController.setSmartMotionMaxVelocity(m_velocityRPM, PID_SLOT);
+      pidController.setSmartMotionMaxAccel(m_accelerationRPMPerSec, PID_SLOT);
+      pidController.setSmartMotionAccelStrategy(m_accelStrategy, PID_SLOT);
+    }
+
+    // Write settings to onboard flash
+    spark.burnFlash();
+  }
+
+
+
   /**
    * Initializes Spark PID and Smart Motion parameters
    * <p>

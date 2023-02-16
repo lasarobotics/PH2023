@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.BlinkinLEDController;
+import frc.robot.utils.SparkPIDConfig;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -52,12 +54,17 @@ public class RobotContainer {
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
                                                                            Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
                                                                            Constants.Drive.DRIVE_TURN_INPUT_CURVE);
-  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE), 
-                                                                                                     Constants.Arm.SHOULDER_CONFIG,
-                                                                                                     Constants.Arm.ELBOW_CONFIG);
-                                                                                                      
-  private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(IntakeSubsystem.initializeHardware(REAL_HARDWARE));
-  
+  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                          new Pair<SparkPIDConfig,SparkPIDConfig>(
+                                                                            Constants.Arm.MOTION_SHOULDER_CONFIG,
+                                                                            Constants.Arm.POSITION_SHOULDER_CONFIG
+                                                                          ), 
+                                                                          new Pair<SparkPIDConfig, SparkPIDConfig>(
+                                                                            Constants.Arm.MOTION_ELBOW_CONFIG,
+                                                                            Constants.Arm.POSITION_ELBOW_CONFIG
+                                                                          )
+                                                                    );
+
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
     new CommandXboxController(Constants.HID.PRIMARY_CONTROLLER_PORT);
@@ -94,18 +101,10 @@ public class RobotContainer {
    */
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
-    
-    // Arm Positions
-    PRIMARY_CONTROLLER.a().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
+    PRIMARY_CONTROLLER.a().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
     PRIMARY_CONTROLLER.b().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
     PRIMARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
-    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
-    
-    // Intake Controls
-    PRIMARY_CONTROLLER.rightTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
-    PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
-    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
-    PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
   }
 
   /**

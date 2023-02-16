@@ -38,6 +38,18 @@ public class SparkMax extends CANSparkMax {
     getPIDController().setReference(value, ctrl, PID_SLOT, arbFeedforward, arbFFUnits);
   }
 
+
+  /**
+   * Set motor output value with arbitrary feed forward
+   * @param value Value to set
+   * @param ctrl Desired control mode
+   * @param arbFeedforward Feed forward value
+   * @param arbFFUnits Feed forward units
+   */
+  public void set(double value, ControlType ctrl, double arbFeedforward, SparkMaxPIDController.ArbFFUnits arbFFUnits, int PID_SLOT) {
+    getPIDController().setReference(value, ctrl, PID_SLOT, arbFeedforward, arbFFUnits);
+  }
+
   /**
    * Get the position of the motor. This returns the native units of 'rotations' by default, and can
    * be changed by a scale factor using setPositionConversionFactor().
