@@ -116,6 +116,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     }
   }
 
+
+   /**
+   * Initialize hardware devices for drive subsystem
+   * @return hardware object containing all necessary devices for this subsystem
+   */
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware armHardware = new Hardware(isHardwareReal,
                                         new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MOTOR_ID, MotorType.kBrushless),
@@ -146,6 +151,20 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Makes the arm hold position
+   */
+  private void holdPosition() {
+    // Calculate feed forward
+    Pair<Double, Double> feedForwards = calculateFF(m_armAngles);
+
+    // Set shoulder and elbow positions
+    if(shoulderInPositionMode)
+      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kPosition, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+    if(elbowInPositionMode)
+      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kPosition, feedForwards.getSecond(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+  }
+
+  /**
    * Calculate feed forward for arm
    * @param armAngles Angle of shoulder and elbow in degrees
    * @return Tuple of shoulder feed forward, elbow feed forward
@@ -157,21 +176,30 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     );
   }
 
-  
+  /**
+   * Check if shoulder motion is complete
+   * @return True if shoulder motion is complete
+   */
   public boolean isShoulderMotionComplete() {
-    return Math.abs(m_shoulderMotor.get()) >= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getFirst();
+    return Math.abs(m_shoulderMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getFirst();
   }
 
 
+  /**
+   * Check if motion is complete
+   * @return True if elbow motion is complete
+   */
   public boolean isElbowMotionComplete() {
-    return Math.abs(m_shoulderMotor.get()) >= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getSecond();
+    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getAlternateEncoderPosition() == m_armAngles.getSecond();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    this.shoulderInPositionMode = this.isShoulderMotionComplete();
-    this.elbowInPositionMode = this.isElbowMotionComplete();
+    shoulderInPositionMode = isShoulderMotionComplete();
+    elbowInPositionMode = isElbowMotionComplete();
+
+    holdPosition();
   }
 
   /**
@@ -185,19 +213,14 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Calculate arm angles
     m_armAngles = armIK(armState);
 
+
     // Calculate feed forward
     Pair<Double, Double> feedForwards = calculateFF(m_armAngles);
 
-    // Set shoulder and elbow positions
-    if(this.shoulderInPositionMode)
-      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
-    else
-      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
-    if(this.elbowInPositionMode)
-      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
-    else
-      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
   }
+
 
   /**
    * Get current arm state
