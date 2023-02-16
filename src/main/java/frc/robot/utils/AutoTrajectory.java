@@ -12,14 +12,11 @@ import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -27,14 +24,8 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class AutoTrajectory {
   // Ramsete Command values
-  private final double VOLTS_kS = 0.1941; 
-  private final double VOLT_SECONDS_PER_METER_kV = 2.8541;
-  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.35776;
-  private final double kP = 1;
-  private final double kD = 0; 
   private final double kRamseteB = 2.0;
   private final double kRamseteZeta = 0.7;
-  private final double MAX_VOLTAGE = 11.0;
 
   DriveSubsystem m_driveSubsystem;
   RamseteCommand m_ramseteCommand;
@@ -76,18 +67,8 @@ public class AutoTrajectory {
   public AutoTrajectory(DriveSubsystem driveSubsystem, Pose2d[] waypoints, boolean isReversed, double maxVelocity, double maxAcceleration) {
     this.m_driveSubsystem = driveSubsystem;
     
-    var autoVoltageConstraint = 
-      new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(VOLTS_kS,
-                                   VOLT_SECONDS_PER_METER_kV,
-                                   VOLT_SECONDS_SQUARED_PER_METER_kA),
-        m_driveSubsystem.getKinematics(),
-        MAX_VOLTAGE
-      );
-    
     TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration);
     config.setKinematics(m_driveSubsystem.getKinematics());
-    config.addConstraint(autoVoltageConstraint);
     config.setReversed(isReversed);
     
     List<Pose2d> waypointList = new ArrayList<Pose2d>();
