@@ -59,65 +59,128 @@ public final class Constants {
   public static class Arm {
     public static final double MOTOR_END_VELOCITY_THRESHOLD = 0.01;
 
-    // Arm shoulder PID settings
-    private static final double SHOULDER_kP = 0.0;
-    private static final double SHOULDER_kD = 0.0;
-    private static final double SHOULDER_kI = 0.0;
-    private static final double SHOULDER_kF = 0.0;
-    private static final double SHOULDER_TOLERANCE = 2;
-    private static final double SHOULDER_LOWER_LIMIT = 0;
-    private static final double SHOULDER_UPPER_LIMIT = 175;
-    private static final double SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
-    private static final boolean SHOULDER_SOFT_LIMITS = true;
-    private static final boolean SHOULDER_SENSOR_PHASE = false;
-    private static final boolean SHOULDER_INVERT_MOTOR = false;
-    private static final AccelStrategy SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    // Arm shoulder motion PID settings
+    private static final double MOTION_SHOULDER_kP = 0.0;
+    private static final double MOTION_SHOULDER_kD = 0.0;
+    private static final double MOTION_SHOULDER_kI = 0.0;
+    private static final double MOTION_SHOULDER_kF = 0.0;
+    private static final double MOTION_SHOULDER_TOLERANCE = 2;
+    private static final double MOTION_SHOULDER_LOWER_LIMIT = 0;
+    private static final double MOTION_SHOULDER_UPPER_LIMIT = 175;
+    private static final double MOTION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double MOTION_SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean MOTION_SHOULDER_SOFT_LIMITS = true;
+    private static final boolean MOTION_SHOULDER_SENSOR_PHASE = false;
+    private static final boolean MOTION_SHOULDER_INVERT_MOTOR = false;
+    private static final AccelStrategy MOTION_SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
     
-    // Arm shoulder PID config
-    public static final SparkPIDConfig SHOULDER_CONFIG = new SparkPIDConfig(SHOULDER_SENSOR_PHASE, 
-                                                                            SHOULDER_INVERT_MOTOR, 
-                                                                            SHOULDER_kP,
-                                                                            SHOULDER_kI,
-                                                                            SHOULDER_kD,
-                                                                            SHOULDER_kF,
-                                                                            SHOULDER_TOLERANCE,
-                                                                            SHOULDER_LOWER_LIMIT,
-                                                                            SHOULDER_UPPER_LIMIT,
-                                                                            SHOULDER_SOFT_LIMITS,
-                                                                            SHOULDER_VELOCITY,
-                                                                            SHOULDER_ACCELERATION,
-                                                                            SHOULDER_ACCEL_STRATEGY);
+    // Arm shoulder motion PID config
+    public static final SparkPIDConfig MOTION_SHOULDER_CONFIG = new SparkPIDConfig(MOTION_SHOULDER_SENSOR_PHASE, 
+                                                                            MOTION_SHOULDER_INVERT_MOTOR, 
+                                                                            MOTION_SHOULDER_kP,
+                                                                            MOTION_SHOULDER_kI,
+                                                                            MOTION_SHOULDER_kD,
+                                                                            MOTION_SHOULDER_kF,
+                                                                            MOTION_SHOULDER_TOLERANCE,
+                                                                            MOTION_SHOULDER_LOWER_LIMIT,
+                                                                            MOTION_SHOULDER_UPPER_LIMIT,
+                                                                            MOTION_SHOULDER_SOFT_LIMITS,
+                                                                            MOTION_SHOULDER_VELOCITY,
+                                                                            MOTION_SHOULDER_ACCELERATION,
+                                                                            MOTION_SHOULDER_ACCEL_STRATEGY);
 
-    // Arm elbow PID settings
-    private static final double ELBOW_kP = 1.0;
-    private static final double ELBOW_kI = 0.0;
-    private static final double ELBOW_kD = 0.0;
-    private static final double ELBOW_kF = 0.0;
-    private static final double ELBOW_TOLERANCE = 10;
-    private static final double ELBOW_LOWER_LIMIT = 0;
-    private static final double ELBOW_UPPER_LIMIT = 3100;
-    private static final double ELBOW_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
-    private static final boolean ELBOW_SOFT_LIMITS = true;
-    private static final boolean ELBOW_SENSOR_PHASE = false;
-    private static final boolean ELBOW_INVERT_MOTOR = false;
-    private static final AccelStrategy ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    // Arm shoulder position PID settings
+    private static final double POSITION_SHOULDER_kP = 0.0;
+    private static final double POSITION_SHOULDER_kD = 0.0;
+    private static final double POSITION_SHOULDER_kI = 0.0;
+    private static final double POSITION_SHOULDER_kF = 0.0;
+    private static final double POSITION_SHOULDER_TOLERANCE = 2;
+    private static final double POSITION_SHOULDER_LOWER_LIMIT = 0;
+    private static final double POSITION_SHOULDER_UPPER_LIMIT = 175;
+    private static final double POSITION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double POSITION_SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean POSITION_SHOULDER_SOFT_LIMITS = true;
+    private static final boolean POSITION_SHOULDER_SENSOR_PHASE = false;
+    private static final boolean POSITION_SHOULDER_INVERT_MOTOR = false;
+    private static final AccelStrategy POSITION_SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
     
-    // Arm elbow PID config
-    public static final SparkPIDConfig ELBOW_CONFIG = new SparkPIDConfig(ELBOW_SENSOR_PHASE, 
-                                                                         ELBOW_INVERT_MOTOR, 
-                                                                         ELBOW_kP,
-                                                                         ELBOW_kI,
-                                                                         ELBOW_kD,
-                                                                         ELBOW_kF,
-                                                                         ELBOW_TOLERANCE,
-                                                                         ELBOW_LOWER_LIMIT,
-                                                                         ELBOW_UPPER_LIMIT,
-                                                                         ELBOW_SOFT_LIMITS,
-                                                                         ELBOW_VELOCITY,
-                                                                         ELBOW_ACCELERATION,
-                                                                         ELBOW_ACCEL_STRATEGY);
+    // Arm shoulder position PID config
+    public static final SparkPIDConfig POSITION_SHOULDER_CONFIG = new SparkPIDConfig(POSITION_SHOULDER_SENSOR_PHASE, 
+                                                                            POSITION_SHOULDER_INVERT_MOTOR, 
+                                                                            POSITION_SHOULDER_kP,
+                                                                            POSITION_SHOULDER_kI,
+                                                                            POSITION_SHOULDER_kD,
+                                                                            POSITION_SHOULDER_kF,
+                                                                            POSITION_SHOULDER_TOLERANCE,
+                                                                            POSITION_SHOULDER_LOWER_LIMIT,
+                                                                            POSITION_SHOULDER_UPPER_LIMIT,
+                                                                            POSITION_SHOULDER_SOFT_LIMITS,
+                                                                            POSITION_SHOULDER_VELOCITY,
+                                                                            POSITION_SHOULDER_ACCELERATION,
+                                                                            POSITION_SHOULDER_ACCEL_STRATEGY);
+
+
+    // Arm elbow motion PID settings
+    private static final double MOTION_ELBOW_kP = 1.0;
+    private static final double MOTION_ELBOW_kI = 0.0;
+    private static final double MOTION_ELBOW_kD = 0.0;
+    private static final double MOTION_ELBOW_kF = 0.0;
+    private static final double MOTION_ELBOW_TOLERANCE = 10;
+    private static final double MOTION_ELBOW_LOWER_LIMIT = 0;
+    private static final double MOTION_ELBOW_UPPER_LIMIT = 3100;
+    private static final double MOTION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean MOTION_ELBOW_SOFT_LIMITS = true;
+    private static final boolean MOTION_ELBOW_SENSOR_PHASE = false;
+    private static final boolean MOTION_ELBOW_INVERT_MOTOR = false;
+    private static final AccelStrategy MOTION_ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    
+    // Arm elbow motion PID config
+    public static final SparkPIDConfig MOTION_ELBOW_CONFIG = new SparkPIDConfig(MOTION_ELBOW_SENSOR_PHASE, 
+                                                                         MOTION_ELBOW_INVERT_MOTOR, 
+                                                                         MOTION_ELBOW_kP,
+                                                                         MOTION_ELBOW_kI,
+                                                                         MOTION_ELBOW_kD,
+                                                                         MOTION_ELBOW_kF,
+                                                                         MOTION_ELBOW_TOLERANCE,
+                                                                         MOTION_ELBOW_LOWER_LIMIT,
+                                                                         MOTION_ELBOW_UPPER_LIMIT,
+                                                                         MOTION_ELBOW_SOFT_LIMITS,
+                                                                         MOTION_ELBOW_VELOCITY,
+                                                                         MOTION_ELBOW_ACCELERATION,
+                                                                         MOTION_ELBOW_ACCEL_STRATEGY);
+
+    // Arm elbow position PID settings
+    private static final double POSITION_ELBOW_kP = 1.0;
+    private static final double POSITION_ELBOW_kI = 0.0;
+    private static final double POSITION_ELBOW_kD = 0.0;
+    private static final double POSITION_ELBOW_kF = 0.0;
+    private static final double POSITION_ELBOW_TOLERANCE = 10;
+    private static final double POSITION_ELBOW_LOWER_LIMIT = 0;
+    private static final double POSITION_ELBOW_UPPER_LIMIT = 3100;
+    private static final double POSITION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;
+    private static final double POSITION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
+    private static final boolean POSITION_ELBOW_SOFT_LIMITS = true;
+    private static final boolean POSITION_ELBOW_SENSOR_PHASE = false;
+    private static final boolean POSITION_ELBOW_INVERT_MOTOR = false;
+    private static final AccelStrategy POSITION_ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    
+    // Arm elbow position PID config
+    public static final SparkPIDConfig POSITION_ELBOW_CONFIG = new SparkPIDConfig(POSITION_ELBOW_SENSOR_PHASE, 
+                                                                         POSITION_ELBOW_INVERT_MOTOR, 
+                                                                         POSITION_ELBOW_kP,
+                                                                         POSITION_ELBOW_kI,
+                                                                         POSITION_ELBOW_kD,
+                                                                         POSITION_ELBOW_kF,
+                                                                         POSITION_ELBOW_TOLERANCE,
+                                                                         POSITION_ELBOW_LOWER_LIMIT,
+                                                                         POSITION_ELBOW_UPPER_LIMIT,
+                                                                         POSITION_ELBOW_SOFT_LIMITS,
+                                                                         POSITION_ELBOW_VELOCITY,
+                                                                         POSITION_ELBOW_ACCELERATION,
+                                                                         POSITION_ELBOW_ACCEL_STRATEGY);
+
+                                                                         
   }
 
   public static class Intake {

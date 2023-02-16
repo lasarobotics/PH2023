@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,8 +27,10 @@ import frc.robot.commands.autonomous.MidPadObject;
 import frc.robot.commands.autonomous.TopObject;
 import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.BlinkinLEDController;
+import frc.robot.utils.SparkPIDConfig;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,6 +53,16 @@ public class RobotContainer {
                                                                            Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
                                                                            Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
                                                                            Constants.Drive.DRIVE_TURN_INPUT_CURVE);
+  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                          new Pair<SparkPIDConfig,SparkPIDConfig>(
+                                                                            Constants.Arm.MOTION_SHOULDER_CONFIG,
+                                                                            Constants.Arm.POSITION_SHOULDER_CONFIG
+                                                                          ), 
+                                                                          new Pair<SparkPIDConfig, SparkPIDConfig>(
+                                                                            Constants.Arm.MOTION_ELBOW_CONFIG,
+                                                                            Constants.Arm.POSITION_ELBOW_CONFIG
+                                                                          )
+                                                                    );
 
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
