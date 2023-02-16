@@ -4,23 +4,23 @@
 
 package frc.robot.subsystems;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.RobotPoseEstimator;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.RobotPoseEstimator.PoseStrategy;
+import org.photonvision.RobotPoseEstimator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 
 public class VisionSubsystem {
@@ -67,8 +67,8 @@ public class VisionSubsystem {
     this.m_reverseCamera = visionHardware.reverseCamera;
 
     try {
-      m_fieldLayout = new AprilTagFieldLayout(new File(Filesystem.getDeployDirectory(), "2023-chargedup.json").getPath());
-    } catch (IOException e) {}
+      m_fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+    } catch (IOException e) { e.printStackTrace(); }
 
     var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
     camList.add(new Pair<PhotonCamera, Transform3d>(m_forwardCamera, ForwardCamera.LOCATION));
