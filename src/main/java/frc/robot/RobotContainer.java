@@ -102,10 +102,10 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
     
     // Intake Controls
-    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
-    PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
-    PRIMARY_CONTROLLER.rightTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.rightTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
     PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
   }
 
   /**
