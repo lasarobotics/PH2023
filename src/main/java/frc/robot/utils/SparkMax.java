@@ -96,7 +96,7 @@ public class SparkMax extends CANSparkMax {
    * @return Number of rotations of the motor
    */
   public double getAlternateEncoderPosition() {
-    return getAlternateEncoder(Type.kQuadrature, ALT_ENCODER_CPR).getPosition();
+    return getAlternateEncoder().getPosition();
   }
 
   /**
@@ -106,7 +106,7 @@ public class SparkMax extends CANSparkMax {
    * @return Number the RPM of the motor
    */
   public double getAlternateEncoderVelocity() {
-    return getAlternateEncoder(Type.kQuadrature, ALT_ENCODER_CPR).getVelocity();
+    return getAlternateEncoder().getVelocity();
   }
 
   /**
@@ -120,6 +120,6 @@ public class SparkMax extends CANSparkMax {
    * Reset external through bore encoder
    */
   public void resetAlternateEncoder() {
-    getAlternateEncoder(Type.kQuadrature, ALT_ENCODER_CPR).setPosition(0.0);
+    getAlternateEncoder().setPosition(0.0);
   }
 }

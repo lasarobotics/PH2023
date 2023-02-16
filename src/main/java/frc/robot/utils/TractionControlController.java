@@ -88,6 +88,18 @@ public class TractionControlController {
   }
 
   /**
+   * Lookup motor output given velocity
+   * @param velocityLookup Desired velocity in m/s
+   * @return Corresponding motor output [-1.0, +1.0]
+   */
+  public double lookupVelocity(double velocityLookup) {
+    velocityLookup = Math.copySign(Math.floor(Math.abs(velocityLookup) * 1000) / 1000, velocityLookup) + 0.0;
+    velocityLookup = MathUtil.clamp(velocityLookup, -m_maxLinearSpeed, +m_maxLinearSpeed);
+    
+    return m_tractionControlMap.get(velocityLookup);
+  }
+
+  /**
    * Toggle traction control
    */
   public void toggleTractionControl() {

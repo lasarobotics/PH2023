@@ -7,6 +7,10 @@
 
 package frc.robot.subsystems;
 
+import java.lang.StackWalker.Option;
+import java.util.ArrayList;
+import java.util.Optional;
+
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -15,18 +19,27 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.IntakeSubsystem.GameObject;
+import frc.robot.utils.AutoTrajectory;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkMax;
 import frc.robot.utils.TractionControlController;
@@ -54,6 +67,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       this.navx = navx;
     }
   }
+  
 
   private TurnPIDController m_turnPIDController;
   private PIDController m_pitchPIDController;
@@ -72,6 +86,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final int CURRENT_LIMIT = 55;
   private final double TOLERANCE = 0.125;
   private final double MAX_VOLTAGE = 12.0;
+  private final double GRID_OFFSET_X = 0.5588;
+  private final double GRID_OFFSET_Z = 1.0;
   private final double VISION_AIM_DAMPENER = 0.9;
  
   private double m_deadband = 0.0;
@@ -364,15 +380,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-   * Controls the left and right sides of the drive directly with voltages.
+   * Controls the left and right sides of the drive directly with velocities.
    * <p>
    * Only use this method to drive during autonomous!
-   * @param leftVolts Left voltage [-12, +12]
-   * @param rightVolts Right voltage [-12, +12]
+   * @param leftVelocity Left velocity in m/s
+   * @param rightVelocity Right velocity in m/s
    */
-  public void autoTankDriveVolts(double leftVolts, double rightVolts) {
-    m_lMasterMotor.setVoltage(leftVolts);
-    m_rMasterMotor.setVoltage(rightVolts);
+  public void autoTankDrive(double leftVelocity, double rightVelocity) {
+    m_lMasterMotor.set(m_tractionControlController.lookupVelocity(leftVelocity), ControlType.kDutyCycle);
+    m_rMasterMotor.set(m_tractionControlController.lookupVelocity(rightVelocity), ControlType.kDutyCycle);
   }
   
   /**
@@ -497,6 +513,48 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public double getDrivePIDSetpoint() {
     return m_turnPIDController.getSetpoint();
+  }
+
+    private double getDistance(Pose3d a, Pose3d b){
+    return Math.sqrt(
+        Math.pow(a.getX() - b.getX(), 2)
+      + Math.pow(a.getX() - b.getX(), 2)
+      + Math.pow(a.getX() - b.getX(), 2)
+      );
+  }
+
+  public Command moveToClosestTarget(int grid, GameObject gameObject) {
+    boolean isBlue = DriverStation.getAlliance() == Alliance.Blue;
+    AprilTagFieldLayout fieldLayout = VisionSubsystem.getInstance().getAprilTagFieldLayout();
+
+    if (isBlue) grid = 9 - grid;
+    Optional<Pose3d> targetPosition = fieldLayout.getTagPose(grid);
+    
+    Pose3d[] targets = new Pose3d[] {
+      new Pose3d(targetPosition.get().getX() - GRID_OFFSET_X, targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
+      new Pose3d(targetPosition.get().getX(), targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
+      new Pose3d(targetPosition.get().getX() + GRID_OFFSET_X, targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation())
+    };
+
+
+    Pose3d goToLocation = targets[0];
+    Pose3d currentPosition = new Pose3d(getPose());
+
+    if(gameObject.equals(GameObject.Cube)){
+      goToLocation = targets[1];
+    }
+    else {
+      if(getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2])) {
+        goToLocation = targets[2];
+      }
+    }
+
+    Pose2d waypoints[] = { 
+      new Pose2d(currentPosition.getX(), currentPosition.getY(), new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
+      new Pose2d(goToLocation.getX(), goToLocation.getY(), new Rotation2d(goToLocation.getRotation().getX(), goToLocation.getRotation().getY()))
+    };
+
+    return new AutoTrajectory(this, waypoints, false, 0.5, 0.5).getCommandAndStop();
   }
 
   @Override
