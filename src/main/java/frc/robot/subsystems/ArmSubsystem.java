@@ -194,9 +194,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     else
       m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
     if(this.elbowInPositionMode)
-      m_elbowMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
     else
-      m_elbowMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
   }
 
   /**

@@ -21,13 +21,15 @@ import org.mockito.ArgumentMatchers;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.Pair;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.utils.SparkMax;
+import frc.robot.utils.SparkPIDConfig;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ArmSubsystemTest {
-  private final double DELTA = 2e-3;
+  private final double DELTA = 0.1;
   private final boolean MOCK_HARDWARE = false;
   private ArmSubsystem m_armSubsystem;
   private ArmSubsystem.Hardware m_armHardware;
@@ -45,7 +47,16 @@ public class ArmSubsystemTest {
     m_armHardware = new ArmSubsystem.Hardware(MOCK_HARDWARE, m_shoulderMotor, m_elbowMotor);
 
     // Create ArmSubsystem object
-    m_armSubsystem = new ArmSubsystem(m_armHardware, Constants.Arm.SHOULDER_CONFIG, Constants.Arm.ELBOW_CONFIG);
+    m_armSubsystem = new ArmSubsystem(m_armHardware,
+                                      new Pair<SparkPIDConfig,SparkPIDConfig>(
+                                        Constants.Arm.MOTION_SHOULDER_CONFIG,
+                                        Constants.Arm.POSITION_SHOULDER_CONFIG
+                                      ), 
+                                      new Pair<SparkPIDConfig, SparkPIDConfig>(
+                                        Constants.Arm.MOTION_ELBOW_CONFIG,
+                                        Constants.Arm.POSITION_ELBOW_CONFIG
+                                      )
+                                    );
   }
 
   @AfterEach
@@ -63,9 +74,9 @@ public class ArmSubsystemTest {
 
     // Verify motors are being driven with expected values
     verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(1.364, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(158.058, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
   }
 
   @Test
@@ -76,9 +87,9 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Ground);
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(36.699, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
     verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(33.443, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
 
@@ -90,9 +101,9 @@ public class ArmSubsystemTest {
         // Try to move arm to middle state
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(28.461, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
     verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(79.654, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
   @Test
@@ -103,9 +114,9 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.High);
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(10.279, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
     verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(97.238, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage));
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
 }

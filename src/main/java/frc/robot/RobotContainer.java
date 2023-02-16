@@ -28,6 +28,7 @@ import frc.robot.commands.autonomous.TopObject;
 import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.BlinkinLEDController;
 import frc.robot.utils.SparkPIDConfig;
@@ -101,6 +102,10 @@ public class RobotContainer {
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
     PRIMARY_CONTROLLER.a().onTrue(new TurnCommand(DRIVE_SUBSYSTEM));
+    PRIMARY_CONTROLLER.b().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
+    PRIMARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
+    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
+    PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
   }
 
   /**
