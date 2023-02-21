@@ -29,6 +29,8 @@ import frc.robot.commands.autonomous.TopObjectScore;
 import frc.robot.commands.autonomous.TopPadObjectAuto;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.DriveSubsystem.GridSelector;
+import frc.robot.subsystems.IntakeSubsystem.GameObject;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.BlinkinLEDController;
@@ -46,6 +48,7 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(DriveSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                           Constants.Drive.GRID,
                                                                            Constants.Drive.DRIVE_TURN_PID,
                                                                            Constants.Drive.DRIVE_BALANCE_PID,
                                                                            Constants.HID.CONTROLLER_DEADBAND,
@@ -112,6 +115,12 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+    
+    PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
+    PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
+    PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
+    PRIMARY_CONTROLLER.leftBumper().whileTrue(DRIVE_SUBSYSTEM.moveToClosestTarget(GameObject.Cone))
+                                   .onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.stop(), DRIVE_SUBSYSTEM));
   }
 
   /**
