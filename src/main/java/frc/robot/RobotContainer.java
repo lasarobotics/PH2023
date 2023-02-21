@@ -65,6 +65,7 @@ public class RobotContainer {
                                                                             Constants.Arm.POSITION_ELBOW_CONFIG
                                                                           )
                                                                     );
+  private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(IntakeSubsystem.initializeHardware(REAL_HARDWARE));
 
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
@@ -106,6 +107,11 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.b().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
     PRIMARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
     PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
+
+    PRIMARY_CONTROLLER.rightTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
+    PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
   }
 
   /**
