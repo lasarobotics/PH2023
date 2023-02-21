@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem.GameObject;
@@ -63,6 +64,40 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       this.navx = navx;
     }
   }
+
+  public class GridSelector {
+    private int m_grid;
+    private boolean m_isBlue;
+    public GridSelector() {
+      m_grid = 0;
+    }
+    public GridSelector(int grid) {
+      m_isBlue = DriverStation.getAlliance() == Alliance.Blue;
+      if (m_isBlue) grid = 9 - grid;
+      grid = Math.min(3, Math.max(1, grid));
+      m_grid = grid;
+    }
+
+    /**
+     * 
+     * @param Grid to be set to target
+     */
+    public void setGrid(int grid) {
+      m_isBlue = DriverStation.getAlliance() == Alliance.Blue;
+      if (m_isBlue) grid = 9 - grid;
+      grid = Math.min(3, Math.max(1, grid));
+      m_grid = grid;
+    }
+
+    /**
+     * 
+     * @return Selected grid position (Range 1-9)
+     */
+    public int getGrid() {
+      return m_grid;
+    }
+  }
+
   
 
   private TurnPIDController m_turnPIDController;
@@ -98,12 +133,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private static final double DRIVETRAIN_EFFICIENCY = 0.9;
   private static final double DRIVE_MAX_LINEAR_SPEED = (Constants.Global.NEO_MAX_RPM / 60) * DRIVE_METERS_PER_ROTATION * DRIVETRAIN_EFFICIENCY;
 
+  private static GridSelector m_gridSelector;
   /**
    * Create an instance of DriveSubsystem
    * <p>
    * NOTE: ONLY ONE INSTANCE SHOULD EXIST AT ANY TIME!
    * <p>
    * @param drivetrainHardware Hardware devices required by drivetrain
+   * @param gridSelector Chosen grid to use
    * @param turnPIDConstants PID values for turning
    * @param pitchPIDConstants PID values for balancing
    * @param deadband Deadband for controller input [+0.001, +0.2]
@@ -118,7 +155,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param throttleInputCurve Spline function characterising throttle input
    * @param turnInputCurve Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
+  public DriveSubsystem(Hardware drivetrainHardware, int grid, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
                         double deadband, double slipRatio, double turnScalar, double lookAhead,
                         PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
     m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
@@ -135,6 +172,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     this.m_deadband = deadband;
 
+    m_gridSelector = new GridSelector(grid);
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
     m_lSlaveMotor.restoreFactoryDefaults();
@@ -221,6 +259,28 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private void resetAngle() {
     m_navx.reset();
+  }
+
+  /**
+   * 
+   * @param a Vec3 of Position A
+   * @param b Vec3 of Position B
+   * @return Euclidean distance between A and B
+   */
+  private double getDistance(Pose3d a, Pose3d b){
+    return Math.sqrt(
+        Math.pow(a.getX() - b.getX(), 2)
+      + Math.pow(a.getX() - b.getX(), 2)
+      + Math.pow(a.getX() - b.getX(), 2)
+      );
+  }
+
+  /**
+   * 
+   * @param grid Selected grid to move to (Range 1-9) 
+   */
+  public void setGridSelector(int grid) {
+    m_gridSelector.setGrid(grid);
   }
 
   /**
@@ -511,19 +571,19 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     return m_turnPIDController.getSetpoint();
   }
 
-    private double getDistance(Pose3d a, Pose3d b){
-    return Math.sqrt(
-        Math.pow(a.getX() - b.getX(), 2)
-      + Math.pow(a.getX() - b.getX(), 2)
-      + Math.pow(a.getX() - b.getX(), 2)
-      );
-  }
+/**
+ * 
+ * @param grid  Grid labelled 1-9 here https://firstfrc.blob.core.windows.net/frc2023/Manual/2023FRCGameManual.pdf Page 40
+ * @param gameObject Cube or Cone Enum
+ * @return Command consisting of waypoints orienting and repositioning robot
+ */
+  public Command moveToClosestTarget(GameObject gameObject) {
 
-  public Command moveToClosestTarget(int grid, GameObject gameObject) {
-    boolean isBlue = DriverStation.getAlliance() == Alliance.Blue;
+    if (gameObject == null) return new InstantCommand();
+    int grid = Math.min(3, Math.max(m_gridSelector.getGrid(), 1));
+
     AprilTagFieldLayout fieldLayout = VisionSubsystem.getInstance().getAprilTagFieldLayout();
 
-    if (isBlue) grid = 9 - grid;
     Optional<Pose3d> targetPosition = fieldLayout.getTagPose(grid);
     
     Pose3d[] targets = new Pose3d[] {
@@ -532,22 +592,17 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       new Pose3d(targetPosition.get().getX() + GRID_OFFSET_X, targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation())
     };
 
-
     Pose3d goToLocation = targets[0];
     Pose3d currentPosition = new Pose3d(getPose());
 
-    if(gameObject.equals(GameObject.Cube)){
-      goToLocation = targets[1];
-    }
+    if (gameObject.equals(GameObject.Cube)) goToLocation = targets[1];
     else {
-      if(getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2])) {
-        goToLocation = targets[2];
-      }
+      if (getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2])) goToLocation = targets[2];
     }
 
     Pose2d waypoints[] = { 
       new Pose2d(currentPosition.getX(), currentPosition.getY(), new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
-      new Pose2d(goToLocation.getX(), goToLocation.getY(), new Rotation2d(goToLocation.getRotation().getX(), goToLocation.getRotation().getY()))
+      new Pose2d(goToLocation.getX(), goToLocation.getY(), new Rotation2d(-goToLocation.getRotation().getX(), -goToLocation.getRotation().getY()))
     };
 
     return new AutoTrajectory(this, waypoints, false, 0.5, 0.5).getCommandAndStop();
