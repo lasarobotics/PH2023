@@ -9,6 +9,7 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import frc.robot.subsystems.DriveSubsystem.GridSelector;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -54,6 +55,8 @@ public final class Constants {
     public static final PolynomialSplineFunction DRIVE_THROTTLE_INPUT_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_THROTTLE_INPUT_CURVE_X, DRIVE_THROTTLE_INPUT_CURVE_Y);
     public static final PolynomialSplineFunction DRIVE_TRACTION_CONTROL_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_TRACTION_CONTROL_CURVE_X, DRIVE_TRACTION_CONTROL_CURVE_Y);
     public static final PolynomialSplineFunction DRIVE_TURN_INPUT_CURVE = SPLINE_INTERPOLATOR.interpolate(DRIVE_TURN_INPUT_CURVE_X, DRIVE_TURN_INPUT_CURVE_Y);
+
+    public static int GRID = 0;
   }
 
   public static class Arm {
