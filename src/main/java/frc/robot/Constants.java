@@ -202,6 +202,8 @@ public final class Constants {
   public static class IntakeHardware {
     public static final int WRIST_MOTOR_ID = 10;
     public static final int ROLLER_MOTOR_ID = 11;
+    public static final int PRESENCE_SENSOR_PORT = 0;
+    public static final int DIFFERENTIATOR_SENSOR_PORT = 1;
   }
 
   public static class AccessoryHardware {

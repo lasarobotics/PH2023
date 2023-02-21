@@ -13,6 +13,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -22,35 +23,32 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     private boolean isHardwareReal;
     private SparkMax wristMotor;
     private SparkMax rollerMotor;
-    private ColorSensorV3 colorSensor;
+    private DigitalInput objectPresenceDetector;
+    private DigitalInput objectDifferentiator;
 
     public Hardware(boolean isHardwareReal,
                     SparkMax wristMotor, 
                     SparkMax rollerMotor,
-                    ColorSensorV3 m_colorSensor) {
+                    DigitalInput objectPresenceDetector,
+                    DigitalInput objectDifferentiator) {
       this.isHardwareReal = isHardwareReal;
       this.wristMotor = wristMotor;
       this.rollerMotor = rollerMotor;
-      this.colorSensor = m_colorSensor;
+      this.objectPresenceDetector = objectPresenceDetector;
+      this.objectDifferentiator = objectDifferentiator;
     }
   }
 
   // TODO: Change color targets to be accurate
   public enum GameObject {
-    Cone(Color.kYellow),
-    Cube(Color.kBlueViolet);
-    
-    public final Color color;
-    private GameObject(Color color) {
-      this.color = color;
-    }
+    Cone,
+    Cube
   }
 
   private SparkMax m_wristMotor;
   private SparkMax m_rollerMotor;
-  private ColorSensorV3 m_colorSensor;
-
-  private ColorMatch m_colorMatcher;
+  private DigitalInput m_objectPresenceDetector;
+  private DigitalInput m_objectDifferentiator;
 
   /**
    * Create a new intake subsystem
@@ -59,8 +57,8 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public IntakeSubsystem(Hardware intakeHardware) {
     this.m_wristMotor = intakeHardware.wristMotor;
     this.m_rollerMotor = intakeHardware.rollerMotor;
-    this.m_colorSensor = intakeHardware.colorSensor;
-    this.m_colorMatcher = new ColorMatch();
+    this.m_objectPresenceDetector = intakeHardware.objectPresenceDetector;
+    this.m_objectDifferentiator = intakeHardware.objectDifferentiator;
 
     // Reset motors to default
     m_wristMotor.restoreFactoryDefaults();
@@ -69,16 +67,14 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     // Set motors to break
     m_wristMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
-
-    m_colorMatcher.addColorMatch(GameObject.Cone.color);
-    m_colorMatcher.addColorMatch(GameObject.Cube.color);
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware intakeHardware = new Hardware(isHardwareReal,
                                            new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
                                            new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless),
-                                           new ColorSensorV3(I2C.Port.kOnboard));
+                                           new DigitalInput(Constants.IntakeHardware.PRESENCE_SENSOR_PORT),
+                                           new DigitalInput(Constants.IntakeHardware.DIFFERENTIATOR_SENSOR_PORT));
     return intakeHardware;
   }
 
@@ -97,14 +93,25 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+  * Identifies whether a game object is present
+  * @return boolean
+  */
+  public boolean isObjectPresent() {
+    return m_objectPresenceDetector.get(); // Circuit is open, object is present
+  }
+
+  /**
    * Identify game object
    * @return Game object, null if unidentified
    */
   public GameObject identifyObject() {
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
+    if (isObjectPresent()) {
+      if (m_objectDifferentiator.get()) // Circuit is open, whatever object the differentiator detects is present
+        return GameObject.Cone; // Cone for now - SUBJECT TO CHANGE
+      else
+        return GameObject.Cube;
+    }
 
-    if (match.color == GameObject.Cone.color) return GameObject.Cone;
-    if (match.color == GameObject.Cube.color) return GameObject.Cube;
     return null;
   }
 
@@ -112,11 +119,6 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Read and return current color
    * @return Color, currently detected color by sensor
    */
-  public Color readColor() {
-    ColorMatchResult match = m_colorMatcher.matchClosestColor(m_colorSensor.getColor());
-
-    return match.color;
-  }
 
   /**
    * Stops motor
@@ -129,6 +131,5 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public void close() {
     m_wristMotor.close();
     m_rollerMotor.close();
-    m_colorSensor = null;
   }
 }
