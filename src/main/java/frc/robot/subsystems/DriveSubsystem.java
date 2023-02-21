@@ -155,7 +155,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param throttleInputCurve Spline function characterising throttle input
    * @param turnInputCurve Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, int grid, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
+  public DriveSubsystem(Hardware drivetrainHardware, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
                         double deadband, double slipRatio, double turnScalar, double lookAhead,
                         PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
     m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
@@ -172,7 +172,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     this.m_deadband = deadband;
 
-    m_gridSelector = new GridSelector(grid);
+    m_gridSelector = new GridSelector(0);
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
     m_lSlaveMotor.restoreFactoryDefaults();
