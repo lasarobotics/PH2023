@@ -11,13 +11,15 @@ import frc.robot.utils.AutoTrajectory;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class BottomPadObject extends SequentialCommandGroup {
-		// create a new tool object
-	public BottomPadObject(DriveSubsystem driveSubsystem){
-		AutoTrajectory botPadObject = new AutoTrajectory(driveSubsystem, "bot_pad_object_2");
+public class BotObjectScoreCube extends SequentialCommandGroup {
+	// create a new tool object
+	public BotObjectScoreConeB(DriveSubsystem driveSubsystem){
+		AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "bot_object_1");
+		AutoTrajectory scoreObject = new AutoTrajectory(driveSubsystem, "bot_object_score_2cube");
 
 		addCommands(
-			botPadObject.getCommandAndStop()
+			goToObject.getCommandAndStop(),
+			scoreObject.getCommandAndStop()
 		);
 	}
 }
