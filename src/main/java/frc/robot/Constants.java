@@ -9,7 +9,6 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
-import frc.robot.subsystems.DriveSubsystem.GridSelector;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -77,18 +76,18 @@ public final class Constants {
     
     // Arm shoulder motion PID config
     public static final SparkPIDConfig MOTION_SHOULDER_CONFIG = new SparkPIDConfig(MOTION_SHOULDER_SENSOR_PHASE, 
-                                                                            MOTION_SHOULDER_INVERT_MOTOR, 
-                                                                            MOTION_SHOULDER_kP,
-                                                                            MOTION_SHOULDER_kI,
-                                                                            MOTION_SHOULDER_kD,
-                                                                            MOTION_SHOULDER_kF,
-                                                                            MOTION_SHOULDER_TOLERANCE,
-                                                                            MOTION_SHOULDER_LOWER_LIMIT,
-                                                                            MOTION_SHOULDER_UPPER_LIMIT,
-                                                                            MOTION_SHOULDER_SOFT_LIMITS,
-                                                                            MOTION_SHOULDER_VELOCITY,
-                                                                            MOTION_SHOULDER_ACCELERATION,
-                                                                            MOTION_SHOULDER_ACCEL_STRATEGY);
+                                                                                   MOTION_SHOULDER_INVERT_MOTOR, 
+                                                                                   MOTION_SHOULDER_kP,
+                                                                                   MOTION_SHOULDER_kI,
+                                                                                   MOTION_SHOULDER_kD,
+                                                                                   MOTION_SHOULDER_kF,
+                                                                                   MOTION_SHOULDER_TOLERANCE,
+                                                                                   MOTION_SHOULDER_LOWER_LIMIT,
+                                                                                   MOTION_SHOULDER_UPPER_LIMIT,
+                                                                                   MOTION_SHOULDER_SOFT_LIMITS,
+                                                                                   MOTION_SHOULDER_VELOCITY,
+                                                                                   MOTION_SHOULDER_ACCELERATION,
+                                                                                   MOTION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 0.0;
@@ -107,18 +106,18 @@ public final class Constants {
     
     // Arm shoulder position PID config
     public static final SparkPIDConfig POSITION_SHOULDER_CONFIG = new SparkPIDConfig(POSITION_SHOULDER_SENSOR_PHASE, 
-                                                                            POSITION_SHOULDER_INVERT_MOTOR, 
-                                                                            POSITION_SHOULDER_kP,
-                                                                            POSITION_SHOULDER_kI,
-                                                                            POSITION_SHOULDER_kD,
-                                                                            POSITION_SHOULDER_kF,
-                                                                            POSITION_SHOULDER_TOLERANCE,
-                                                                            POSITION_SHOULDER_LOWER_LIMIT,
-                                                                            POSITION_SHOULDER_UPPER_LIMIT,
-                                                                            POSITION_SHOULDER_SOFT_LIMITS,
-                                                                            POSITION_SHOULDER_VELOCITY,
-                                                                            POSITION_SHOULDER_ACCELERATION,
-                                                                            POSITION_SHOULDER_ACCEL_STRATEGY);
+                                                                                     POSITION_SHOULDER_INVERT_MOTOR, 
+                                                                                     POSITION_SHOULDER_kP,
+                                                                                     POSITION_SHOULDER_kI,
+                                                                                     POSITION_SHOULDER_kD,
+                                                                                     POSITION_SHOULDER_kF,
+                                                                                     POSITION_SHOULDER_TOLERANCE,
+                                                                                     POSITION_SHOULDER_LOWER_LIMIT,
+                                                                                     POSITION_SHOULDER_UPPER_LIMIT,
+                                                                                     POSITION_SHOULDER_SOFT_LIMITS,
+                                                                                     POSITION_SHOULDER_VELOCITY,
+                                                                                     POSITION_SHOULDER_ACCELERATION,
+                                                                                     POSITION_SHOULDER_ACCEL_STRATEGY);
 
 
     // Arm elbow motion PID settings
@@ -138,18 +137,18 @@ public final class Constants {
     
     // Arm elbow motion PID config
     public static final SparkPIDConfig MOTION_ELBOW_CONFIG = new SparkPIDConfig(MOTION_ELBOW_SENSOR_PHASE, 
-                                                                         MOTION_ELBOW_INVERT_MOTOR, 
-                                                                         MOTION_ELBOW_kP,
-                                                                         MOTION_ELBOW_kI,
-                                                                         MOTION_ELBOW_kD,
-                                                                         MOTION_ELBOW_kF,
-                                                                         MOTION_ELBOW_TOLERANCE,
-                                                                         MOTION_ELBOW_LOWER_LIMIT,
-                                                                         MOTION_ELBOW_UPPER_LIMIT,
-                                                                         MOTION_ELBOW_SOFT_LIMITS,
-                                                                         MOTION_ELBOW_VELOCITY,
-                                                                         MOTION_ELBOW_ACCELERATION,
-                                                                         MOTION_ELBOW_ACCEL_STRATEGY);
+                                                                                MOTION_ELBOW_INVERT_MOTOR, 
+                                                                                MOTION_ELBOW_kP,
+                                                                                MOTION_ELBOW_kI,
+                                                                                MOTION_ELBOW_kD,
+                                                                                MOTION_ELBOW_kF,
+                                                                                MOTION_ELBOW_TOLERANCE,
+                                                                                MOTION_ELBOW_LOWER_LIMIT,
+                                                                                MOTION_ELBOW_UPPER_LIMIT,
+                                                                                MOTION_ELBOW_SOFT_LIMITS,
+                                                                                MOTION_ELBOW_VELOCITY,
+                                                                                MOTION_ELBOW_ACCELERATION,
+                                                                                MOTION_ELBOW_ACCEL_STRATEGY);
 
     // Arm elbow position PID settings
     private static final double POSITION_ELBOW_kP = 1.0;
@@ -168,18 +167,18 @@ public final class Constants {
     
     // Arm elbow position PID config
     public static final SparkPIDConfig POSITION_ELBOW_CONFIG = new SparkPIDConfig(POSITION_ELBOW_SENSOR_PHASE, 
-                                                                         POSITION_ELBOW_INVERT_MOTOR, 
-                                                                         POSITION_ELBOW_kP,
-                                                                         POSITION_ELBOW_kI,
-                                                                         POSITION_ELBOW_kD,
-                                                                         POSITION_ELBOW_kF,
-                                                                         POSITION_ELBOW_TOLERANCE,
-                                                                         POSITION_ELBOW_LOWER_LIMIT,
-                                                                         POSITION_ELBOW_UPPER_LIMIT,
-                                                                         POSITION_ELBOW_SOFT_LIMITS,
-                                                                         POSITION_ELBOW_VELOCITY,
-                                                                         POSITION_ELBOW_ACCELERATION,
-                                                                         POSITION_ELBOW_ACCEL_STRATEGY);
+                                                                                  POSITION_ELBOW_INVERT_MOTOR, 
+                                                                                  POSITION_ELBOW_kP,
+                                                                                  POSITION_ELBOW_kI,
+                                                                                  POSITION_ELBOW_kD,
+                                                                                  POSITION_ELBOW_kF,
+                                                                                  POSITION_ELBOW_TOLERANCE,
+                                                                                  POSITION_ELBOW_LOWER_LIMIT,
+                                                                                  POSITION_ELBOW_UPPER_LIMIT,
+                                                                                  POSITION_ELBOW_SOFT_LIMITS,
+                                                                                  POSITION_ELBOW_VELOCITY,
+                                                                                  POSITION_ELBOW_ACCELERATION,
+                                                                                  POSITION_ELBOW_ACCEL_STRATEGY);
 
                                                                          
   }
