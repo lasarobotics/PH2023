@@ -4,11 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxLimitSwitch;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -18,14 +19,14 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     private boolean isHardwareReal;
     private SparkMax wristMotor;
     private SparkMax rollerMotor;
-    private DigitalInput objectPresenceDetector;
-    private DigitalInput objectDifferentiator;
+    private SparkMaxLimitSwitch objectPresenceDetector;
+    private SparkMaxLimitSwitch objectDifferentiator;
 
     public Hardware(boolean isHardwareReal,
                     SparkMax wristMotor, 
                     SparkMax rollerMotor,
-                    DigitalInput objectPresenceDetector,
-                    DigitalInput objectDifferentiator) {
+                    SparkMaxLimitSwitch objectPresenceDetector,
+                    SparkMaxLimitSwitch objectDifferentiator) {
       this.isHardwareReal = isHardwareReal;
       this.wristMotor = wristMotor;
       this.rollerMotor = rollerMotor;
@@ -42,8 +43,8 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   private SparkMax m_wristMotor;
   private SparkMax m_rollerMotor;
-  private DigitalInput m_objectPresenceDetector;
-  private DigitalInput m_objectDifferentiator;
+  private SparkMaxLimitSwitch m_objectPresenceDetector;
+  private SparkMaxLimitSwitch m_objectDifferentiator;
 
   /**
    * Create a new intake subsystem
@@ -62,14 +63,22 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     // Set motors to break
     m_wristMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
+
+    // Reset presence detection limit switches to default
+    m_objectPresenceDetector.enableLimitSwitch(true);
+    m_objectDifferentiator.enableLimitSwitch(false);
+
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
+    CANSparkMax objectPresenceDetectorPort = new CANSparkMax(Constants.IntakeHardware.PRESENCE_SENSOR_PORT, MotorType.kBrushless);
+    CANSparkMax objectDifferentiatorPort = new CANSparkMax(Constants.IntakeHardware.DIFFERENTIATOR_SENSOR_PORT, MotorType.kBrushless);
     Hardware intakeHardware = new Hardware(isHardwareReal,
                                            new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
                                            new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless),
-                                           new DigitalInput(Constants.IntakeHardware.PRESENCE_SENSOR_PORT),
-                                           new DigitalInput(Constants.IntakeHardware.DIFFERENTIATOR_SENSOR_PORT));
+                                           objectPresenceDetectorPort.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
+                                           objectDifferentiatorPort.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
+      );
     return intakeHardware;
   }
 
@@ -77,6 +86,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Intake game object
    */
   public void intake() {
+    m_objectPresenceDetector.enableLimitSwitch(true);
     m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
@@ -84,6 +94,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Outtake game object
    */
   public void outake() {
+    m_objectPresenceDetector.enableLimitSwitch(false);
     m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
@@ -92,7 +103,8 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   * @return boolean
   */
   public boolean isObjectPresent() {
-    return m_objectPresenceDetector.get(); // Circuit is open, object is present
+    // return m_objectPresenceDetector.get(); // Circuit is open, object is present
+    return m_objectPresenceDetector.isPressed();
   }
 
   /**
@@ -101,12 +113,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public GameObject identifyObject() {
     if (isObjectPresent()) {
-      if (m_objectDifferentiator.get()) // Circuit is open, whatever object the differentiator detects is present
-        return GameObject.Cone; // Cone for now - SUBJECT TO CHANGE
-      else
-        return GameObject.Cube;
+      if (m_objectDifferentiator.isPressed())  return GameObject.Cone; 
+      else return GameObject.Cube;
     }
-
     return null;
   }
 
