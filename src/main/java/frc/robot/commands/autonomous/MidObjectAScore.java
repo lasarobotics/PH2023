@@ -20,7 +20,9 @@ public class MidObjectAScore extends SequentialCommandGroup {
 
 		addCommands(
 			midObjectA1.getCommandAndStop(), 
+
 			midObjectA2.getCommandAndStop(), 
+
 			midObjectA3.getCommandAndStop()
 		);
 	}
