@@ -9,22 +9,24 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 /** 
- * Goes to top top object from top starting position and picks the object up
+ * Goes to top top object from top starting position and picks the object up, then scores on the upper top cone rod
  */
-public class TopObject extends SequentialCommandGroup {
+public class TopObjectScoreConeA extends SequentialCommandGroup {
 
 	/** 
-   * Create an instance of TopObject auto command
+   * Create an instance of TopObjectScoreConeA auto command
    *
    * @param driveSubsystem Pass in instance of driveSubsystem
    * @param intakeSubsystem Pass in instance of intakeSubsystem
   */
-  public TopObject(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
+  public TopObjectScoreConeA(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
     AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "top_object_1");
+    AutoTrajectory scoreObject = new AutoTrajectory(driveSubsystem, "top_object_score_2conea");
 
     addCommands(
       goToObject.getCommandAndStop(),
-      new InstantCommand(() -> { intakeSubsystem.intake() }, intakeSubsystem))
+      new InstantCommand(() -> { intakeSubsystem.intake() }, intakeSubsystem)),
+      scoreObject.getCommandAndStop()
     );
   }
 }
