@@ -8,11 +8,17 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/** 
+ * Goes to bottom object from bottom starting position and picks the object up
+ */
 public class BotObject extends SequentialCommandGroup {
-  // create a new tool objects
+
+  /** 
+   * Create an instance of BotObject auto command
+   *
+   * @param driveSubsystem Pass in instance of driveSubsystem
+   * @param intakeSubsystem Pass in instance of intakeSubsystem
+  */
   public BotObject(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
     AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "bot_object_1");
 

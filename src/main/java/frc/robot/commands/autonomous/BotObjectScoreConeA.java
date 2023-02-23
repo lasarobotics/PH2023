@@ -8,17 +8,24 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Goes to bottom object from bottom starting position and picks up the object, then goes to score on upper bottom cone rod
+ */
 public class BotObjectScoreConeA extends SequentialCommandGroup {
-	// create a new tool object
-	public BotObjectScoreConeA(DriveSubsystem driveSubsystem){
+
+	/** 
+   * Create an instance of BotObjectScoreConeA auto command
+   *
+   * @param driveSubsystem Pass in instance of driveSubsystem
+   * @param intakeSubsystem Pass in instance of intakeSubsystem
+  */
+	public BotObjectScoreConeA(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem){
 		AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "bot_object_1");
 		AutoTrajectory scoreObject = new AutoTrajectory(driveSubsystem, "bot_object_score_2conea");
 
 		addCommands(
 			goToObject.getCommandAndStop(),
+			new InstantCommand(() -> { intakeSubsystem.intake() }, intakeSubsystem)),
 			scoreObject.getCommandAndStop()
 		);
 	}

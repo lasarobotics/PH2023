@@ -8,17 +8,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TopPadObjectAuto extends SequentialCommandGroup {
 
-
-  /** Creates a new TopPadGameObjectAuto. */
+  // construct a new auto command object
   public TopPadObjectAuto(DriveSubsystem driveSubsystem) {
     AutoTrajectory topPadGameObject2 = new AutoTrajectory(driveSubsystem, "top_pad_object_2");
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     addCommands(
       topPadGameObject2.getCommandAndStop()
     );

@@ -9,18 +9,18 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 /** 
- * Goes to top middle object from middle starting position and picks the object up
+ * Goes to bottom middle object from middle starting position and picks the object up
  */
-public class MidObjectA extends SequentialCommandGroup {
+public class MidObjectB extends SequentialCommandGroup {
 
 	/** 
-   * Create an instance of MidObjectA auto command
+   * Create an instance of MidObjectB auto command
    *
    * @param driveSubsystem Pass in instance of driveSubsystem
    * @param intakeSubsystem Pass in instance of intakeSubsystem
   */
-  public MidObjectA(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
-    AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "mid_objecta_1");
+  public MidObjectB(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
+    AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "mid_objectb_1");
 
     addCommands(
       goToObject.getCommandAndStop(),

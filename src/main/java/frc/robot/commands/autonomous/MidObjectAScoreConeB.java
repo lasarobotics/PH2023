@@ -8,20 +8,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-/**
- * Goes to bottom object from bottom starting position and picks up the object, then goes to score on lower bottom cone rod
+/** 
+ * Goes to top middle object from middle starting position and picks the object up, then scores on lower middle cone rod
  */
-public class BotObjectScoreConeB extends SequentialCommandGroup {
+public class MidObjectAScoreConeB extends SequentialCommandGroup {
 
 	/** 
-   * Create an instance of BotObjectScoreConeB auto command
+   * Create an instance of MidObjectAScoreConeB auto command
    *
    * @param driveSubsystem Pass in instance of driveSubsystem
    * @param intakeSubsystem Pass in instance of intakeSubsystem
   */
-	public BotObjectScoreConeB(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem){
-		AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "bot_object_1");
-		AutoTrajectory scoreObject = new AutoTrajectory(driveSubsystem, "bot_object_score_2coneb");
+	public MidObjectAScoreConeB(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem){
+		AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "mid_objecta_1");
+		AutoTrajectory scoreObject = new AutoTrajectory(driveSubsystem, "mid_objecta_score_2coneb");
 
 		addCommands(
 			goToObject.getCommandAndStop(),
