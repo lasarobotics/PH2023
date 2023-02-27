@@ -31,7 +31,6 @@ public class TalonPIDConfig {
   private boolean m_sensorPhase = false;
   private boolean m_invertMotor = false;
   private double m_ticksPerRotation = 0.0;
-  private double m_maxRPM = 0.0;
   private double m_kP = 0.0;
   private double m_kI = 0.0;
   private double m_kD = 0.0;
@@ -50,25 +49,22 @@ public class TalonPIDConfig {
    * USE FOR VELOCITY PID ONLY!
    * @param sensorPhase set sensor phase of encoder
    * @param invertMotor invert motor or not
-   * @param maxRPM max RPM of encoder
    * @param ticksPerRotation number of ticks in one encoder revolution
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
-   * @param mechanicalEfficiency mechanical efficiency of mechanism [0.0, +1.0]
+   * @param kF feed forward gain
    * @param tolerance tolerance of PID loop in ticks per 100ms
    */
-  public TalonPIDConfig(boolean sensorPhase, boolean invertMotor,
-                        double maxRPM, double ticksPerRotation,
-                        double kP, double kI, double kD, 
-                        double mechanicalEfficiency, double tolerance) {
+  public TalonPIDConfig(boolean sensorPhase, boolean invertMotor, double ticksPerRotation,
+                        double kP, double kI, double kD, double kF, double tolerance) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
-    this.m_maxRPM = maxRPM * mechanicalEfficiency;
     this.m_ticksPerRotation = ticksPerRotation;
     this.m_kP = kP;
     this.m_kI = kI;
     this.m_kD = kD;
+    this.m_kF = kF;
     this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
 
     this.m_enableSoftLimits = false;
@@ -81,27 +77,26 @@ public class TalonPIDConfig {
    * @param sensorPhase set sensor phase of encoder
    * @param invertMotor invert motor or not
    * @param ticksPerRotation number of ticks in one encoder revolution
-   * @param maxRPM max RPM for this motor
    * @param kP proportional gain
    * @param kI integral gain
    * @param kD derivative gain
-   * @param mechanicalEfficiency mechanical efficiency of mechanism [0.0, +1.0]
+   * @param kF feed forward gain
    * @param tolerance tolerance of PID loop in ticks
    * @param velocity MotionMagic cruise velocity in RPM
    * @param accelerationRPMPerSec MotionMagic acceleration in RPM
    * @param motionSmoothing MotionMagic smoothing factor [0, 8]
    */
-  public TalonPIDConfig(boolean sensorPhase, boolean invertMotor, double ticksPerRotation, double maxRPM,
-                        double kP, double kI, double kD, double mechanicalEfficiency, double tolerance, 
+  public TalonPIDConfig(boolean sensorPhase, boolean invertMotor, double ticksPerRotation,
+                        double kP, double kI, double kD, double kF, double tolerance, 
                         double lowerLimit, double upperLimit, boolean enableSoftLimits,
                         double velocityRPM, double accelerationRPMPerSec, int motionSmoothing) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
     this.m_ticksPerRotation = ticksPerRotation;
-    this.m_maxRPM = maxRPM * MathUtil.clamp(mechanicalEfficiency, 0.0, 1.0);
     this.m_kP = kP;
     this.m_kI = kI;
     this.m_kD = kD;
+    this.m_kF = kF;
     this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
     this.m_lowerLimit = lowerLimit;
     this.m_upperLimit = upperLimit;
@@ -153,13 +148,10 @@ public class TalonPIDConfig {
     talon.config_kP(PID_SLOT, m_kP);
     talon.config_kI(PID_SLOT, m_kI);
     talon.config_kD(PID_SLOT, m_kD);
+    talon.config_kF(PID_SLOT, m_kF);
     talon.configAllowableClosedloopError(PID_SLOT, m_tolerance);
     talon.configClosedLoopPeakOutput(PID_SLOT, 1.0);
-
     talon.config_IntegralZone(PID_SLOT, m_tolerance * 2);
-
-    m_kF = 1023 / rpmToTicksPer100ms(m_maxRPM);
-    talon.config_kF(PID_SLOT, m_kF);
 
     // Configure motor deadband
     talon.configNeutralDeadband(MOTOR_DEADBAND);
