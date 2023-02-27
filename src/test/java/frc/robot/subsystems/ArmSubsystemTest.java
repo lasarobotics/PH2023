@@ -34,17 +34,19 @@ public class ArmSubsystemTest {
   private ArmSubsystem m_armSubsystem;
   private ArmSubsystem.Hardware m_armHardware;
 
-  private SparkMax m_shoulderMotor;
+  private SparkMax m_shoulderMasterMotor;
+  private SparkMax m_shoulderSlaveMotor;
   private SparkMax m_elbowMotor;
 
   @BeforeEach
   public void setup() {
     // Create mock hardware devices
-    m_shoulderMotor = mock(SparkMax.class);
+    m_shoulderMasterMotor = mock(SparkMax.class);
+    m_shoulderSlaveMotor = mock(SparkMax.class);
     m_elbowMotor = mock(SparkMax.class);
 
     // Create Hardware object using mock objects
-    m_armHardware = new ArmSubsystem.Hardware(MOCK_HARDWARE, m_shoulderMotor, m_elbowMotor);
+    m_armHardware = new ArmSubsystem.Hardware(MOCK_HARDWARE, m_shoulderMasterMotor, m_shoulderSlaveMotor, m_elbowMotor);
 
     // Create ArmSubsystem object
     m_armSubsystem = new ArmSubsystem(m_armHardware,
@@ -73,7 +75,7 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Stowed);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(1.364, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.364, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(158.058, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
@@ -88,7 +90,7 @@ public class ArmSubsystemTest {
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(36.699, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(33.443, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(33.443, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
@@ -102,7 +104,7 @@ public class ArmSubsystemTest {
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(28.461, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(79.654, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(79.654, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
@@ -115,7 +117,7 @@ public class ArmSubsystemTest {
 
     verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(10.279, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMotor, times(1)).set(AdditionalMatchers.eq(97.238, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(97.238, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }

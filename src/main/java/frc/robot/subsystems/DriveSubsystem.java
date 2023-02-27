@@ -196,14 +196,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     if (drivetrainHardware.isHardwareReal) {
       // Set position and velocity conversion factor, based on gearbox output shaft encoder
       double conversionFactor = DRIVE_WHEEL_DIAMETER_METERS * Math.PI;
-      m_lMasterMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
-      m_lMasterMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_rMasterMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
-      m_rMasterMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_lSlaveMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
-      m_lSlaveMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
-      m_rSlaveMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
-      m_rSlaveMotor.getAlternateEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_lMasterMotor.getRelativeEncoder().setPositionConversionFactor(conversionFactor);
+      m_lMasterMotor.getRelativeEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_rMasterMotor.getRelativeEncoder().setPositionConversionFactor(conversionFactor);
+      m_rMasterMotor.getRelativeEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_lSlaveMotor.getRelativeEncoder().setPositionConversionFactor(conversionFactor);
+      m_lSlaveMotor.getRelativeEncoder().setVelocityConversionFactor(conversionFactor / 60);
+      m_rSlaveMotor.getRelativeEncoder().setPositionConversionFactor(conversionFactor);
+      m_rSlaveMotor.getRelativeEncoder().setVelocityConversionFactor(conversionFactor / 60);
     }
 
     // Invert only left side
@@ -288,8 +288,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Reset left and right drive encoders
    */
   public void resetEncoders() {
-    m_lMasterMotor.resetAlternateEncoder();
-    m_rMasterMotor.resetAlternateEncoder();
+    m_lMasterMotor.resetRelativeEncoder();
+    m_rMasterMotor.resetRelativeEncoder();
   }
 
   @Override
@@ -453,8 +453,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getAlternateEncoderVelocity(), 
-                                            m_rMasterMotor.getAlternateEncoderVelocity());
+    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getRelativeEncoderVelocity(), 
+                                            m_rMasterMotor.getRelativeEncoderVelocity());
   }
 
   /**
@@ -462,7 +462,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return 
    */
   public double getAverageWheelSpeed() {
-    return Math.abs((m_lMasterMotor.getAlternateEncoderVelocity() + m_rMasterMotor.getAlternateEncoderVelocity()) / 2);
+    return Math.abs((m_lMasterMotor.getRelativeEncoderVelocity() + m_rMasterMotor.getRelativeEncoderVelocity()) / 2);
   }
 
   /**

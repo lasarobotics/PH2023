@@ -1,9 +1,11 @@
 package frc.robot.utils;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder.Type;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 public class SparkMax extends CANSparkMax {
   public static final int PID_SLOT = 0;
@@ -70,33 +72,23 @@ public class SparkMax extends CANSparkMax {
     return getEncoder().getVelocity();
   }
 
-  /**
-   * Returns an object for interfacing with the REV through bore encoder connected to the alternate encoder
-   * mode data port pins. These are defined as:
-   *
-   * <ul>
-   *   <li>Pin 4 (Forward Limit Switch): Index
-   *   <li>Pin 6 (Multi-function): Encoder A
-   *   <li>Pin 8 (Reverse Limit Switch): Encoder B
-   * </ul>
-   *
-   * <p>This call will disable support for the limit switch inputs.
-   *
-   * @return An object for interfacing with a quadrature encoder connected to the alternate encoder
-   *     mode data port pins
+   /**
+   * Returns an object for interfacing with a connected absolute encoder.
+   * 
+   * @return An object for interfacing with a connected absolute encoder
    */
-  public RelativeEncoder getAlternateEncoder() {
-    return getAlternateEncoder(Type.kQuadrature, ALT_ENCODER_CPR);
+  public AbsoluteEncoder getAbsoluteEncoder() {
+    return getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
   }
 
   /**
-   * Get the position of the motor. This returns the native units of 'rotations' by default, and can
+   * Get position of the motor. This returns the native units 'rotations' by default, and can
    * be changed by a scale factor using setPositionConversionFactor().
-   *
+   * 
    * @return Number of rotations of the motor
    */
-  public double getAlternateEncoderPosition() {
-    return getAlternateEncoder().getPosition();
+  public double getAbsoluteEncoderPosition() {
+    return getAbsoluteEncoder().getPosition();
   }
 
   /**
@@ -105,8 +97,43 @@ public class SparkMax extends CANSparkMax {
    *
    * @return Number the RPM of the motor
    */
-  public double getAlternateEncoderVelocity() {
-    return getAlternateEncoder().getVelocity();
+  public double getAbsoluteEncoderVelocity() {
+    return getAbsoluteEncoder().getVelocity();
+  }
+
+  /**
+   * Return an object for interfacing with a connected through bore encoder
+   * @return An object for interfacing with relative encoder
+   */
+  public RelativeEncoder getRelativeEncoder() {
+    return getEncoder(Type.kQuadrature, ALT_ENCODER_CPR);
+  }
+
+  /**
+   * Get the position of the motor. This returns the native units of 'rotations' by default, and can
+   * be changed by a scale factor using setPositionConversionFactor().
+   *
+   * @return Number of rotations of the motor
+   */
+  public double getRelativeEncoderPosition() {
+    return getRelativeEncoder().getPosition();
+  }
+
+  /**
+   * Get the velocity of the motor. This returns the native units of 'RPM' by default, and can be
+   * changed by a scale factor using setVelocityConversionFactor().
+   *
+   * @return Number the RPM of the motor
+   */
+  public double getRelativeEncoderVelocity() {
+    return getRelativeEncoder().getVelocity();
+  }
+
+  /**
+   * Reset relative encoder
+   */
+  public void resetRelativeEncoder() {
+    getRelativeEncoder().setPosition(0.0);
   }
 
   /**
@@ -114,12 +141,5 @@ public class SparkMax extends CANSparkMax {
    */
   public void resetEncoder() {
     getEncoder().setPosition(0.0);
-  }
-
-  /**
-   * Reset external through bore encoder
-   */
-  public void resetAlternateEncoder() {
-    getAlternateEncoder().setPosition(0.0);
   }
 }

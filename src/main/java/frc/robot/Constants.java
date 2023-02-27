@@ -195,8 +195,9 @@ public final class Constants {
   }
 
   public static class ArmHardware {
-    public static final int ARM_SHOULDER_MOTOR_ID = 6;
-    public static final int ARM_ELBOW_MOTOR_ID = 7;
+    public static final int ARM_SHOULDER_MASTER_MOTOR_ID = 6;
+    public static final int ARM_SHOULDER_SLAVE_MOTOR_ID = 7;
+    public static final int ARM_ELBOW_MOTOR_ID = 8;
   }
 
   public static class IntakeHardware {

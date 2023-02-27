@@ -20,13 +20,16 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   public static class Hardware {
     private boolean isHardwareReal;
-    private SparkMax shoulderMotor, elbowMotor;
+    private SparkMax shoulderMasterMotor, shoulderSlaveMotor;
+    private SparkMax elbowMotor;
 
     public Hardware(boolean isHardwareReal,
-                    SparkMax shoulderMotor, 
+                    SparkMax shoulderMasterMotor, 
+                    SparkMax shoulderSlaveMotor,
                     SparkMax elbowMotor) {
       this.isHardwareReal = isHardwareReal;
-      this.shoulderMotor = shoulderMotor;
+      this.shoulderMasterMotor = shoulderMasterMotor;
+      this.shoulderSlaveMotor = shoulderSlaveMotor;
       this.elbowMotor = elbowMotor;
     }
   }
@@ -37,20 +40,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * +Y is in front of robot
    */
   public enum ArmState {
-    Stowed(+0.498, +0.178),
+    Stowed(1.0, 1.0),
     Ground(+0.914, +0.922),
     Middle(+0.026, +1.322),
     High(-0.249, +1.331);
 
-    public final double x;
-    public final double y;
-    private ArmState(double x, double y) {
-      this.x = x;
-      this.y = y;
+    public final double shoulderAngle;
+    public final double elbowAngle;
+    private ArmState(double shoulderAngle, double elbowAngle) {
+      this.shoulderAngle = shoulderAngle;
+      this.elbowAngle = elbowAngle;
     }
   }
 
-  private SparkMax m_shoulderMotor;
+  private SparkMax m_shoulderMasterMotor;
+  private SparkMax m_shoulderSlaveMotor;
   private SparkMax m_elbowMotor;
 
   private SparkPIDConfig m_shoulderMotionConfig;
@@ -63,9 +67,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final int MOTION_CONFIG_PID_SLOT = 0;
   private final int POSITION_CONFIG_PID_SLOT = 1;
-
-  private final double UPPERARM_LENGTH = 0.9144;
-  private final double FOREARM_LENGTH = 0.4445;
 
   private final double SHOULDER_FF = 0.0;
   private final double ELBOW_FF = 0.0;
@@ -85,7 +86,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
 
   public ArmSubsystem(Hardware armHardware, Pair<SparkPIDConfig, SparkPIDConfig> shoulderConfigs, Pair<SparkPIDConfig, SparkPIDConfig> elbowConfigs) {
-    this.m_shoulderMotor = armHardware.shoulderMotor;
+    this.m_shoulderMasterMotor = armHardware.shoulderMasterMotor;
+    this.m_shoulderSlaveMotor = armHardware.shoulderSlaveMotor;
     this.m_elbowMotor = armHardware.elbowMotor;
 
     this.m_shoulderMotionConfig = shoulderConfigs.getFirst();
@@ -94,25 +96,28 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
 
     m_currentState = ArmState.Stowed;
-    m_armAngles = armIK(ArmState.Stowed);
     
     // Set all arm motors to brake
-    m_shoulderMotor.setIdleMode(IdleMode.kBrake);
-    m_elbowMotor.setIdleMode(IdleMode.kBrake);
+    m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_shoulderSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_elbowMotor.setIdleMode(IdleMode.kCoast);
+
+    // Make slave follow master
+    m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
 
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize PID
-      m_shoulderMotionConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
-      m_elbowMotionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+      m_shoulderMotionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+      m_elbowMotionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
 
-      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMotor, m_shoulderMotor.getAlternateEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
-      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAlternateEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
+      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
+      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
 
       // Set conversion factor
       double conversionFactor = 360;
-      m_shoulderMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
-      m_elbowMotor.getAlternateEncoder().setPositionConversionFactor(conversionFactor);
+      m_shoulderMasterMotor.getAbsoluteEncoder().setPositionConversionFactor(conversionFactor);
+      m_elbowMotor.getAbsoluteEncoder().setPositionConversionFactor(conversionFactor);
     }
   }
 
@@ -123,31 +128,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware armHardware = new Hardware(isHardwareReal,
-                                        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MOTOR_ID, MotorType.kBrushless),
+                                        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MASTER_MOTOR_ID, MotorType.kBrushless),
+                                        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_SLAVE_MOTOR_ID, MotorType.kBrushless),
                                         new SparkMax(Constants.ArmHardware.ARM_ELBOW_MOTOR_ID, MotorType.kBrushless));
     return armHardware;
-  }
-
-  /**
-   * Calculate arm joint angles given end effector coordinate
-   * @param x horizontal coordinate of end effector relative to shoulder joint
-   * @param y vertical coordinate of end effector relative to shoulder joint
-   * @return Tuple of shoulder angle, elbow angle in degrees
-   */
-  private Pair<Double, Double> armIK(ArmState armState) {
-    double shoulderAngle = 0.0;
-    double elbowAngle = 0.0;
-
-    elbowAngle = Math.acos(
-      (Math.pow(armState.x, 2) + Math.pow(armState.y, 2) - Math.pow(UPPERARM_LENGTH, 2) - Math.pow(FOREARM_LENGTH, 2))
-      / 
-      (2 * UPPERARM_LENGTH * FOREARM_LENGTH)
-    );
-
-    shoulderAngle = Math.atan(armState.y / armState.x) - Math.atan((FOREARM_LENGTH * Math.sin(elbowAngle)) / (UPPERARM_LENGTH + FOREARM_LENGTH * Math.cos(elbowAngle)));
-    if (armState.x < 0) shoulderAngle += Math.PI;
-
-    return new Pair<Double, Double>(Math.toDegrees(shoulderAngle), Math.toDegrees(elbowAngle));
   }
 
   /**
@@ -155,13 +139,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private void holdPosition() {
     // Calculate feed forward
-    Pair<Double, Double> feedForwards = calculateFF(m_armAngles);
+    Pair<Double, Double> feedForwards = calculateFF();
 
     // Set shoulder and elbow positions
     if(shoulderInPositionMode)
-      m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kPosition, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+      m_shoulderMasterMotor.set(m_currentState.shoulderAngle, ControlType.kPosition, feedForwards.getFirst(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
     if(elbowInPositionMode)
-      m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kPosition, feedForwards.getSecond(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
+      m_elbowMotor.set(m_currentState.elbowAngle, ControlType.kPosition, feedForwards.getSecond(), ArbFFUnits.kVoltage, POSITION_CONFIG_PID_SLOT);
   }
 
   /**
@@ -169,10 +153,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armAngles Angle of shoulder and elbow in degrees
    * @return Tuple of shoulder feed forward, elbow feed forward
    */
-  private Pair<Double, Double> calculateFF(Pair<Double, Double> armAngles) {
+  private Pair<Double, Double> calculateFF() {
     return new Pair<Double,Double>(
-      SHOULDER_FF * Math.cos(Math.toRadians(90 - armAngles.getFirst())), 
-      ELBOW_FF * Math.cos(Math.toRadians(90 - armAngles.getSecond()))
+      SHOULDER_FF * Math.cos(Math.toRadians(90 - m_currentState.shoulderAngle)), 
+      ELBOW_FF * Math.cos(Math.toRadians(90 - m_currentState.elbowAngle))
     );
   }
 
@@ -181,7 +165,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if shoulder motion is complete
    */
   public boolean isShoulderMotionComplete() {
-    return Math.abs(m_shoulderMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMotor.getAlternateEncoderPosition() == m_armAngles.getFirst();
+    return Math.abs(m_shoulderMasterMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMasterMotor.getAbsoluteEncoderPosition() == m_currentState.shoulderAngle;
   }
 
 
@@ -190,7 +174,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if elbow motion is complete
    */
   public boolean isElbowMotionComplete() {
-    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getAlternateEncoderPosition() == m_armAngles.getSecond();
+    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getAbsoluteEncoderPosition() == m_currentState.elbowAngle;
   }
 
   @Override
@@ -200,6 +184,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     elbowInPositionMode = isElbowMotionComplete();
 
     holdPosition();
+
+    System.out.println("Shoulder angle: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+    System.out.println("Elbow angle: " + m_elbowMotor.getAbsoluteEncoderPosition());
   }
 
   /**
@@ -210,14 +197,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Update current state
     m_currentState = armState;
 
-    // Calculate arm angles
-    m_armAngles = armIK(armState);
-
-
     // Calculate feed forward
-    Pair<Double, Double> feedForwards = calculateFF(m_armAngles);
+    Pair<Double, Double> feedForwards = calculateFF();
 
-    m_shoulderMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    m_shoulderMasterMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
     m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
   }
 
@@ -232,7 +215,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void close() {
-    m_shoulderMotor.close();
+    m_shoulderMasterMotor.close();
     m_elbowMotor.close();
   }
 }
