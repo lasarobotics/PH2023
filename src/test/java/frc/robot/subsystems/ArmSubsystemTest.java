@@ -75,9 +75,9 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Stowed);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.364, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(158.058, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
   }
 
@@ -88,9 +88,9 @@ public class ArmSubsystemTest {
         // Try to move arm to ground state
     m_armSubsystem.setArmState(ArmState.Ground);
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(36.699, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(33.443, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
@@ -102,9 +102,9 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Middle);
         // Try to move arm to middle state
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(28.461, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(79.654, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }
@@ -115,9 +115,9 @@ public class ArmSubsystemTest {
         // Try to move arm to high state
     m_armSubsystem.setArmState(ArmState.High);
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(10.279, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(97.238, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
                                                   
   }

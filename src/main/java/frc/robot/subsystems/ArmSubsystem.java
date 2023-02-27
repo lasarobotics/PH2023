@@ -41,9 +41,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public enum ArmState {
     Stowed(1.0, 1.0),
-    Ground(+0.914, +0.922),
-    Middle(+0.026, +1.322),
-    High(-0.249, +1.331);
+    Ground(1.0, 1.0),
+    Middle(1.0, 1.0),
+    High(1.0, 1.0);
 
     public final double shoulderAngle;
     public final double elbowAngle;
@@ -70,8 +70,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final double SHOULDER_FF = 0.0;
   private final double ELBOW_FF = 0.0;
-
-  private Pair<Double, Double> m_armAngles;
 
   private ArmState m_currentState;
 
@@ -200,8 +198,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Calculate feed forward
     Pair<Double, Double> feedForwards = calculateFF();
 
-    m_shoulderMasterMotor.set(m_armAngles.getFirst(), ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
-    m_elbowMotor.set(m_armAngles.getSecond(), ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    m_shoulderMasterMotor.set(m_currentState.shoulderAngle, ControlType.kSmartMotion, feedForwards.getFirst(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
+    m_elbowMotor.set(m_currentState.elbowAngle, ControlType.kSmartMotion, feedForwards.getSecond(), ArbFFUnits.kVoltage, MOTION_CONFIG_PID_SLOT);
   }
 
 
