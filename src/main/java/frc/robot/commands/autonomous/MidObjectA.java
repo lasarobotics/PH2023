@@ -4,23 +4,29 @@
 
 package frc.robot.commands.autonomous;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/** 
+ * Goes to top middle object from middle starting position and picks the object up
+ */
 public class MidObjectA extends SequentialCommandGroup {
-  /** Creates a new TopObject. */
-  public MidObjectA(DriveSubsystem driveSubsystem) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    AutoTrajectory midObjectA1 = new AutoTrajectory(driveSubsystem, "mid_objecta_1");
-    AutoTrajectory midObjectA2 = new AutoTrajectory(driveSubsystem, "mid_objecta_1b");
+
+	/** 
+   * Create an instance of MidObjectA auto command
+   *
+   * @param driveSubsystem Pass in instance of driveSubsystem
+   * @param intakeSubsystem Pass in instance of intakeSubsystem
+  */
+  public MidObjectA(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
+    AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "mid_objecta_1");
+
     addCommands(
-      midObjectA1.getCommandAndStop(),
-      midObjectA2.getCommandAndStop()
+      goToObject.getCommandAndStop(),
+      new InstantCommand(() -> intakeSubsystem.intake(), intakeSubsystem)
     );
   }
 }

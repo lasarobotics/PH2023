@@ -77,7 +77,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Intake game object
    */
   public void intake() {
-    m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+      m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   /**

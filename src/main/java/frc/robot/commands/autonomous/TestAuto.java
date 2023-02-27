@@ -4,24 +4,24 @@
 
 package frc.robot.commands.autonomous;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import java.util.List;
+
+import com.pathplanner.lib.PathPoint;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TestAuto extends SequentialCommandGroup {
-  /** Creates a new Test. */
+  
+  // construct a new auto command object
   public TestAuto(DriveSubsystem driveSubsystem) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    Pose2d waypoints[] = {
-      new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-      new Pose2d(2.0, 0.0, new Rotation2d(0.0))
-    };
+    List<PathPoint> waypoints = List.of(
+      new PathPoint(new Translation2d(0.0, 0.0), new Rotation2d()),
+      new PathPoint(new Translation2d(2.0, 0.0), new Rotation2d())
+    );
 
     addCommands(
       new AutoTrajectory(driveSubsystem, waypoints, false, 0.5, 0.5).getCommandAndStop()

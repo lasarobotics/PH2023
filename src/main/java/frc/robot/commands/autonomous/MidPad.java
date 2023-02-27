@@ -7,17 +7,17 @@ package frc.robot.commands.autonomous;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
-
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Crosses line and goes to pad from middle position
+ */
 public class MidPad extends SequentialCommandGroup {
-	// create a new tool object
+
+  // construct a new auto command object
 	public MidPad(DriveSubsystem driveSubsystem){
-		AutoTrajectory midPad = new AutoTrajectory(driveSubsystem, "mid_pad_1");
+		AutoTrajectory crossAndGoToPad = new AutoTrajectory(driveSubsystem, "mid_pad_1");
 
 		addCommands(
-			midPad.getCommandAndStop()
+			crossAndGoToPad.getCommandAndStop()
 		);
 	}
 }

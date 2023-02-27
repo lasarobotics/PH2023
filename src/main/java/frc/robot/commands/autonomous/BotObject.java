@@ -11,22 +11,22 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 /** 
- * Goes to top top object from top starting position and picks the object up
+ * Goes to bottom object from bottom starting position and picks the object up
  */
-public class TopObject extends SequentialCommandGroup {
+public class BotObject extends SequentialCommandGroup {
 
-	/** 
-   * Create an instance of TopObject auto command
+  /** 
+   * Create an instance of BotObject auto command
    *
    * @param driveSubsystem Pass in instance of driveSubsystem
    * @param intakeSubsystem Pass in instance of intakeSubsystem
   */
-  public TopObject(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
-    AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "top_object_1");
+  public BotObject(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
+    AutoTrajectory goToObject = new AutoTrajectory(driveSubsystem, "bot_object_1");
 
     addCommands(
       goToObject.getCommandAndStop(),
-      new InstantCommand(() -> intakeSubsystem.intake(), intakeSubsystem)
+      new InstantCommand(() ->  intakeSubsystem.intake(), intakeSubsystem)
     );
   }
 }
