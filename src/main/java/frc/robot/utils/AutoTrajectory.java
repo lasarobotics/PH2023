@@ -7,12 +7,14 @@
 
 package frc.robot.utils;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -115,7 +117,7 @@ public class AutoTrajectory {
   }
 
   /**
-   * Get Ramsete command to run, resetting odometry first
+   * Get auto command to execute path, resetting odometry first
    * @param isFirstPath true if path is the first one in autonomous
    * @return Ramsete command that will stop when complete
    */
@@ -126,12 +128,46 @@ public class AutoTrajectory {
                  .andThen(() -> {
                     m_driveSubsystem.resetDrivePID();
                     m_driveSubsystem.stop();
-                 });
+                  });
     } else return getCommandAndStop();
+  }
+
+  /**
+   * Get auto command to execute path and events along the way
+   * @param eventMap Map of event marker names to the commands that should run when reaching that
+   *     marker. This SHOULD NOT contain any commands requiring the same subsystems as the path
+   *     following command.
+   * @return Command to execute actions in autonomous
+   */
+  public Command getCommandAndStopWithEvents(HashMap<String, Command> eventMap) {
+    return new FollowPathWithEvents(m_ramseteCommand, m_trajectory.getMarkers(), eventMap)
+               .andThen(() -> {
+                  m_driveSubsystem.resetDrivePID();
+                  m_driveSubsystem.stop();
+                });
+  }
+
+  /**
+   * Get auto command to execute path and events along the way, resetting odometry first
+   * @param isFirstPath true if path is the first one in autonomous
+   * @param eventMap Map of event marker names to the commands that should run when reaching that
+   *     marker. This SHOULD NOT contain any commands requiring the same subsystems as the path
+   *     following command.
+   * @return Command to execute actions in autonomous
+   */
+  public Command getCommandAndStopWithEvents(boolean isFirstPath, HashMap<String, Command> eventMap) {
+    if (isFirstPath) {
+      return new InstantCommand(() -> resetOdometry())
+                 .andThen(new FollowPathWithEvents(m_ramseteCommand, m_trajectory.getMarkers(), eventMap))
+                 .andThen(() -> {
+                    m_driveSubsystem.resetDrivePID();
+                    m_driveSubsystem.stop();
+                  });
+    } else return getCommandAndStopWithEvents(eventMap);
   }
   
   /**
-   * Get Ramsete command to run
+   * Get auto command to execute path
    * @return Ramsete command that does NOT stop when complete
    */
   public Command getCommand() {
@@ -139,7 +175,7 @@ public class AutoTrajectory {
   }
 
   /**
-   * Get Ramsete command to run, resetting odometry first
+   * Get auto command to execute path, resetting odometry first
    * @param isFirstPath true if path is first one in autonomous
    * @return Ramsete command that does NOT stop when complete
    */
