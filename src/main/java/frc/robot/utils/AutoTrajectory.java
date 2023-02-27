@@ -99,7 +99,7 @@ public class AutoTrajectory {
   /**
    * Reset drive odometry to beginning of this path
    */
-  public void resetOdometry() {
+  private void resetOdometry() {
     m_driveSubsystem.resetOdometry(m_trajectory.getInitialPose());
   }
 
@@ -108,12 +108,26 @@ public class AutoTrajectory {
    * @return Ramsete command that will stop when complete
    */
   public Command getCommandAndStop() {
-    return new InstantCommand(() -> resetOdometry())
-               .andThen(m_ramseteCommand)
-               .andThen(() -> {
-                m_driveSubsystem.resetDrivePID();
-                m_driveSubsystem.stop();
-               });
+    return m_ramseteCommand.andThen(() -> {
+            m_driveSubsystem.resetDrivePID();
+            m_driveSubsystem.stop();
+           });
+  }
+
+  /**
+   * Get Ramsete command to run, resetting odometry first
+   * @param isFirstPath true if path is the first one in autonomous
+   * @return Ramsete command that will stop when complete
+   */
+  public Command getCommandAndStop(boolean isFirstPath) {
+    if (isFirstPath) {
+      return new InstantCommand(() -> resetOdometry())
+                 .andThen(m_ramseteCommand)
+                 .andThen(() -> {
+                    m_driveSubsystem.resetDrivePID();
+                    m_driveSubsystem.stop();
+                 });
+    } else return getCommandAndStop();
   }
   
   /**
@@ -121,10 +135,19 @@ public class AutoTrajectory {
    * @return Ramsete command that does NOT stop when complete
    */
   public Command getCommand() {
-    return new InstantCommand(() -> resetOdometry())
-               .andThen(m_ramseteCommand)
-               .andThen(() -> {
-                m_driveSubsystem.resetDrivePID();
-               });
+    return m_ramseteCommand.andThen(() -> m_driveSubsystem.resetDrivePID());
+  }
+
+  /**
+   * Get Ramsete command to run, resetting odometry first
+   * @param isFirstPath true if path is first one in autonomous
+   * @return Ramsete command that does NOT stop when complete
+   */
+  public Command getCommand(boolean isFirstPath) {
+    if (isFirstPath) {
+      return new InstantCommand(() -> resetOdometry())
+                 .andThen(m_ramseteCommand)
+                 .andThen(() -> m_driveSubsystem.resetDrivePID());
+    } else return getCommand();  
   }
 }
