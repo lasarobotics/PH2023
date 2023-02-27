@@ -7,11 +7,13 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPoint;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -25,6 +27,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -440,12 +443,12 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Controls the left and right sides of the drive directly with velocities.
    * <p>
    * Only use this method to drive during autonomous!
-   * @param leftVelocity Left velocity in m/s
-   * @param rightVelocity Right velocity in m/s
+   * @param leftVoltage Left side output voltage
+   * @param rightVoltage Right side output voltage
    */
-  public void autoTankDrive(double leftVelocity, double rightVelocity) {
-    m_lMasterMotor.set(m_tractionControlController.lookupVelocity(leftVelocity), ControlType.kDutyCycle);
-    m_rMasterMotor.set(m_tractionControlController.lookupVelocity(rightVelocity), ControlType.kDutyCycle);
+  public void autoTankDrive(double leftVoltage, double rightVoltage) {
+    m_lMasterMotor.setVoltage(rightVoltage);
+    m_rMasterMotor.setVoltage(rightVoltage);
   }
   
   /**
@@ -601,12 +604,12 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       if (getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2])) goToLocation = targets[2];
     }
 
-    Pose2d waypoints[] = { 
-      new Pose2d(currentPosition.getX(), currentPosition.getY(), new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
-      new Pose2d(goToLocation.getX(), goToLocation.getY(), new Rotation2d(-goToLocation.getRotation().getX(), -goToLocation.getRotation().getY()))
-    };
+    List<PathPoint> waypoints = List.of( 
+      new PathPoint(new Translation2d(currentPosition.getX(), currentPosition.getY()), new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
+      new PathPoint(new Translation2d(goToLocation.getX(), goToLocation.getY()), new Rotation2d(-goToLocation.getRotation().getX(), -goToLocation.getRotation().getY()))
+    );
 
-    return new AutoTrajectory(this, waypoints, false, 0.5, 0.5).getCommandAndStop();
+    return new AutoTrajectory(this, waypoints, false, getInertialVelocity(), 0.5).getCommandAndStop();
   }
 
   @Override
