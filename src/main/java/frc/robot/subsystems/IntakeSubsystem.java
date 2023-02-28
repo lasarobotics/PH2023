@@ -35,7 +35,6 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     Cone, Cube
   }
 
-  private SparkMax m_wristMotor;
   private SparkMax m_rollerMotor;
   private SparkMaxLimitSwitch m_objectPresenceDetector;
   private SparkMaxLimitSwitch m_objectDifferentiator;
@@ -118,7 +117,6 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void close() {
-    m_wristMotor.close();
     m_rollerMotor.close();
   }
 }
