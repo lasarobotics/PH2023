@@ -35,11 +35,7 @@ public class TestPath extends SequentialCommandGroup {
     AutoTrajectory testPath = new AutoTrajectory(driveSubsystem, "test_path");
 
     addCommands(
-      new FollowPathWithEvents(
-        testPath.getCommandAndStop(), 
-        testPath.getMarkers(), 
-        eventMap
-      )
+      testPath.getCommandAndStopWithEvents(eventMap)
     );
   }
 }
