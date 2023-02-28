@@ -219,8 +219,8 @@ public class DriveSubsystemTest {
     // Hardcode NAVX sensor and encoders
     when(m_navx.getAngle()).thenReturn(0.0);
     when(m_navx.getVelocityY()).thenReturn((float)+0.5);
-    when(m_lMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
-    when(m_rMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
+    when(m_lMasterMotor.getRelativeEncoderVelocity()).thenReturn(+2.0);
+    when(m_rMasterMotor.getRelativeEncoderVelocity()).thenReturn(+2.0);
 
     // Try to drive at full throttle with traction control enabled
     m_driveSubsystem.enableTractionControl();
@@ -240,8 +240,8 @@ public class DriveSubsystemTest {
     // Hardcode NAVX sensor and encoders
     when(m_navx.getAngle()).thenReturn(0.0);
     when(m_navx.getVelocityY()).thenReturn((float)+0.5);
-    when(m_lMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
-    when(m_rMasterMotor.getAlternateEncoderVelocity()).thenReturn(+2.0);
+    when(m_lMasterMotor.getRelativeEncoderVelocity()).thenReturn(+2.0);
+    when(m_rMasterMotor.getRelativeEncoderVelocity()).thenReturn(+2.0);
 
     // Try to drive at full throttle with traction control disabled
     m_driveSubsystem.disableTractionControl();

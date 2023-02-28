@@ -195,15 +195,13 @@ public final class Constants {
   }
 
   public static class ArmHardware {
-    public static final int ARM_SHOULDER_MOTOR_ID = 6;
-    public static final int ARM_ELBOW_MOTOR_ID = 7;
+    public static final int ARM_SHOULDER_MASTER_MOTOR_ID = 6;
+    public static final int ARM_SHOULDER_SLAVE_MOTOR_ID = 7;
+    public static final int ARM_ELBOW_MOTOR_ID = 8;
   }
 
   public static class IntakeHardware {
-    public static final int WRIST_MOTOR_ID = 10;
-    public static final int ROLLER_MOTOR_ID = 11;
-    public static final int PRESENCE_SENSOR_PORT = 0;
-    public static final int DIFFERENTIATOR_SENSOR_PORT = 1;
+    public static final int ROLLER_MOTOR_ID = 9;
   }
 
   public static class AccessoryHardware {
