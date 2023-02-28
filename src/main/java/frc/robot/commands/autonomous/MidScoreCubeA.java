@@ -4,20 +4,22 @@
 
 package frc.robot.commands.autonomous;
 
+import java.util.HashMap;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
-/**
- * Crosses line and goes to pad from middle position
- */
-public class MidPad extends SequentialCommandGroup {
 
+public class MidScoreCubeA extends SequentialCommandGroup {
+  
   // construct a new auto command object
-	public MidPad(DriveSubsystem driveSubsystem){
-		AutoTrajectory crossAndGoToPad = new AutoTrajectory(driveSubsystem, "mid_pad_1");
+  public MidScoreCubeA(DriveSubsystem driveSubsystem, HashMap<String, Command> eventMap) {
 
-		addCommands(
-			crossAndGoToPad.getCommandAndStop()
-		);
-	}
+    AutoTrajectory testPath = new AutoTrajectory(driveSubsystem, "mid_scoreCube_objectA");
+
+    addCommands(
+      testPath.getCommandAndStopWithEvents(true, eventMap)
+    );
+  }
 }
