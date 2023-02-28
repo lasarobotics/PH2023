@@ -13,6 +13,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.PathPlannerTrajectory.EventMarker;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -101,6 +102,14 @@ public class AutoTrajectory {
    */
   private void resetOdometry() {
     m_driveSubsystem.resetOdometry(m_trajectory.getInitialPose());
+  }
+
+  /**
+   * Get markers of path
+   * @return A list of markers within the path
+   */
+  public List<EventMarker> getMarkers() {
+    return m_trajectory.getMarkers();
   }
 
   /**
