@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,28 +16,23 @@ import frc.robot.utils.SparkMax;
 public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   public static class Hardware {
     private boolean isHardwareReal;
-    private SparkMax wristMotor;
     private SparkMax rollerMotor;
     private SparkMaxLimitSwitch objectPresenceDetector;
     private SparkMaxLimitSwitch objectDifferentiator;
 
     public Hardware(boolean isHardwareReal,
-                    SparkMax wristMotor, 
                     SparkMax rollerMotor,
                     SparkMaxLimitSwitch objectPresenceDetector,
                     SparkMaxLimitSwitch objectDifferentiator) {
       this.isHardwareReal = isHardwareReal;
-      this.wristMotor = wristMotor;
       this.rollerMotor = rollerMotor;
       this.objectPresenceDetector = objectPresenceDetector;
       this.objectDifferentiator = objectDifferentiator;
     }
   }
 
-  // TODO: Change color targets to be accurate
   public enum GameObject {
-    Cone,
-    Cube
+    Cone, Cube
   }
 
   private SparkMax m_wristMotor;
@@ -51,33 +45,30 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @param intakeHardware Intake hardware
    */
   public IntakeSubsystem(Hardware intakeHardware) {
-    this.m_wristMotor = intakeHardware.wristMotor;
     this.m_rollerMotor = intakeHardware.rollerMotor;
     this.m_objectPresenceDetector = intakeHardware.objectPresenceDetector;
     this.m_objectDifferentiator = intakeHardware.objectDifferentiator;
 
     // Reset motors to default
-    m_wristMotor.restoreFactoryDefaults();
     m_rollerMotor.restoreFactoryDefaults();
 
     // Set motors to break
-    m_wristMotor.setIdleMode(IdleMode.kBrake);
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
 
     // Reset presence detection limit switches to default
     m_objectPresenceDetector.enableLimitSwitch(true);
     m_objectDifferentiator.enableLimitSwitch(false);
 
+    // Only do this stuff if hardware is real
+    if (intakeHardware.isHardwareReal) {}
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
-    CANSparkMax objectPresenceDetectorPort = new CANSparkMax(Constants.IntakeHardware.PRESENCE_SENSOR_PORT, MotorType.kBrushless);
-    CANSparkMax objectDifferentiatorPort = new CANSparkMax(Constants.IntakeHardware.DIFFERENTIATOR_SENSOR_PORT, MotorType.kBrushless);
+    SparkMax rollerMotor = new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless);
     Hardware intakeHardware = new Hardware(isHardwareReal,
-                                           new SparkMax(Constants.IntakeHardware.WRIST_MOTOR_ID, MotorType.kBrushless),
-                                           new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless),
-                                           objectPresenceDetectorPort.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
-                                           objectDifferentiatorPort.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
+                                           rollerMotor,
+                                           rollerMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
+                                           rollerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
       );
     return intakeHardware;
   }
@@ -100,10 +91,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
   * Identifies whether a game object is present
-  * @return boolean
+  * @return true if object is present
   */
   public boolean isObjectPresent() {
-    // return m_objectPresenceDetector.get(); // Circuit is open, object is present
     return m_objectPresenceDetector.isPressed();
   }
 
@@ -113,16 +103,11 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public GameObject identifyObject() {
     if (isObjectPresent()) {
-      if (m_objectDifferentiator.isPressed())  return GameObject.Cone; 
+      if (m_objectDifferentiator.isPressed()) return GameObject.Cone; 
       else return GameObject.Cube;
     }
     return null;
   }
-
-  /**
-   * Read and return current color
-   * @return Color, currently detected color by sensor
-   */
 
   /**
    * Stops motor
