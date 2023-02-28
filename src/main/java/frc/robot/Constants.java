@@ -212,4 +212,14 @@ public final class Constants {
     public static final String SMARTDASHBOARD_DEFAULT_TAB = "SmartDashboard";
     public static final String SMARTDASHBOARD_AUTO_MODE = "Auto Mode";
   }
+
+  public static class Auto {
+    public static final String EVENT_MAP_INTAKE = "intake";
+    public static final String EVENT_MAP_OUTAKE = "outake";
+    public static final String EVENT_MAP_PRINT = "print";
+    public static final String EVENT_MAP_STOWED = "stowed";
+    public static final String EVENT_MAP_GROUND = "ground";
+    public static final String EVENT_MAP_MIDDLE = "middle";
+    public static final String EVENT_MAP_HIGH = "high";
+  }
 }
