@@ -5,21 +5,32 @@
 package frc.robot;
 
 
+import java.util.HashMap;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.autonomous.BotObject;
-import frc.robot.commands.autonomous.MidObjectA;
-import frc.robot.commands.autonomous.MidPad;
+import frc.robot.commands.autonomous.BotScoreConeA;
+import frc.robot.commands.autonomous.BotScoreConeB;
+import frc.robot.commands.autonomous.BotScoreCube;
+import frc.robot.commands.autonomous.MidScoreConeAA;
+import frc.robot.commands.autonomous.MidScoreConeAB;
+import frc.robot.commands.autonomous.MidScoreConeBA;
+import frc.robot.commands.autonomous.MidScoreConeBB;
+import frc.robot.commands.autonomous.MidScoreCubeA;
+import frc.robot.commands.autonomous.MidScoreCubeB;
 import frc.robot.commands.autonomous.TestAuto;
-import frc.robot.commands.autonomous.TopObject;
+import frc.robot.commands.autonomous.TopScoreConeA;
+import frc.robot.commands.autonomous.TopScoreConeB;
+import frc.robot.commands.autonomous.TopScoreCube;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
@@ -59,6 +70,16 @@ public class RobotContainer {
                                                                           )
                                                                     );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(IntakeSubsystem.initializeHardware(REAL_HARDWARE));
+
+  private static final HashMap<String, Command> EVENT_MAP = new HashMap<>() {{;
+      put(Constants.Auto.EVENT_MAP_INTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
+      put(Constants.Auto.EVENT_MAP_OUTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+      put(Constants.Auto.EVENT_MAP_PRINT, new PrintCommand("It has crossed the threshold"));
+      put(Constants.Auto.EVENT_MAP_STOWED, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
+      put(Constants.Auto.EVENT_MAP_GROUND, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
+      put(Constants.Auto.EVENT_MAP_MIDDLE, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
+      put(Constants.Auto.EVENT_MAP_HIGH, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
+  }};
 
   // Controllers
   private static final CommandXboxController PRIMARY_CONTROLLER = 
@@ -119,11 +140,20 @@ public class RobotContainer {
    */
   private void autoModeChooser() {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
-    m_automodeChooser.addOption("Bottom object", new BotObject(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
-    m_automodeChooser.addOption("Middle ObjectA", new MidObjectA(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
-    m_automodeChooser.addOption("Middle and Charging Station", new MidPad(DRIVE_SUBSYSTEM));
-    m_automodeChooser.addOption("Top Object", new TopObject(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
-    m_automodeChooser.addOption("Test", new TestAuto(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Bottom score held Cube then pickup new object", new BotScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Bottom score held ConeA then pickup new object", new BotScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Bottom score held ConeB then pickup new object", new BotScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held Cube then pickup ObjectA and go to pad", new MidScoreCubeA(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held ConeA then pickup new ObjectA and go to pad", new MidScoreConeAA(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held ConeB then pickup new ObjectA and go to pad", new MidScoreConeBA(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held Cube then pickup new ObjectB and go to pad", new MidScoreCubeB(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held ConeA then pickup new ObjectB and go to pad", new MidScoreConeAB(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Middle score held ConeB then pickup new ObjectB and go to pad", new MidScoreConeBB(DRIVE_SUBSYSTEM, EVENT_MAP));
+    // m_automodeChooser.addOption("Middle score go to pad", new (DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Top score held Cube then pickup new object", new TopScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Top score held ConeA then pickup new object", new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Top score held ConeB then pickup new object", new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
+    // m_automodeChooser.addOption("Test - Go forward", new (DRIVE_SUBSYSTEM, EVENT_MAP));
   }
 
   /**
