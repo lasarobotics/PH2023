@@ -121,8 +121,10 @@ public class SparkPIDConfig {
     SparkMaxPIDController pidController = spark.getPIDController();
 
     // Configure feedback sensor and set sensor phase
-    pidController.setFeedbackDevice(feedbackSensor);
-    feedbackSensor.setInverted(m_sensorPhase);
+    try {
+      pidController.setFeedbackDevice(feedbackSensor);
+      feedbackSensor.setInverted(m_sensorPhase);
+    } catch (IllegalArgumentException e) {}
     
     // Configure forward and reverse soft limits
     if (m_enableSoftLimits) {
@@ -184,8 +186,10 @@ public class SparkPIDConfig {
     SparkMaxPIDController pidController = spark.getPIDController();
 
     // Configure feedback sensor and set sensor phase
-    pidController.setFeedbackDevice(feedbackSensor);
-    feedbackSensor.setInverted(m_sensorPhase);
+    try {
+      pidController.setFeedbackDevice(feedbackSensor);
+      feedbackSensor.setInverted(m_sensorPhase);
+    } catch (IllegalArgumentException e) {}
     
     // Configure forward and reverse soft limits
     if (m_enableSoftLimits) {
