@@ -168,6 +168,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState Arm state, which includes shoulder and elbow position
    */
   public void setArmState(ArmState armState) {
+    // If already at arm position, don't move
+    if (armState == m_currentState) return;
+
     // Update current state
     m_currentState = armState;
 
