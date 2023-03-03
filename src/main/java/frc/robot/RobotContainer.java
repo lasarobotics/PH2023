@@ -112,6 +112,9 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
     PRIMARY_CONTROLLER.leftBumper().whileTrue(DRIVE_SUBSYSTEM.moveToClosestTarget(INTAKE_SUBSYSTEM.identifyObject()));
     PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
+
+    // PRIMARY_CONTROLLER.axisGreaterThan(1, Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.moveShoulder(PRIMARY_CONTROLLER.getRawAxis(1)), ARM_SUBSYSTEM))
+    //   .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.moveShoulder(0.0)));
   }
 
   /**

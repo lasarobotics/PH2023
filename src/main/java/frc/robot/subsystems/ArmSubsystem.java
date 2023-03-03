@@ -38,10 +38,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(-1.0, -1.0),
-    Ground(-21.0, -60.0),
-    Middle(-93.0, -60.0),
-    High(-115.0, -55.0);
+    Stowed(+0.89, +0.57),
+    Ground(+0.85, -0.29),
+    Middle(+0.63, +0.10),
+    High(+0.60, +0.10);
 
     public final double shoulderAngle;
     public final double elbowAngle;
@@ -90,9 +90,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     
     // Set all arm motors to brake
-    m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_shoulderSlaveMotor.setIdleMode(IdleMode.kCoast);
-    m_elbowMotor.setIdleMode(IdleMode.kCoast);
+    m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
+    m_elbowMotor.setIdleMode(IdleMode.kBrake);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
@@ -100,15 +100,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize PID
-      m_shoulderMotionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
-      m_elbowMotionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+      m_shoulderMotionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
+      m_elbowMotionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
 
-      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
-      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
-
-      // Reset encoders
-      m_shoulderMasterMotor.resetEncoder();
-      m_elbowMotor.resetEncoder();
+      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
+      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false, POSITION_CONFIG_PID_SLOT);
     }
   }
 
@@ -123,6 +119,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
                                         new SparkMax(Constants.ArmHardware.ARM_SHOULDER_SLAVE_MOTOR_ID, MotorType.kBrushless),
                                         new SparkMax(Constants.ArmHardware.ARM_ELBOW_MOTOR_ID, MotorType.kBrushless));
     return armHardware;
+  }
+
+  public void moveShoulder(double value) {
+    m_shoulderMasterMotor.set(value);
   }
 
   /**
@@ -141,7 +141,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if shoulder motion is complete
    */
   public boolean isShoulderMotionComplete() {
-    return Math.abs(m_shoulderMasterMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMasterMotor.getEncoderPosition() == m_currentState.shoulderAngle;
+    return Math.abs(m_shoulderMasterMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMasterMotor.getAbsoluteEncoderPosition() == m_currentState.shoulderAngle;
   }
 
   /**
@@ -149,7 +149,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if elbow motion is complete
    */
   public boolean isElbowMotionComplete() {
-    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getEncoderPosition() == m_currentState.elbowAngle;
+    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getAbsoluteEncoderPosition() == m_currentState.elbowAngle;
   }
 
   @Override
@@ -159,8 +159,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Hold position if motion is complete
     holdPosition(isShoulderMotionComplete(), isElbowMotionComplete());
 
-    System.out.println("Shoulder position: " + m_shoulderMasterMotor.getEncoderPosition());
-    System.out.println("Elbow position: " + m_elbowMotor.getEncoderPosition());
+    System.out.println("Shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+    System.out.println("Elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
   }
 
   /**
