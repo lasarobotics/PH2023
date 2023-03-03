@@ -14,7 +14,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
   private ArmSubsystem m_armSubsystem;
-  private ArmState m_armState;
+  private ArmState m_prevArmState;
   private CommandXboxController m_controller;
 
   /** Creates a new IntakeCommand. */
@@ -31,7 +31,7 @@ public class IntakeCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_armState = m_armSubsystem.getArmState();
+    m_prevArmState = m_armSubsystem.getArmState();
     m_intakeSubsystem.intake();
   }
 
@@ -42,9 +42,9 @@ public class IntakeCommand extends CommandBase {
       m_controller.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
       m_controller.getHID().setRumble(RumbleType.kRightRumble, 1.0);
 
-      if (m_armState != ArmState.Middle && m_armState != ArmState.High) {
+      if (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High) {
         m_armSubsystem.setArmState(ArmState.Stowed);
-        end(true);
+        end(false);
       }
     } else {
       m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
@@ -57,6 +57,9 @@ public class IntakeCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
     m_controller.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+
+    if (interrupted && (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High))
+      m_armSubsystem.setArmState(ArmState.Stowed);
 
     m_intakeSubsystem.stop();
   }
