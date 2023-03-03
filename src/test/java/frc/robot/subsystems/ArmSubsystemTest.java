@@ -75,50 +75,51 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Stowed);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.89, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.57, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
   }
 
   @Test
   @Order(2)
   @DisplayName("Test if robot can move arm to ground position")
   public void groundArm() {
-        // Try to move arm to ground state
+    // Try to move arm to ground state
     m_armSubsystem.setArmState(ArmState.Ground);
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-                                                  
+    // Verify motors are being driven with expected values
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.85, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.29, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
   }
 
   @Test
   @Order(3)
   @DisplayName("Test if robot can move arm to middle position")
   public void middleArm() {
+    // Try to move arm to middle state
     m_armSubsystem.setArmState(ArmState.Middle);
-        // Try to move arm to middle state
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
+    // Verify motors are being driven with expected values
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.63, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.10, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
                                                   
   }
   @Test
   @Order(4)
   @DisplayName("Test if robot can move arm to high position")
   public void highArm() {
-        // Try to move arm to high state
+    // Try to move arm to high state
     m_armSubsystem.setArmState(ArmState.High);
 
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(1.0, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kVoltage), ArgumentMatchers.eq(0));
-                                                  
+    // Verify motors are being driven with expected values
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.60, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.10, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));                                                  
   }
 }
