@@ -54,6 +54,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     // Set motors to break
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
 
+    // Inver roller motor
+    m_rollerMotor.setInverted(true);
+
     // Reset presence detection limit switches to default
     m_objectPresenceDetector.enableLimitSwitch(true);
     m_objectDifferentiator.enableLimitSwitch(false);
