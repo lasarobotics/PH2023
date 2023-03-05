@@ -12,7 +12,6 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Arm;
 import frc.robot.utils.SparkMax;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -39,9 +38,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public enum ArmState {
     Stowed(+0.89, +0.57),
-    Ground(+0.85, +0.29),
-    Middle(+0.63, +0.10),
-    High(+0.60, +0.10);
+    Ground(+0.84, +0.36),
+    Middle(+0.70, +0.28),
+    High(+0.60, +0.06);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -59,6 +58,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkPIDConfig m_shoulderPositionConfig;
   private SparkPIDConfig m_elbowMotionConfig;
   private SparkPIDConfig m_elbowPositionConfig;
+
+  private final double CONVERSION_FACTOR = 360.0;
+  private final double SHOULDER_FF = 0.02;
+  private final double ELBOW_FF = 0.01;
 
   private final int MOTION_CONFIG_PID_SLOT = 0;
   private final int POSITION_CONFIG_PID_SLOT = 1;
@@ -86,11 +89,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
 
     m_currentState = ArmState.Stowed;
-    
+
     // Set all arm motors to brake
     m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
     m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
-    m_elbowMotor.setIdleMode(IdleMode.kBrake);
+    m_elbowMotor.setIdleMode(IdleMode.kCoast);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
@@ -106,8 +109,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     }
   }
 
-
-   /**
+  /**
    * Initialize hardware devices for drive subsystem
    * @return hardware object containing all necessary devices for this subsystem
    */
@@ -120,14 +122,46 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Calculate feed forward for shoulder
+   * @return Correctly scaled feed forward based on shoulder angle
+   */
+  private double calculateShoulderFF() {
+      return SHOULDER_FF * Math.sin(Math.toRadians(m_currentState.shoulderPosition * CONVERSION_FACTOR));
+  }
+
+  /**
+   * Calculate feed forward for elbow
+   * @return Correctly scaled feed forward based on elbow angle
+   */
+  private double calculateElbowFF() {
+    return ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
+  }
+
+  /**
+   * Check if shoulder motion is complete
+   * @return True if shoulder motion is complete
+   */
+  private boolean isShoulderMotionComplete() {
+    return Math.abs(m_shoulderMasterMotor.getAbsoluteEncoderPosition() - m_currentState.shoulderPosition) <= m_shoulderMotionConfig.getTolerance();
+  }
+
+  /**
+   * Check if motion is complete
+   * @return True if elbow motion is complete
+   */
+  private boolean isElbowMotionComplete() {
+    return Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentState.elbowPosition) <= m_elbowMotionConfig.getTolerance();
+  }
+
+  /**
    * Makes the arm hold position
    */
   private void holdPosition(boolean shoulderMotionComplete, boolean elbowMotionComplete) {
     // Set shoulder and elbow positions
-    if (shoulderMotionComplete)
-      m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kPosition, 0.0, ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
-    if (elbowMotionComplete)
-      m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kPosition, 0.0, ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
+    if (shoulderMotionComplete) 
+      m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
+    if (elbowMotionComplete) 
+      m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
   }
 
   @Override
@@ -136,25 +170,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Hold position if motion is complete
     holdPosition(isShoulderMotionComplete(), isElbowMotionComplete());
-
-    System.out.println("Shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
-    System.out.println("Elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
-  }
-
-  /**
-   * Check if shoulder motion is complete
-   * @return True if shoulder motion is complete
-   */
-  public boolean isShoulderMotionComplete() {
-    return Math.abs(m_shoulderMasterMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_shoulderMasterMotor.getAbsoluteEncoderPosition() == m_currentState.shoulderPosition;
-  }
-
-  /**
-   * Check if motion is complete
-   * @return True if elbow motion is complete
-   */
-  public boolean isElbowMotionComplete() {
-    return Math.abs(m_elbowMotor.get()) <= Arm.MOTOR_END_VELOCITY_THRESHOLD && m_elbowMotor.getAbsoluteEncoderPosition() == m_currentState.elbowPosition;
   }
 
   /**
@@ -169,7 +184,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
     m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
   }
-
 
   /**
    * Get current arm state

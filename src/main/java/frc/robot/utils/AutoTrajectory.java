@@ -27,10 +27,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class AutoTrajectory {
   // Ramsete Command values
-  private final double VOLTS_kS = 0.37608; 
-  private final double VOLT_SECONDS_PER_METER_kV = 2.8367;
-  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.23014;
-  private final double kP = 1.0;
+  private final double VOLTS_kS = 0.041809; 
+  private final double VOLT_SECONDS_PER_METER_kV = 2.855;
+  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.84148;
+  private final double kP = 0;
   private final double kD = 0; 
   private final boolean USE_ALLIANCE = true;
 
@@ -51,7 +51,7 @@ public class AutoTrajectory {
     m_trajectory = PathPlanner.loadPath(pathName, PathPlanner.getConstraintsFromPath(pathName));
 
     RamseteController ramseteController = new RamseteController();
-    ramseteController.setEnabled(true);
+    ramseteController.setEnabled(false);
 
     m_ramseteCommand = new PPRamseteCommand(
       m_trajectory, 
@@ -82,7 +82,7 @@ public class AutoTrajectory {
     m_trajectory = PathPlanner.generatePath(new PathConstraints(maxVelocity, maxAcceleration), reversed, waypoints);
 
     RamseteController ramseteController = new RamseteController();
-    ramseteController.setEnabled(true);
+    ramseteController.setEnabled(false);
 
     m_ramseteCommand = new PPRamseteCommand(
       m_trajectory, 

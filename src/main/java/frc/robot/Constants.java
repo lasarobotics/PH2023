@@ -38,8 +38,8 @@ public final class Constants {
 
   public static class Drive {
     public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.019, 0.0, 0.0012, 0.0);
-    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.02, 0.0, 0.0004, 0.0);
-    public static final double DRIVE_SLIP_RATIO = 0.05;
+    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
+    public static final double DRIVE_SLIP_RATIO = 0.12;
     public static final double DRIVE_TURN_SCALAR = 40.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
@@ -57,14 +57,12 @@ public final class Constants {
   }
 
   public static class Arm {
-    public static final double MOTOR_END_VELOCITY_THRESHOLD = 0.005;
-
     // Arm shoulder motion PID settings
     private static final double MOTION_SHOULDER_kP = 0.0005;
     private static final double MOTION_SHOULDER_kI = 0.0;
     private static final double MOTION_SHOULDER_kD = 0.0;
     private static final double MOTION_SHOULDER_kF = 0.001;
-    private static final double MOTION_SHOULDER_TOLERANCE = 0.02;
+    private static final double MOTION_SHOULDER_TOLERANCE = 0.005;
     private static final double MOTION_SHOULDER_LOWER_LIMIT = 0.5;
     private static final double MOTION_SHOULDER_UPPER_LIMIT = 0.9;
     private static final double MOTION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
@@ -90,11 +88,11 @@ public final class Constants {
                                                                                    MOTION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 0.0001;
+    private static final double POSITION_SHOULDER_kP = 0.1;
     private static final double POSITION_SHOULDER_kI = 0.0;
     private static final double POSITION_SHOULDER_kD = 0.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
-    private static final double POSITION_SHOULDER_TOLERANCE = 0.02;
+    private static final double POSITION_SHOULDER_TOLERANCE = 0.005;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = 0.5;
     private static final double POSITION_SHOULDER_UPPER_LIMIT = 0.9;
     private static final double POSITION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
@@ -125,11 +123,11 @@ public final class Constants {
     private static final double MOTION_ELBOW_kI = 0.0;
     private static final double MOTION_ELBOW_kD = 0.0;
     private static final double MOTION_ELBOW_kF = 0.0;
-    private static final double MOTION_ELBOW_TOLERANCE = 0.02;
+    private static final double MOTION_ELBOW_TOLERANCE = 0.01;
     private static final double MOTION_ELBOW_LOWER_LIMIT = 0.1;
     private static final double MOTION_ELBOW_UPPER_LIMIT = 0.6;
     private static final double MOTION_ELBOW_VELOCITY = Global.NEO_MAX_RPM / 2;
-    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM / 2;
+    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
     private static final boolean MOTION_ELBOW_SOFT_LIMITS = true;
     private static final boolean MOTION_ELBOW_SENSOR_PHASE = false;
     private static final boolean MOTION_ELBOW_INVERT_MOTOR = false;
@@ -155,7 +153,7 @@ public final class Constants {
     private static final double POSITION_ELBOW_kI = 0.0;
     private static final double POSITION_ELBOW_kD = 0.0;
     private static final double POSITION_ELBOW_kF = 0.0;
-    private static final double POSITION_ELBOW_TOLERANCE = 0.02;
+    private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = 0.1;
     private static final double POSITION_ELBOW_UPPER_LIMIT = 0.6;
     private static final double POSITION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;

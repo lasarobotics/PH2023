@@ -123,6 +123,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final double GRID_OFFSET_X = 0.5588;
   private final double GRID_OFFSET_Z = 1.0;
   private final double VISION_AIM_DAMPENER = 0.9;
+
+  private final double BALANCE_OFFSET = 0.5;
  
   private double m_deadband = 0.0;
 
@@ -322,7 +324,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   /**
    * Initialize drive subsystem for teleop
    */
-  public void teleopInit() {
+public void teleopInit() {
     // Set all drive motors to coast
     m_lMasterMotor.setIdleMode(IdleMode.kCoast);
     m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
@@ -367,6 +369,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rMasterMotor.set(speedOutput, ControlType.kDutyCycle, +turnOutput, ArbFFUnits.kPercentOut);
   }
 
+  /**
+   * Call this repeatedly to automatically balance robot in pitch orientation
+   */
   public void autoBalance() {
     double pitchOutput = m_pitchPIDController.calculate(getPitch());
 
@@ -472,9 +477,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Resets the odometry
    */
   public void resetOdometry(Pose2d pose) {
-    resetAngle();
     resetEncoders();
-    m_poseEstimator.resetPosition(new Rotation2d(), 0.0, 0.0, pose);
+    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(getAngle()), 0.0, 0.0, pose);
   }
 
   /**
@@ -483,7 +487,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Repeatedly call this method at a steady rate to keep track of robot position
    */
   public void updateOdometry() {
-    m_poseEstimator.update(m_navx.getRotation2d(), 
+    m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()), 
                            m_lMasterMotor.getEncoderPosition(),
                            m_rMasterMotor.getEncoderPosition());
     Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
@@ -555,7 +559,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Current pitch angle
    */
   public double getPitch() {
-    return m_navx.getPitch();
+    return m_navx.getRoll() + BALANCE_OFFSET;
   }
 
   /**

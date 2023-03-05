@@ -12,8 +12,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 public class BotScoreCube extends SequentialCommandGroup {
-  
-  // construct a new auto command object
   public BotScoreCube(DriveSubsystem driveSubsystem, HashMap<String, Command> eventMap) {
 
     AutoTrajectory testPath = new AutoTrajectory(driveSubsystem, "bot_scoreCube_object");

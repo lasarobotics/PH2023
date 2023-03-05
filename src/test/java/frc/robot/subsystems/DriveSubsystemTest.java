@@ -227,9 +227,9 @@ public class DriveSubsystemTest {
     m_driveSubsystem.teleopPID(+1.0, 0.0);
 
     // Verify that left and right motors are being driven with the expected values
-    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.130, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.142, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
-    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.130, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.142, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
   }
 
@@ -259,7 +259,7 @@ public class DriveSubsystemTest {
   @DisplayName("Test if robot will auto balance when tipped forward")
   public void balanceForwardTest() {
     // Hardcode navX sensor
-    when(m_navx.getPitch()).thenReturn(30.0f);
+    when(m_navx.getRoll()).thenReturn(30.0f);
 
     // Try to auto balance
     m_driveSubsystem.autoBalance();
@@ -274,7 +274,7 @@ public class DriveSubsystemTest {
   @DisplayName("Test if robot will auto balance when tipped backward")
   public void balanceBackwardTest() {
     // Hardcode navX sensor 
-    when(m_navx.getPitch()).thenReturn(-30.0f);
+    when(m_navx.getRoll()).thenReturn(-30.0f);
 
     // Try to auto balance
     m_driveSubsystem.autoBalance();

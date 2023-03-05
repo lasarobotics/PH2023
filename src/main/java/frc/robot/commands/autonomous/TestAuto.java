@@ -24,7 +24,7 @@ public class TestAuto extends SequentialCommandGroup {
     );
 
     addCommands(
-      new AutoTrajectory(driveSubsystem, waypoints, false, 0.5, 0.5).getCommandAndStop()
+      new AutoTrajectory(driveSubsystem, waypoints, false, 0.5, 0.5).getCommandAndStop(true)
     );
   }
 }

@@ -16,7 +16,6 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
  */
 public class SparkPIDConfig {
   private static final double MAX_VOLTAGE = 12.0;
-  private static final double MIN_TOLERANCE = 1.0;
   private static final int PID_SLOT = 0;
 
   private boolean m_smartMotion = false;
@@ -57,7 +56,7 @@ public class SparkPIDConfig {
     this.m_kI = kI;
     this.m_kD = kD;
     this.m_kF = kF;
-    this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
+    this.m_tolerance = tolerance;
 
     this.m_enableSoftLimits = false;
 
@@ -92,7 +91,7 @@ public class SparkPIDConfig {
     this.m_kI = kI;
     this.m_kD = kD;
     this.m_kF = kF;
-    this.m_tolerance = Math.max(tolerance, MIN_TOLERANCE);
+    this.m_tolerance = tolerance;
     this.m_lowerLimit = lowerLimit;
     this.m_upperLimit = upperLimit;
     this.m_enableSoftLimits = enableSoftLimits;

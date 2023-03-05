@@ -105,7 +105,7 @@ public class ArmSubsystemTest {
     // Verify motors are being driven with expected values
     verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.63, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.10, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.28, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
                                                   
   }
@@ -119,7 +119,7 @@ public class ArmSubsystemTest {
     // Verify motors are being driven with expected values
     verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.60, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.10, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.06, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
                                                                   AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));                                                  
   }
 }

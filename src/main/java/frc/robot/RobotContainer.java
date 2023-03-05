@@ -28,6 +28,7 @@ import frc.robot.commands.autonomous.MidScoreConeBA;
 import frc.robot.commands.autonomous.MidScoreConeBB;
 import frc.robot.commands.autonomous.MidScoreCubeA;
 import frc.robot.commands.autonomous.MidScoreCubeB;
+import frc.robot.commands.autonomous.TestPath;
 import frc.robot.commands.autonomous.TopScoreConeA;
 import frc.robot.commands.autonomous.TopScoreConeB;
 import frc.robot.commands.autonomous.TopScoreCube;
@@ -125,16 +126,13 @@ public class RobotContainer {
 
     PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
     PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
     PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
     PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
     PRIMARY_CONTROLLER.leftBumper().whileTrue(DRIVE_SUBSYSTEM.moveToClosestTarget(INTAKE_SUBSYSTEM.identifyObject()));
-    PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
-
-    // PRIMARY_CONTROLLER.axisGreaterThan(1, Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.moveShoulder(PRIMARY_CONTROLLER.getRawAxis(1)), ARM_SUBSYSTEM))
-    //   .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.moveShoulder(0.0)));
   }
 
   /**
@@ -151,11 +149,10 @@ public class RobotContainer {
     m_automodeChooser.addOption("Middle score held Cube then pickup new ObjectB and go to pad", new MidScoreCubeB(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Middle score held ConeA then pickup new ObjectB and go to pad", new MidScoreConeAB(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Middle score held ConeB then pickup new ObjectB and go to pad", new MidScoreConeBB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    // m_automodeChooser.addOption("Middle score go to pad", new (DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held Cube then pickup new object", new TopScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeA then pickup new object", new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeB then pickup new object", new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    // m_automodeChooser.addOption("Test - Go forward", new (DRIVE_SUBSYSTEM, EVENT_MAP));
+    m_automodeChooser.addOption("Test auto", new TestPath(DRIVE_SUBSYSTEM));
   }
 
   /**
