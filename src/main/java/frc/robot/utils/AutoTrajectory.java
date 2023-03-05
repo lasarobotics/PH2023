@@ -27,10 +27,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class AutoTrajectory {
   // Ramsete Command values
-  private final double VOLTS_kS = 0.041809; 
-  private final double VOLT_SECONDS_PER_METER_kV = 2.855;
-  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.84148;
-  private final double kP = 0;
+  private final double VOLTS_kS = 0.050416; 
+  private final double VOLT_SECONDS_PER_METER_kV = 2.889;
+  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.54109;
+  private final double kP = 0.81275;
   private final double kD = 0; 
   private final boolean USE_ALLIANCE = true;
 
