@@ -452,7 +452,7 @@ public void teleopInit() {
    * @param rightVoltage Right side output voltage
    */
   public void autoTankDrive(double leftVoltage, double rightVoltage) {
-    m_lMasterMotor.setVoltage(rightVoltage);
+    m_lMasterMotor.setVoltage(leftVoltage);
     m_rMasterMotor.setVoltage(rightVoltage);
   }
   
