@@ -29,5 +29,7 @@ Keypoints:
 - Motion profiling to gain greater dexterity of motor position and velocity.
 
 ## [Vision Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/VisionSubsystem.java)
-- 
+
+We utilize a forward and rear facing PhotonCamera (a Raspberry Pi camera module) to scan AprilTags across the field. By using this method, we are able to correct our pose relative to detected AprilTags on opposite sides of the field using visual simultaneous location and mapping (vSLAM). The field layout of the AprilTags' pose is saved and read, providing a virtual map in the field useful throughout the competition.  
+
 ## [Intake Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/IntakeSubsystem.java)
