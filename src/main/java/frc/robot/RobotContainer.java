@@ -74,7 +74,7 @@ public class RobotContainer {
 
   private static final HashMap<String, Command> EVENT_MAP = new HashMap<>() {{;
       put(Constants.Auto.EVENT_MAP_INTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
-      put(Constants.Auto.EVENT_MAP_OUTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+      put(Constants.Auto.EVENT_MAP_OUTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
       put(Constants.Auto.EVENT_MAP_PRINT, new PrintCommand("It has crossed the threshold"));
       put(Constants.Auto.EVENT_MAP_STOWED, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Stowed)));
       put(Constants.Auto.EVENT_MAP_GROUND, new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
@@ -125,7 +125,7 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
 
     PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
-    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outake()));
+    PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
