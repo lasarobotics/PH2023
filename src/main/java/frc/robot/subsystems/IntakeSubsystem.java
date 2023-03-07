@@ -86,15 +86,15 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   /**
    * Outtake game object
    */
-  public void outake() {
+  public void outtake() {
     m_objectPresenceDetector.enableLimitSwitch(false);
     m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   /**
-  * Identifies whether a game object is present
-  * @return true if object is present
-  */
+   * Identifies whether a game object is present
+   * @return true if object is present
+   */
   public boolean isObjectPresent() {
     return m_objectPresenceDetector.isPressed();
   }
