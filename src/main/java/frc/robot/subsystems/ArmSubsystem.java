@@ -37,8 +37,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.89, +0.57),
-    Ground(+0.84, +0.36),
+    Stowed(+0.90, +0.55),
+    Ground(+0.84, +0.34),
     Middle(+0.70, +0.28),
     High(+0.60, +0.06);
 
@@ -60,8 +60,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkPIDConfig m_elbowPositionConfig;
 
   private final double CONVERSION_FACTOR = 360.0;
-  private final double SHOULDER_FF = 0.02;
-  private final double ELBOW_FF = 0.01;
+  private final double SHOULDER_FF = 0.011;
+  private final double ELBOW_FF = 0.005;
 
   private final int MOTION_CONFIG_PID_SLOT = 0;
   private final int POSITION_CONFIG_PID_SLOT = 1;
