@@ -92,9 +92,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-  * Identifies whether a game object is present
-  * @return true if object is present
-  */
+   * Identifies whether a game object is present
+   * @return true if object is present
+   */
   public boolean isObjectPresent() {
     return m_objectPresenceDetector.isPressed();
   }
