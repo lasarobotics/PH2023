@@ -449,13 +449,25 @@ public void teleopInit() {
   }
 
   /**
-   * Controls the left and right sides of the drive directly with velocities.
+   * Controls the left and right sides of the drive directly using velocities
+   * <p>
+   * Only use this method to drive during autonomous!
+   * @param leftVelocity Left side linear velocity
+   * @param rightVelocity Right side linear velocity
+   */
+  public void autoDrive(double leftVelocity, double rightVelocity) {
+    m_lMasterMotor.set(m_tractionControlController.lookupVelocity(leftVelocity), ControlType.kDutyCycle);
+    m_rMasterMotor.set(m_tractionControlController.lookupVelocity(rightVelocity), ControlType.kDutyCycle);
+  }
+
+  /**
+   * Controls the left and right sides of the drive directly with voltages.
    * <p>
    * Only use this method to drive during autonomous!
    * @param leftVoltage Left side output voltage
    * @param rightVoltage Right side output voltage
    */
-  public void autoTankDrive(double leftVoltage, double rightVoltage) {
+  public void autoDriveVoltage(double leftVoltage, double rightVoltage) {
     m_lMasterMotor.setVoltage(leftVoltage);
     m_rMasterMotor.setVoltage(rightVoltage);
   }
