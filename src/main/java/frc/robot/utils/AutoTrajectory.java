@@ -18,20 +18,13 @@ import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AutoTrajectory {
   // Ramsete Command values
-  private final double VOLTS_kS = 0.050416; 
-  private final double VOLT_SECONDS_PER_METER_kV = 2.889;
-  private final double VOLT_SECONDS_SQUARED_PER_METER_kA = 0.54109;
-  private final double kP = 0.81275;
-  private final double kD = 0; 
   private final boolean USE_ALLIANCE = true;
 
   DriveSubsystem m_driveSubsystem;
@@ -57,12 +50,8 @@ public class AutoTrajectory {
       m_trajectory, 
       m_driveSubsystem::getPose,
       ramseteController, 
-      new SimpleMotorFeedforward(VOLTS_kS, VOLT_SECONDS_PER_METER_kV, VOLT_SECONDS_SQUARED_PER_METER_kA), 
-      m_driveSubsystem.getKinematics(), 
-      m_driveSubsystem::getWheelSpeeds, 
-      new PIDController(kP, 0.0, kD), 
-      new PIDController(kP, 0.0, kD), 
-      m_driveSubsystem::autoTankDrive, 
+      m_driveSubsystem.getKinematics(),
+      m_driveSubsystem::autoDrive, 
       USE_ALLIANCE, 
       m_driveSubsystem
     );
@@ -88,12 +77,8 @@ public class AutoTrajectory {
       m_trajectory, 
       m_driveSubsystem::getPose,
       ramseteController, 
-      new SimpleMotorFeedforward(VOLTS_kS, VOLT_SECONDS_PER_METER_kV, VOLT_SECONDS_SQUARED_PER_METER_kA), 
-      m_driveSubsystem.getKinematics(), 
-      m_driveSubsystem::getWheelSpeeds, 
-      new PIDController(kP, 0.0, kD), 
-      new PIDController(kP, 0.0, kD), 
-      m_driveSubsystem::autoTankDrive, 
+      m_driveSubsystem.getKinematics(),
+      m_driveSubsystem::autoDrive, 
       USE_ALLIANCE, 
       m_driveSubsystem
     );
