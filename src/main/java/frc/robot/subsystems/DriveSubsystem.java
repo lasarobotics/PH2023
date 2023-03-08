@@ -181,7 +181,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     m_gridSelector = new GridSelector(0);
 
-    m_velocityFilter = LinearFilter.singlePoleIIR(0.1, Constants.Global.ROBOT_LOOP_PERIOD);
+    m_velocityFilter = LinearFilter.singlePoleIIR(Constants.Global.ROBOT_LOOP_PERIOD, Constants.Global.ROBOT_LOOP_PERIOD);
     
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
