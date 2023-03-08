@@ -32,6 +32,9 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void initialize() {
     m_prevArmState = m_armSubsystem.getArmState();
+
+    if (m_prevArmState == ArmState.Stowed) m_armSubsystem.setArmState(ArmState.Ground);
+    
     m_intakeSubsystem.intake();
   }
 
