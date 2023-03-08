@@ -37,10 +37,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.90, +0.55),
-    Ground(+0.84, +0.34),
-    Middle(+0.70, +0.28),
-    High(+0.60, +0.06);
+    Stowed(+0.905, +0.580),
+    Ground(+0.840, +0.305),
+    Middle(+0.700, +0.280),
+    High(+0.600, +0.020);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -93,7 +93,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Set all arm motors to brake
     m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
     m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
-    m_elbowMotor.setIdleMode(IdleMode.kCoast);
+    m_elbowMotor.setIdleMode(IdleMode.kBrake);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);

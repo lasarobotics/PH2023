@@ -146,6 +146,9 @@ public class SparkPIDConfig {
     // Invert motor if required
     spark.setInverted(m_invertMotor);
 
+    // Don't wrap PID positions
+    pidController.setPositionPIDWrappingEnabled(false);
+
     // Configure PID values
     pidController.setP(m_kP, PID_SLOT);
     pidController.setI(m_kI, PID_SLOT);
@@ -165,7 +168,7 @@ public class SparkPIDConfig {
     }
 
     // Write settings to onboard flash
-    spark.burnFlash();
+    for (int i = 0; i < 10; i++) spark.burnFlash();
   }
 
 
@@ -230,7 +233,7 @@ public class SparkPIDConfig {
     }
 
     // Write settings to onboard flash
-    spark.burnFlash();
+    for (int i = 0; i < 10; i++) spark.burnFlash();
   }
 
 
