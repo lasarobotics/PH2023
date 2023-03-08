@@ -33,8 +33,8 @@ public class IntakeCommand extends CommandBase {
   public void initialize() {
     m_prevArmState = m_armSubsystem.getArmState();
 
-    if (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High)
-      m_armSubsystem.setArmState(ArmState.Ground);
+    if (m_prevArmState == ArmState.Stowed) m_armSubsystem.setArmState(ArmState.Ground);
+    
     m_intakeSubsystem.intake();
   }
 
