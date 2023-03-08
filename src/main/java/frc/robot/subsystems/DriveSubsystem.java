@@ -24,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -108,6 +109,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private TractionControlController m_tractionControlController;
   private DifferentialDrivePoseEstimator m_poseEstimator;
   private DifferentialDriveKinematics m_kinematics;
+  private LinearFilter m_velocityFilter;
 
   private SparkMax m_lMasterMotor;
   private SparkMax m_lSlaveMotor;
@@ -178,6 +180,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_deadband = deadband;
 
     m_gridSelector = new GridSelector(0);
+
+    m_velocityFilter = LinearFilter.singlePoleIIR(0.1, Constants.Global.ROBOT_LOOP_PERIOD);
     
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
@@ -527,7 +531,7 @@ public void teleopInit() {
    * @return Velocity of the robot as measured by the NAVX
    */
   public double getInertialVelocity() {
-    return m_navx.getVelocityY();
+    return m_velocityFilter.calculate(m_navx.getVelocityY());
   }
 
   /**
