@@ -491,7 +491,7 @@ public void teleopInit() {
    * Repeatedly call this method at a steady rate to keep track of robot position
    */
   public void updateOdometry() {
-    m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()), 
+    m_poseEstimator.update(m_navx.getRotation2d(), 
                            m_lMasterMotor.getEncoderPosition(),
                            m_rMasterMotor.getEncoderPosition());
     Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
