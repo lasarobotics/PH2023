@@ -482,7 +482,7 @@ public void teleopInit() {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    m_poseEstimator.resetPosition(Rotation2d.fromDegrees(getAngle()), 0.0, 0.0, pose);
+    m_poseEstimator.resetPosition(m_navx.getRotation2d(), 0.0, 0.0, pose);
   }
 
   /**
