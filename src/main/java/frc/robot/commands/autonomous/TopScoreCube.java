@@ -19,7 +19,7 @@ public class TopScoreCube extends SequentialCommandGroup {
     AutoTrajectory testPath = new AutoTrajectory(driveSubsystem, "top_scoreCube_object");
 
     addCommands(
-      testPath.getCommandAndStopWithEvents(true, eventMap)
+      testPath.getCommandAndStop(true)
     );
   }
 }

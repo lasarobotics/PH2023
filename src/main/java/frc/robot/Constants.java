@@ -39,12 +39,12 @@ public final class Constants {
   public static class Drive {
     public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.019, 0.0, 0.0012, 0.0);
     public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
-    public static final double DRIVE_SLIP_RATIO = 0.15;
-    public static final double DRIVE_TURN_SCALAR = 40.0;
+    public static final double DRIVE_SLIP_RATIO = 0.3;
+    public static final double DRIVE_TURN_SCALAR = 35.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
     private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5,   1.0 };
-    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.975, 3.95 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.975, 2.96 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_X[] = { 0.0, 1.975, 3.95 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_Y[] = { 0.0, 0.5,   1.0 };
     private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0 };
@@ -149,7 +149,7 @@ public final class Constants {
                                                                                 MOTION_ELBOW_ACCEL_STRATEGY);
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 0.8;
+    private static final double POSITION_ELBOW_kP = 0.1;
     private static final double POSITION_ELBOW_kI = 0.0;
     private static final double POSITION_ELBOW_kD = 0.0;
     private static final double POSITION_ELBOW_kF = 0.0;

@@ -37,10 +37,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.905, +0.580),
-    Ground(+0.840, +0.305),
-    Middle(+0.700, +0.280),
-    High(+0.600, +0.020);
+    Stowed(+0.905, +0.550),
+    Ground(+0.840, +0.300),
+    Middle(+0.650, +0.280),
+    High(+0.550, +0.020);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -134,7 +134,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
+    if (m_currentState == ArmState.High) return -ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
+    else return +ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
   }
 
   /**

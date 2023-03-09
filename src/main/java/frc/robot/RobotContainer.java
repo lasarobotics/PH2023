@@ -28,7 +28,7 @@ import frc.robot.commands.autonomous.MidScoreConeBA;
 import frc.robot.commands.autonomous.MidScoreConeBB;
 import frc.robot.commands.autonomous.MidScoreCubeA;
 import frc.robot.commands.autonomous.MidScoreCubeB;
-import frc.robot.commands.autonomous.TestPath;
+import frc.robot.commands.autonomous.TestAuto;
 import frc.robot.commands.autonomous.TopScoreConeA;
 import frc.robot.commands.autonomous.TopScoreConeB;
 import frc.robot.commands.autonomous.TopScoreCube;
@@ -160,7 +160,7 @@ public class RobotContainer {
     m_automodeChooser.addOption("Top score held Cube then pickup new object", new TopScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeA then pickup new object", new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeB then pickup new object", new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Test auto", new TestPath(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Test auto", new TestAuto(DRIVE_SUBSYSTEM));
   }
 
   /**
