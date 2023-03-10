@@ -58,7 +58,7 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion PID settings
-    private static final double MOTION_SHOULDER_kP = 0.0005;
+    private static final double MOTION_SHOULDER_kP = 0.005;
     private static final double MOTION_SHOULDER_kI = 0.0;
     private static final double MOTION_SHOULDER_kD = 0.0;
     private static final double MOTION_SHOULDER_kF = 0.001;
@@ -70,7 +70,7 @@ public final class Constants {
     private static final boolean MOTION_SHOULDER_SOFT_LIMITS = true;
     private static final boolean MOTION_SHOULDER_SENSOR_PHASE = false;
     private static final boolean MOTION_SHOULDER_INVERT_MOTOR = false;
-    private static final AccelStrategy MOTION_SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    private static final AccelStrategy MOTION_SHOULDER_ACCEL_STRATEGY = AccelStrategy.kSCurve;
     
     // Arm shoulder motion PID config
     public static final SparkPIDConfig MOTION_SHOULDER_CONFIG = new SparkPIDConfig(MOTION_SHOULDER_SENSOR_PHASE, 
@@ -119,7 +119,7 @@ public final class Constants {
 
 
     // Arm elbow motion PID settings
-    private static final double MOTION_ELBOW_kP = 0.0005;
+    private static final double MOTION_ELBOW_kP = 0.005;
     private static final double MOTION_ELBOW_kI = 0.0;
     private static final double MOTION_ELBOW_kD = 0.0;
     private static final double MOTION_ELBOW_kF = 0.002;
@@ -131,7 +131,7 @@ public final class Constants {
     private static final boolean MOTION_ELBOW_SOFT_LIMITS = true;
     private static final boolean MOTION_ELBOW_SENSOR_PHASE = false;
     private static final boolean MOTION_ELBOW_INVERT_MOTOR = false;
-    private static final AccelStrategy MOTION_ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
+    private static final AccelStrategy MOTION_ELBOW_ACCEL_STRATEGY = AccelStrategy.kSCurve;
     
     // Arm elbow motion PID config
     public static final SparkPIDConfig MOTION_ELBOW_CONFIG = new SparkPIDConfig(MOTION_ELBOW_SENSOR_PHASE, 
