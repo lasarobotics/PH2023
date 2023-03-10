@@ -37,10 +37,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.905, +0.550),
-    Ground(+0.840, +0.300),
-    Middle(+0.650, +0.280),
-    High(+0.550, +0.020);
+    Stowed(+0.905, +0.90),
+    Ground(+0.840, +0.62),
+    Middle(+0.700, +0.35),
+    High(+0.590, +0.27);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -134,7 +134,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    if (m_currentState == ArmState.High) return -ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
+    if (m_currentState == ArmState.High) return 0.0;
     else return +ELBOW_FF * Math.sin(Math.toRadians(m_currentState.elbowPosition * CONVERSION_FACTOR));
   }
 
@@ -163,6 +163,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
     if (elbowMotionComplete) 
       m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
+
+    System.out.println("Holding position...");
   }
 
   @Override
@@ -171,6 +173,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Hold position if motion is complete
     holdPosition(isShoulderMotionComplete(), isElbowMotionComplete());
+
+    System.out.println("elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
+    System.out.println("shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
   }
 
   /**
