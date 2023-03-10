@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.autonomous.Balance;
 import frc.robot.commands.autonomous.BotScoreConeA;
 import frc.robot.commands.autonomous.BotScoreConeB;
 import frc.robot.commands.autonomous.BotScoreCube;
@@ -161,6 +162,7 @@ public class RobotContainer {
     m_automodeChooser.addOption("Top score held ConeA then pickup new object", new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeB then pickup new object", new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Test auto", new TestAuto(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM));
   }
 
   /**
