@@ -149,6 +149,7 @@ public class RobotContainer {
    */
   private void autoModeChooser() {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
+    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM));
     m_automodeChooser.addOption("Bottom score held Cube then pickup new object", new BotScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Bottom score held ConeA then pickup new object", new BotScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Bottom score held ConeB then pickup new object", new BotScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
@@ -162,7 +163,6 @@ public class RobotContainer {
     m_automodeChooser.addOption("Top score held ConeA then pickup new object", new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Top score held ConeB then pickup new object", new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Test auto", new TestAuto(DRIVE_SUBSYSTEM));
-    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM));
   }
 
   /**

@@ -10,12 +10,15 @@ import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 public class Balance extends SequentialCommandGroup {
+  private final boolean REVERSED = true;
+  private final double MAX_VELOCITY = 3.0;
+  private final double MAX_ACCELERATION = 3.0;
   
   // construct a new auto command object
   public Balance(DriveSubsystem driveSubsystem) {
@@ -25,8 +28,8 @@ public class Balance extends SequentialCommandGroup {
     );
 
     addCommands(
-      new AutoTrajectory(driveSubsystem, waypoints, true, 0.5, 0.5).getCommandAndStop(),
-      new InstantCommand(() -> driveSubsystem.autoBalance())
+      new AutoTrajectory(driveSubsystem, waypoints, REVERSED, MAX_VELOCITY, MAX_ACCELERATION).getCommandAndStop(),
+      new RunCommand(() -> driveSubsystem.autoBalance())
     );
   }
 }
