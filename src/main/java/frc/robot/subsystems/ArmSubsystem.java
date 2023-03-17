@@ -240,6 +240,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     m_shoulderMotionConfig.setGoal(armState.shoulderPosition);
     m_elbowMotionConfig.setGoal(armState.elbowPosition);
+    moveToPosition(m_currentArmState, m_currentArmDirection);
 
   }
 
