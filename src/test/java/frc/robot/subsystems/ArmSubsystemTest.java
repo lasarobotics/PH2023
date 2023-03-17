@@ -22,6 +22,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.utils.SparkMax;
@@ -50,15 +51,12 @@ public class ArmSubsystemTest {
 
     // Create ArmSubsystem object
     m_armSubsystem = new ArmSubsystem(m_armHardware,
-                                      new Pair<SparkPIDConfig,SparkPIDConfig>(
-                                        Constants.Arm.MOTION_SHOULDER_CONFIG,
-                                        Constants.Arm.POSITION_SHOULDER_CONFIG
-                                      ), 
-                                      new Pair<SparkPIDConfig, SparkPIDConfig>(
-                                        Constants.Arm.MOTION_ELBOW_CONFIG,
-                                        Constants.Arm.POSITION_ELBOW_CONFIG
-                                      )
-                                    );
+        new Pair<ProfiledPIDController, SparkPIDConfig>(
+            Constants.Arm.MOTION_SHOULDER_CONFIG,
+            Constants.Arm.POSITION_SHOULDER_CONFIG),
+        new Pair<ProfiledPIDController, SparkPIDConfig>(
+            Constants.Arm.MOTION_ELBOW_CONFIG,
+            Constants.Arm.POSITION_ELBOW_CONFIG));
   }
 
   @AfterEach
@@ -75,10 +73,12 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Stowed);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.89, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.57, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                 AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.89, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.57, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
   }
 
   @Test
@@ -89,10 +89,12 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Ground);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.85, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.29, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.85, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.29, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
   }
 
   @Test
@@ -103,12 +105,15 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.Middle);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.63, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.28, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-                                                  
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.63, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.28, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+
   }
+
   @Test
   @Order(4)
   @DisplayName("Test if robot can move arm to high position")
@@ -117,9 +122,11 @@ public class ArmSubsystemTest {
     m_armSubsystem.setArmState(ArmState.High);
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.60, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion), 
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.06, DELTA), ArgumentMatchers.eq(ControlType.kSmartMotion),
-                                                                  AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));                                                  
+    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.60, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.06, DELTA),
+        ArgumentMatchers.eq(ControlType.kSmartMotion),
+        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
   }
 }
