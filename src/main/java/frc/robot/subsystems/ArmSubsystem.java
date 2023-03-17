@@ -201,7 +201,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
         m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()));
       else
         m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
-    } else {
+    } else if (armDirection == ArmDirection.Down) {
       if (!isElbowMotionComplete())
         m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
       else
