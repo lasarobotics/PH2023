@@ -118,12 +118,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize PID
-      // m_shoulderMotionConfig.initializeSparkPID(m_shoulderMasterMotor,
-      // m_shoulderMasterMotor.getAbsoluteEncoder(), false, false,
-      // MOTION_CONFIG_PID_SLOT);
-      // m_elbowMotionConfig.initializeSparkPID(m_elbowMotor,
-      // m_elbowMotor.getAbsoluteEncoder(), false, false, MOTION_CONFIG_PID_SLOT);
-
       m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(),
           false, false, POSITION_CONFIG_PID_SLOT);
       m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false,
@@ -183,6 +177,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
         - m_currentArmState.elbowPosition) <= Constants.Arm.MOTION_ELBOW_TOLERANCE;
   }
 
+  /**
+   * Move arm position up (first move shoulder up, then elbow)
+   * 
+   * @param armState
+   */
   private void moveToPositionUp(ArmState armState) {
     if (!isShoulderMotionComplete())
       m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
@@ -192,6 +191,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
           calculateElbowFF(), ArbFFUnits.kPercentOut);
   }
 
+  /**
+   * Move arm position down (first move elbow, then shoulder)
+   * 
+   * @param armState
+   */
   private void moveToPositionDown(ArmState armState) {
     if (!isElbowMotionComplete())
       m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
@@ -201,6 +205,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
 
+  /**
+   * Move arm to a given position
+   * 
+   * @param armState
+   * @param armDirection
+   */
   public void moveToPosition(ArmState armState, ArmDirection armDirection) {
     Runnable moveToPositions[] = { () -> {
     }, () -> moveToPositionUp(armState), () -> moveToPositionDown(armState) };
@@ -219,11 +229,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * 
    * @param armState Arm state, which includes shoulder and elbow position
    */
-  // m_shoulderMasterMotor.set(m_currentState.shoulderPosition,
-  // ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut,
-  // MOTION_CONFIG_PID_SLOT);
-  // m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kSmartMotion, 0.0,
-  // ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
   public void setArmState(ArmState armState) {
     // Update current state
     if (armState != m_currentArmState) {
