@@ -53,7 +53,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   public enum ArmDirection {
-    Up, Down, None;
+    None, Up, Down;
 
     public static ArmDirection getArmDirection(ArmState from, ArmState to) {
       int diff = from.ordinal() - to.ordinal();
@@ -64,6 +64,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMax m_shoulderMasterMotor;
   private SparkMax m_shoulderSlaveMotor;
   private SparkMax m_elbowMotor;
+
+  private Runnable m_moveToPosition[];
 
   private ProfiledPIDController m_shoulderMotionConfig;
   private SparkPIDConfig m_shoulderPositionConfig;
@@ -115,6 +117,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
 
+    // Initialize moveToPosition Runnable Array
+    m_moveToPosition = new Runnable[] { () -> {
+    }, () -> armUp(), () -> armDown() };
+
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize PID
@@ -144,7 +150,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on shoulder angle
    */
   private double calculateShoulderFF() {
-    return SHOULDER_FF * Math.sin(Math.toRadians(m_currentArmState.shoulderPosition * CONVERSION_FACTOR));
+    return SHOULDER_FF
+        * Math.sin(Math.toRadians(m_shoulderMasterMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
   }
 
   /**
@@ -153,7 +160,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return ELBOW_FF * Math.sin(Math.toRadians(m_currentArmState.elbowPosition * CONVERSION_FACTOR));
+    return ELBOW_FF * Math.sin(Math.toRadians(m_elbowMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
   }
 
   /**
@@ -162,9 +169,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if shoulder motion is complete
    */
   private boolean isShoulderMotionComplete() {
-    return Math.abs(m_shoulderMasterMotor.getAbsoluteEncoderPosition()
-        - m_currentArmState.shoulderPosition) <= Constants.Arm.MOTION_SHOULDER_TOLERANCE;
-
+    return m_shoulderMotionConfig.atGoal();
   }
 
   /**
@@ -173,8 +178,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if elbow motion is complete
    */
   private boolean isElbowMotionComplete() {
-    return Math.abs(m_elbowMotor.getAbsoluteEncoderPosition()
-        - m_currentArmState.elbowPosition) <= Constants.Arm.MOTION_ELBOW_TOLERANCE;
+    return m_elbowMotionConfig.atGoal();
   }
 
   /**
@@ -182,7 +186,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * 
    * @param armState
    */
-  private void moveToPositionUp(ArmState armState) {
+  private void armUp() {
     if (!isShoulderMotionComplete())
       m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
@@ -196,7 +200,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * 
    * @param armState
    */
-  private void moveToPositionDown(ArmState armState) {
+  private void armDown() {
     if (!isElbowMotionComplete())
       m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
           calculateElbowFF(), ArbFFUnits.kPercentOut);
@@ -205,23 +209,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
 
-  /**
-   * Move arm to a given position
-   * 
-   * @param armState
-   * @param armDirection
-   */
-  public void moveToPosition(ArmState armState, ArmDirection armDirection) {
-    Runnable moveToPositions[] = { () -> {
-    }, () -> moveToPositionUp(armState), () -> moveToPositionDown(armState) };
-    moveToPositions[armDirection.ordinal()].run();
-
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    moveToPosition(m_currentArmState, m_currentArmDirection);
+    m_moveToPosition[m_currentArmDirection.ordinal()].run();
   }
 
   /**
@@ -238,7 +229,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     m_shoulderMotionConfig.setGoal(armState.shoulderPosition);
     m_elbowMotionConfig.setGoal(armState.elbowPosition);
-    moveToPosition(m_currentArmState, m_currentArmDirection);
 
   }
 
