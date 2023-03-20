@@ -56,7 +56,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     Up, Down, None;
 
     public static ArmDirection getArmDirection(ArmState from, ArmState to) {
-      return from.ordinal() - to.ordinal() > 0 ? Down : Up;
+      int diff = from.ordinal() - to.ordinal();
+      return diff < 0 ? Down : diff < 0 ? Up : None;
     }
   }
 
@@ -104,7 +105,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
 
     m_currentArmState = ArmState.Stowed;
-    m_currentArmDirection = ArmDirection.None;
+    m_currentArmDirection = ArmDirection.Up;
 
     // Set all arm motors to brake
     m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
@@ -169,6 +170,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private boolean isShoulderMotionComplete() {
     return Math.abs(m_shoulderMasterMotor.getAbsoluteEncoderPosition()
         - m_currentArmState.shoulderPosition) <= Constants.Arm.MOTION_SHOULDER_TOLERANCE;
+
   }
 
   /**
@@ -181,44 +183,35 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
         - m_currentArmState.elbowPosition) <= Constants.Arm.MOTION_ELBOW_TOLERANCE;
   }
 
-  /**
-   * Makes the arm hold position
-   */
-  private void holdPosition(boolean shoulderMotionComplete, boolean elbowMotionComplete) {
-    // Set shoulder and elbow positions
-    if (shoulderMotionComplete)
-      m_shoulderMasterMotor.set(m_currentArmState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(),
-          ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
-    if (elbowMotionComplete)
-      m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition, calculateElbowFF(),
-          ArbFFUnits.kPercentOut,
-          POSITION_CONFIG_PID_SLOT);
+  private void moveToPositionUp(ArmState armState) {
+    if (!isShoulderMotionComplete())
+      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
+          ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
+    else if (!isElbowMotionComplete())
+      m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
+          calculateElbowFF(), ArbFFUnits.kPercentOut);
+  }
+
+  private void moveToPositionDown(ArmState armState) {
+    if (!isElbowMotionComplete())
+      m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
+          calculateElbowFF(), ArbFFUnits.kPercentOut);
+    else if (!isShoulderMotionComplete())
+      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
+          ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
 
   public void moveToPosition(ArmState armState, ArmDirection armDirection) {
-    if (armDirection == ArmDirection.Up) {
-      if (!isShoulderMotionComplete())
-        m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()));
-      else
-        m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
-    } else if (armDirection == ArmDirection.Down) {
-      if (!isElbowMotionComplete())
-        m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
-      else
-        m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()));
-    }
+    Runnable moveToPositions[] = { () -> {
+    }, () -> moveToPositionUp(armState), () -> moveToPositionDown(armState) };
+    moveToPositions[armDirection.ordinal()].run();
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_currentArmDirection = isShoulderMotionComplete() && isElbowMotionComplete() ? ArmDirection.None
-        : m_currentArmDirection;
-
-    // Hold position if motion is complete
-    holdPosition(isShoulderMotionComplete(), isElbowMotionComplete());
-    if (m_currentArmDirection != ArmDirection.None)
-      moveToPosition(m_currentArmState, m_currentArmDirection);
+    moveToPosition(m_currentArmState, m_currentArmDirection);
   }
 
   /**

@@ -70,15 +70,25 @@ public class ArmSubsystemTest {
   @DisplayName("Test if robot can move arm to stowed position")
   public void stowArm() {
     // Try to move arm to stowed state
+    double shoulderPosition = m_shoulderMasterMotor.getAbsoluteEncoderPosition();
+    double elbowPosition = m_elbowMotor.getAbsoluteEncoderPosition();
     m_armSubsystem.setArmState(ArmState.Stowed);
+    shoulderPosition = m_shoulderMasterMotor.getAbsoluteEncoderPosition();
+    elbowPosition = m_elbowMotor.getAbsoluteEncoderPosition();
 
     // Verify motors are being driven with expected values
-    verify(m_shoulderMasterMotor, times(1)).set(AdditionalMatchers.eq(0.89, DELTA),
+    verify(m_shoulderMasterMotor, times(1)).set(
+        AdditionalMatchers.eq(0.89, DELTA),
         ArgumentMatchers.eq(ControlType.kSmartMotion),
-        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
-    verify(m_elbowMotor, times(1)).set(AdditionalMatchers.eq(0.57, DELTA),
+        AdditionalMatchers.eq(0.0, DELTA),
+        ArgumentMatchers.eq(ArbFFUnits.kPercentOut),
+        ArgumentMatchers.eq(0));
+    verify(m_elbowMotor, times(1)).set(
+        AdditionalMatchers.eq(0.57, DELTA),
         ArgumentMatchers.eq(ControlType.kSmartMotion),
-        AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut), ArgumentMatchers.eq(0));
+        AdditionalMatchers.eq(0.0, DELTA),
+        ArgumentMatchers.eq(ArbFFUnits.kPercentOut),
+        ArgumentMatchers.eq(0));
   }
 
   @Test
