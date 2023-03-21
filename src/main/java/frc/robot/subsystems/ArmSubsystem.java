@@ -37,10 +37,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.905, +0.90),
-    Ground(+0.840, +0.62),
-    Middle(+0.700, +0.35),
-    High(+0.590, +0.27);
+    Stowed(+0.905, +0.895),
+    // Ground(+0.850, +0.630),
+    Ground(+0.844, +0.882),
+    Middle(+0.593, +0.230),
+    High(+0.560, +0.300);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -163,8 +164,20 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
     if (elbowMotionComplete) 
       m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut, POSITION_CONFIG_PID_SLOT);
+  }
 
-    System.out.println("Holding position...");
+  /**
+   * Manually move elbow
+   */
+  public void moveElbow(double speed) {
+    m_elbowMotor.set(speed, ControlType.kDutyCycle);
+  }
+
+  /**
+   * Stop elbow motor
+   */
+  public void stopElbow() {
+    m_elbowMotor.stopMotor();
   }
 
   @Override
@@ -174,8 +187,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Hold position if motion is complete
     holdPosition(isShoulderMotionComplete(), isElbowMotionComplete());
 
-    System.out.println("elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
-    System.out.println("shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+    // System.out.println("elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
+    // System.out.println("shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
   }
 
   /**
@@ -187,8 +200,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentState = armState;
 
     // Move joint motors
-    m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
     m_elbowMotor.set(m_currentState.elbowPosition, ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
+    m_shoulderMasterMotor.set(m_currentState.shoulderPosition, ControlType.kSmartMotion, 0.0, ArbFFUnits.kPercentOut, MOTION_CONFIG_PID_SLOT);
   }
 
   /**

@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMaxLimitSwitch m_objectPresenceDetector;
   private SparkMaxLimitSwitch m_objectDifferentiator;
 
-  private final int ROLLER_CURRENT_LIMIT = 20;
+  private final int ROLLER_CURRENT_LIMIT = 10;
 
   /**
    * Create a new intake subsystem
@@ -56,6 +56,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     // Set motors to brake
     m_rollerMotor.setIdleMode(IdleMode.kBrake);
 
+    // Set roller current limit
     m_rollerMotor.setSmartCurrentLimit(ROLLER_CURRENT_LIMIT);
 
     // Inver roller motor
@@ -92,6 +93,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void outtake() {
     m_objectPresenceDetector.enableLimitSwitch(false);
+    System.out.println("Velocity: " + m_rollerMotor.getAbsoluteEncoderVelocity());
     m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
@@ -119,7 +121,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Stops motor
    */
   public void stop() {
-    m_rollerMotor.stopMotor();
+    m_rollerMotor.set(+0.05);
   }
 
   @Override

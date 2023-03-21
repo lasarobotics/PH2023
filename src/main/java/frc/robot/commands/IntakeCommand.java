@@ -9,18 +9,21 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
   private ArmSubsystem m_armSubsystem;
+  private DriveSubsystem m_driveSubsystem;
   private ArmState m_prevArmState;
   private CommandXboxController m_controller;
 
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, CommandXboxController controller) {
+  public IntakeCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, DriveSubsystem driveSubsystem, CommandXboxController controller) {
     this.m_intakeSubsystem = intakeSubsystem;
     this.m_armSubsystem = armSubsystem;
+    this.m_driveSubsystem = driveSubsystem;
     this.m_controller = controller;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,6 +39,7 @@ public class IntakeCommand extends CommandBase {
     if (m_prevArmState == ArmState.Stowed) m_armSubsystem.setArmState(ArmState.Ground);
     
     m_intakeSubsystem.intake();
+    m_driveSubsystem.enableSlowMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -65,6 +69,7 @@ public class IntakeCommand extends CommandBase {
       m_armSubsystem.setArmState(ArmState.Stowed);
 
     m_intakeSubsystem.stop();
+    m_driveSubsystem.disableSlowMode();
   }
 
   // Returns true when the command should end.

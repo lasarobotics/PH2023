@@ -38,13 +38,13 @@ public final class Constants {
 
   public static class Drive {
     public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.019, 0.0, 0.0012, 0.0);
-    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
-    public static final double DRIVE_SLIP_RATIO = 0.3;
-    public static final double DRIVE_TURN_SCALAR = 35.0;
+    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.0052, 0.0, 0.00002, 0.0);
+    public static final double DRIVE_SLIP_RATIO = 0.15;
+    public static final double DRIVE_TURN_SCALAR = 25.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
-    private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5,   1.0 };
-    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.48, 2.96 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5,  1.0 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.0,  2.0 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_X[] = { 0.0, 1.975, 3.95 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_Y[] = { 0.0, 0.5,   1.0 };
     private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0 };
@@ -58,10 +58,10 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion PID settings
-    private static final double MOTION_SHOULDER_kP = 0.005;
+    private static final double MOTION_SHOULDER_kP = 0.0005;
     private static final double MOTION_SHOULDER_kI = 0.0;
     private static final double MOTION_SHOULDER_kD = 0.0;
-    private static final double MOTION_SHOULDER_kF = 0.001;
+    private static final double MOTION_SHOULDER_kF = 0.0009;
     private static final double MOTION_SHOULDER_TOLERANCE = 0.01;
     private static final double MOTION_SHOULDER_LOWER_LIMIT = 0.5;
     private static final double MOTION_SHOULDER_UPPER_LIMIT = 0.91;
@@ -88,7 +88,7 @@ public final class Constants {
                                                                                    MOTION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 0.8;
+    private static final double POSITION_SHOULDER_kP = 0.85;
     private static final double POSITION_SHOULDER_kI = 0.0;
     private static final double POSITION_SHOULDER_kD = 0.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
@@ -119,15 +119,15 @@ public final class Constants {
 
 
     // Arm elbow motion PID settings
-    private static final double MOTION_ELBOW_kP = 0.005;
+    private static final double MOTION_ELBOW_kP = 0.0001;
     private static final double MOTION_ELBOW_kI = 0.0;
     private static final double MOTION_ELBOW_kD = 0.0;
-    private static final double MOTION_ELBOW_kF = 0.002;
+    private static final double MOTION_ELBOW_kF = 0.0007;
     private static final double MOTION_ELBOW_TOLERANCE = 0.01;
     private static final double MOTION_ELBOW_LOWER_LIMIT = 0.05;
     private static final double MOTION_ELBOW_UPPER_LIMIT = 0.90;
     private static final double MOTION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM * 1/2;
+    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM * 3;
     private static final boolean MOTION_ELBOW_SOFT_LIMITS = true;
     private static final boolean MOTION_ELBOW_SENSOR_PHASE = false;
     private static final boolean MOTION_ELBOW_INVERT_MOTOR = false;

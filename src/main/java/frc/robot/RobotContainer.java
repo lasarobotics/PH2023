@@ -29,6 +29,7 @@ import frc.robot.commands.autonomous.MidScoreConeBA;
 import frc.robot.commands.autonomous.MidScoreConeBB;
 import frc.robot.commands.autonomous.MidScoreCubeA;
 import frc.robot.commands.autonomous.MidScoreCubeB;
+import frc.robot.commands.autonomous.MobilityBalance;
 import frc.robot.commands.autonomous.TestAuto;
 import frc.robot.commands.autonomous.TopScoreConeA;
 import frc.robot.commands.autonomous.TopScoreConeB;
@@ -133,15 +134,32 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
     SECONDARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
 
-    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, DRIVE_SUBSYSTEM, PRIMARY_CONTROLLER));
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+
+    PRIMARY_CONTROLLER.rightBumper().onTrue(new InstantCommand(() -> {
+        INTAKE_SUBSYSTEM.intake();
+        DRIVE_SUBSYSTEM.enableSlowMode();
+      }
+    ));
+    PRIMARY_CONTROLLER.rightBumper().onFalse(new InstantCommand(() -> {
+        INTAKE_SUBSYSTEM.stop();
+        DRIVE_SUBSYSTEM.disableSlowMode();
+      }
+    ));
 
     PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
     PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
     PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
     PRIMARY_CONTROLLER.leftBumper().whileTrue(DRIVE_SUBSYSTEM.moveToClosestTarget(INTAKE_SUBSYSTEM.identifyObject()));
+
+    SECONDARY_CONTROLLER.axisGreaterThan(1, +Constants.HID.CONTROLLER_DEADBAND).whileTrue(new RunCommand(() -> ARM_SUBSYSTEM.moveElbow(SECONDARY_CONTROLLER.getLeftY())))
+      .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.stopElbow()));
+
+    SECONDARY_CONTROLLER.axisLessThan(1, -Constants.HID.CONTROLLER_DEADBAND).whileTrue(new RunCommand(() -> ARM_SUBSYSTEM.moveElbow(SECONDARY_CONTROLLER.getLeftY())))
+      .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.stopElbow()));
   }
 
   /**
@@ -149,7 +167,8 @@ public class RobotContainer {
    */
   private void autoModeChooser() {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
-    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
+    m_automodeChooser.addOption("Mobility Balance", new MobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
     m_automodeChooser.addOption("Bottom score held Cube then pickup new object", new BotScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Bottom score held ConeA then pickup new object", new BotScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
     m_automodeChooser.addOption("Bottom score held ConeB then pickup new object", new BotScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));

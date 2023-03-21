@@ -130,6 +130,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
  
   private double m_deadband = 0.0;
 
+  private double m_slowMode = 1.0;
+
   // Drive specs, these numbers use the motor shaft encoder
   private static final double DRIVE_TRACK_WIDTH = 0.57221;
   private static final double DRIVE_WHEEL_DIAMETER_METERS = 0.1524; // 6" wheels
@@ -181,7 +183,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     m_gridSelector = new GridSelector(0);
 
-    m_velocityFilter = LinearFilter.singlePoleIIR(Constants.Global.ROBOT_LOOP_PERIOD * 6, Constants.Global.ROBOT_LOOP_PERIOD);
+    m_velocityFilter = LinearFilter.singlePoleIIR(Constants.Global.ROBOT_LOOP_PERIOD * 3, Constants.Global.ROBOT_LOOP_PERIOD);
     
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
@@ -189,11 +191,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rMasterMotor.restoreFactoryDefaults();
     m_rSlaveMotor.restoreFactoryDefaults();
 
-    // Set all drive motors to coast
-    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
-    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
+    // Set all drive motors to brake
+    m_lMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_lSlaveMotor.setIdleMode(IdleMode.kBrake);
+    m_rMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_rSlaveMotor.setIdleMode(IdleMode.kBrake);
 
     // Make rear left motor controllers follow left master
     m_lSlaveMotor.follow(m_lMasterMotor);
@@ -329,12 +331,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Initialize drive subsystem for teleop
    */
 public void teleopInit() {
-    // Set all drive motors to coast
-    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
-    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
-
     // Reset drive PID
     resetDrivePID();
   }
@@ -363,7 +359,7 @@ public void teleopInit() {
    */
   public void teleopPID(double speedRequest, double turnRequest) {
     // Calculate next speed output
-    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest, getAverageWheelSpeed(), isTurning());
+    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest * m_slowMode, getAverageWheelSpeed(), isTurning());
 
     // Calculate next PID turn output
     double turnOutput = m_turnPIDController.calculate(getAngle(), getTurnRate(), turnRequest);
@@ -403,6 +399,20 @@ public void teleopInit() {
    */
   public void disableTractionControl() {
     m_tractionControlController.disableTractionControl();
+  }
+
+  /**
+   * Enable slow mode
+   */
+  public void enableSlowMode() {
+    m_slowMode = 0.2;
+  }
+
+  /**
+   * Disable slow mode
+   */
+  public void disableSlowMode() {
+    m_slowMode = 1.0;
   }
 
   /**
