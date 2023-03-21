@@ -129,7 +129,12 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final double BALANCE_OFFSET = 0.5;
 
+  private final double BOOST_SCALAR = 1;
+  private final double NORMAL_SCALAR = 0.5;
+
   private double m_deadband = 0.0;
+
+  private double m_driveMultiplier = NORMAL_SCALAR;
 
   // Drive specs, these numbers use the motor shaft encoder
   private static final double DRIVE_TRACK_WIDTH = 0.57221;
@@ -375,6 +380,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param turnRequest  Turn input [-1.0, +1.0]
    */
   public void teleopPID(double speedRequest, double turnRequest) {
+    // Multiply speed by speed scalar
+    speedRequest *= m_driveMultiplier;
+
     // Calculate next speed output
     double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest,
         getAverageWheelSpeed(), isTurning());
@@ -395,6 +403,20 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     m_lMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
     m_rMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
+  }
+
+  /**
+   * Enable BOOSTTTT speed
+   */
+  public void enableBoost() {
+    m_driveMultiplier = BOOST_SCALAR;
+  }
+
+  /**
+   * Disable BOOOOOST speed
+   */
+  public void disableBoost() {
+    m_driveMultiplier = NORMAL_SCALAR;
   }
 
   /**

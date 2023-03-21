@@ -60,7 +60,7 @@ public class DriveSubsystemTest {
                                           Constants.Drive.DRIVE_BALANCE_PID,
                                           Constants.HID.CONTROLLER_DEADBAND,
                                           Constants.Drive.DRIVE_SLIP_RATIO,
-                                          Constants.Drive.DRIVE_TURN_SCALAR,
+                                          Constants.Drive.DEFAULT_DRIVE_TURN_SCALAR,
                                           Constants.Drive.DRIVE_LOOKAHEAD,
                                           Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
                                           Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,

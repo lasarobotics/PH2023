@@ -55,17 +55,16 @@ public class RobotContainer {
   private static final boolean REAL_HARDWARE = true;
 
   // The robot's subsystems and commands are defined here...
-  private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(
-      DriveSubsystem.initializeHardware(REAL_HARDWARE),
-      Constants.Drive.DRIVE_TURN_PID,
-      Constants.Drive.DRIVE_BALANCE_PID,
-      Constants.HID.CONTROLLER_DEADBAND,
-      Constants.Drive.DRIVE_SLIP_RATIO,
-      Constants.Drive.DRIVE_TURN_SCALAR,
-      Constants.Drive.DRIVE_LOOKAHEAD,
-      Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
-      Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
-      Constants.Drive.DRIVE_TURN_INPUT_CURVE);
+  private static final DriveSubsystem DRIVE_SUBSYSTEM = new DriveSubsystem(DriveSubsystem.initializeHardware(REAL_HARDWARE),
+                                                                           Constants.Drive.DRIVE_TURN_PID,
+                                                                           Constants.Drive.DRIVE_BALANCE_PID,
+                                                                           Constants.HID.CONTROLLER_DEADBAND,
+                                                                           Constants.Drive.DRIVE_SLIP_RATIO,
+                                                                           Constants.Drive.DEFAULT_DRIVE_TURN_SCALAR,
+                                                                           Constants.Drive.DRIVE_LOOKAHEAD,
+                                                                           Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
+                                                                           Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
+                                                                           Constants.Drive.DRIVE_TURN_INPUT_CURVE);
   private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE),
       new Pair<ProfiledPIDController, SparkPIDConfig>(
           Constants.Arm.MOTION_SHOULDER_CONFIG,
@@ -152,7 +151,10 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
     PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
     PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
-    PRIMARY_CONTROLLER.leftBumper().whileTrue(DRIVE_SUBSYSTEM.moveToClosestTarget(INTAKE_SUBSYSTEM.identifyObject()));
+    PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableBoost()));
+    PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableBoost()));
+
+
   }
 
   /**
