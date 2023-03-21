@@ -187,10 +187,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState
    */
   private void armUp() {
+    if (isShoulderMotionComplete() && isElbowMotionComplete())
+      m_currentArmDirection = ArmDirection.None;
     if (!isShoulderMotionComplete())
       m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-    else if (!isElbowMotionComplete())
+    if (!isElbowMotionComplete() && isShoulderMotionComplete())
       m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
           calculateElbowFF(), ArbFFUnits.kPercentOut);
   }
@@ -201,10 +203,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState
    */
   private void armDown() {
+    if (isShoulderMotionComplete() && isElbowMotionComplete())
+      m_currentArmDirection = ArmDirection.None;
     if (!isElbowMotionComplete())
       m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
           calculateElbowFF(), ArbFFUnits.kPercentOut);
-    else if (!isShoulderMotionComplete())
+    if (!isShoulderMotionComplete() && isElbowMotionComplete())
       m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
