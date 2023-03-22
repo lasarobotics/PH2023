@@ -110,9 +110,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentArmDirection = ArmDirection.Up;
 
     // Set all arm motors to brake
-    m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
-    m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
-    m_elbowMotor.setIdleMode(IdleMode.kBrake);
+    m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_shoulderSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_elbowMotor.setIdleMode(IdleMode.kCoast);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);

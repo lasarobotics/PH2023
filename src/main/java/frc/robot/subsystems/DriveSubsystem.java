@@ -46,7 +46,6 @@ import frc.robot.utils.SparkMax;
 import frc.robot.utils.TractionControlController;
 import frc.robot.utils.TurnPIDController;
 
-
 public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public static class Hardware {
     private boolean isHardwareReal;
@@ -55,11 +54,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     private AHRS navx;
 
     public Hardware(boolean isHardwareReal,
-                    SparkMax lMasterMotor, 
-                    SparkMax rMasterMotor, 
-                    SparkMax lSlaveMotor,
-                    SparkMax rSlaveMotor,
-                    AHRS navx) {
+        SparkMax lMasterMotor,
+        SparkMax rMasterMotor,
+        SparkMax lSlaveMotor,
+        SparkMax rSlaveMotor,
+        AHRS navx) {
       this.isHardwareReal = isHardwareReal;
       this.lMasterMotor = lMasterMotor;
       this.rMasterMotor = rMasterMotor;
@@ -72,12 +71,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public class GridSelector {
     private int m_grid;
     private boolean m_isBlue;
+
     public GridSelector() {
       m_grid = 0;
     }
+
     public GridSelector(int grid) {
       m_isBlue = DriverStation.getAlliance() == Alliance.Blue;
-      if (m_isBlue) grid = 9 - grid;
+      if (m_isBlue)
+        grid = 9 - grid;
       grid = Math.min(3, Math.max(1, grid));
       m_grid = grid;
     }
@@ -88,7 +90,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
      */
     public void setGrid(int grid) {
       m_isBlue = DriverStation.getAlliance() == Alliance.Blue;
-      if (m_isBlue) grid = 9 - grid;
+      if (m_isBlue)
+        grid = 9 - grid;
       grid = Math.min(3, Math.max(1, grid));
       m_grid = grid;
     }
@@ -101,8 +104,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
       return m_grid;
     }
   }
-
-  
 
   private TurnPIDController m_turnPIDController;
   private PIDController m_pitchPIDController;
@@ -127,47 +128,56 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final double VISION_AIM_DAMPENER = 0.9;
 
   private final double BALANCE_OFFSET = 0.5;
- 
+
   private double m_deadband = 0.0;
 
   // Drive specs, these numbers use the motor shaft encoder
   private static final double DRIVE_TRACK_WIDTH = 0.57221;
   private static final double DRIVE_WHEEL_DIAMETER_METERS = 0.1524; // 6" wheels
   private static final double DRIVE_GEAR_RATIO = 10.71;
-  private static final double DRIVE_TICKS_PER_METER = (Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION * DRIVE_GEAR_RATIO) * (1 / (DRIVE_WHEEL_DIAMETER_METERS * Math.PI));
+  private static final double DRIVE_TICKS_PER_METER = (Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION
+      * DRIVE_GEAR_RATIO) * (1 / (DRIVE_WHEEL_DIAMETER_METERS * Math.PI));
   private static final double DRIVE_METERS_PER_TICK = 1 / DRIVE_TICKS_PER_METER;
-  private static final double DRIVE_METERS_PER_ROTATION = DRIVE_METERS_PER_TICK * Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION;
+  private static final double DRIVE_METERS_PER_ROTATION = DRIVE_METERS_PER_TICK
+      * Constants.Global.NEO_ENCODER_TICKS_PER_ROTATION;
   private static final double DRIVETRAIN_EFFICIENCY = 0.9;
-  private static final double DRIVE_MAX_LINEAR_SPEED = (Constants.Global.NEO_MAX_RPM / 60) * DRIVE_METERS_PER_ROTATION * DRIVETRAIN_EFFICIENCY;
+  private static final double DRIVE_MAX_LINEAR_SPEED = (Constants.Global.NEO_MAX_RPM / 60) * DRIVE_METERS_PER_ROTATION
+      * DRIVETRAIN_EFFICIENCY;
 
   private static GridSelector m_gridSelector;
+
   /**
    * Create an instance of DriveSubsystem
    * <p>
    * NOTE: ONLY ONE INSTANCE SHOULD EXIST AT ANY TIME!
    * <p>
-   * @param drivetrainHardware Hardware devices required by drivetrain
-   * @param gridSelector Chosen grid to use
-   * @param turnPIDConstants PID values for turning
-   * @param pitchPIDConstants PID values for balancing
-   * @param deadband Deadband for controller input [+0.001, +0.2]
-   * @param slipRatio Slip ratio for traction control [+0.01, +0.15]
-   * @param kP Proportional gain
-   * @param kD Derivative gain
-   * @param turnScalar Scalar for turn input (degrees)
-   * @param lookAhead Turn PID lookahead, in number of loops
-   * @param metersPerTick Meters traveled per encoder tick (meters)
-   * @param maxLinearSpeed Maximum linear speed of the robot (m/s)
-   * @param tractionControlCurve Spline function characterising traction of the robot
-   * @param throttleInputCurve Spline function characterising throttle input
-   * @param turnInputCurve Spline function characterising turn input
+   * 
+   * @param drivetrainHardware   Hardware devices required by drivetrain
+   * @param gridSelector         Chosen grid to use
+   * @param turnPIDConstants     PID values for turning
+   * @param pitchPIDConstants    PID values for balancing
+   * @param deadband             Deadband for controller input [+0.001, +0.2]
+   * @param slipRatio            Slip ratio for traction control [+0.01, +0.15]
+   * @param kP                   Proportional gain
+   * @param kD                   Derivative gain
+   * @param turnScalar           Scalar for turn input (degrees)
+   * @param lookAhead            Turn PID lookahead, in number of loops
+   * @param metersPerTick        Meters traveled per encoder tick (meters)
+   * @param maxLinearSpeed       Maximum linear speed of the robot (m/s)
+   * @param tractionControlCurve Spline function characterising traction of the
+   *                             robot
+   * @param throttleInputCurve   Spline function characterising throttle input
+   * @param turnInputCurve       Spline function characterising turn input
    */
-  public DriveSubsystem(Hardware drivetrainHardware, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants, 
-                        double deadband, double slipRatio, double turnScalar, double lookAhead,
-                        PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve, PolynomialSplineFunction turnInputCurve) {
-    m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead, deadband, turnInputCurve);
+  public DriveSubsystem(Hardware drivetrainHardware, PIDConstants turnPIDConstants, PIDConstants pitchPIDConstants,
+      double deadband, double slipRatio, double turnScalar, double lookAhead,
+      PolynomialSplineFunction tractionControlCurve, PolynomialSplineFunction throttleInputCurve,
+      PolynomialSplineFunction turnInputCurve) {
+    m_turnPIDController = new TurnPIDController(turnPIDConstants.kP, turnPIDConstants.kD, turnScalar, lookAhead,
+        deadband, turnInputCurve);
     m_pitchPIDController = new PIDController(pitchPIDConstants.kP, pitchPIDConstants.kD, pitchPIDConstants.kF);
-    m_tractionControlController = new TractionControlController(slipRatio, DRIVE_MAX_LINEAR_SPEED, deadband, tractionControlCurve, throttleInputCurve);
+    m_tractionControlController = new TractionControlController(slipRatio, DRIVE_MAX_LINEAR_SPEED, deadband,
+        tractionControlCurve, throttleInputCurve);
     m_kinematics = new DifferentialDriveKinematics(DRIVE_TRACK_WIDTH);
 
     this.m_lMasterMotor = drivetrainHardware.lMasterMotor;
@@ -182,7 +192,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_gridSelector = new GridSelector(0);
 
     m_velocityFilter = LinearFilter.singlePoleIIR(0.1, Constants.Global.ROBOT_LOOP_PERIOD);
-    
+
     // Reset Spark Max settings
     m_lMasterMotor.restoreFactoryDefaults();
     m_lSlaveMotor.restoreFactoryDefaults();
@@ -203,7 +213,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Only do this stuff if hardware is real
     if (drivetrainHardware.isHardwareReal) {
-      // Set position and velocity conversion factor, based on gearbox output shaft encoder
+      // Set position and velocity conversion factor, based on gearbox output shaft
+      // encoder
       double conversionFactor = DRIVE_WHEEL_DIAMETER_METERS * Math.PI;
       m_lMasterMotor.getRelativeEncoder().setPositionConversionFactor(conversionFactor);
       m_lMasterMotor.getRelativeEncoder().setVelocityConversionFactor(conversionFactor / 60);
@@ -242,24 +253,25 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_turnPIDController.setTolerance(TOLERANCE, 1);
 
     // Initialise odometry
-    m_poseEstimator = new DifferentialDrivePoseEstimator(m_kinematics, 
-                                                         new Rotation2d(), 
-                                                         0.0, 
-                                                         0.0, 
-                                                         new Pose2d());
+    m_poseEstimator = new DifferentialDrivePoseEstimator(m_kinematics,
+        new Rotation2d(),
+        0.0,
+        0.0,
+        new Pose2d());
   }
 
   /**
    * Initialize hardware devices for drive subsystem
+   * 
    * @return hardware object containing all necessary devices for this subsystem
    */
   public static Hardware initializeHardware(boolean isHardwareReal) {
     Hardware drivetrainHardware = new Hardware(isHardwareReal,
-                                               new SparkMax(Constants.DriveHardware.FRONT_LEFT_MOTOR_ID, MotorType.kBrushless),
-                                               new SparkMax(Constants.DriveHardware.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless),
-                                               new SparkMax(Constants.DriveHardware.REAR_LEFT_MOTOR_ID, MotorType.kBrushless),
-                                               new SparkMax(Constants.DriveHardware.REAR_RIGHT_MOTOR_ID, MotorType.kBrushless),
-                                               new AHRS(SPI.Port.kMXP));
+        new SparkMax(Constants.DriveHardware.FRONT_LEFT_MOTOR_ID, MotorType.kBrushless),
+        new SparkMax(Constants.DriveHardware.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless),
+        new SparkMax(Constants.DriveHardware.REAR_LEFT_MOTOR_ID, MotorType.kBrushless),
+        new SparkMax(Constants.DriveHardware.REAR_RIGHT_MOTOR_ID, MotorType.kBrushless),
+        new AHRS(SPI.Port.kMXP));
 
     return drivetrainHardware;
   }
@@ -277,17 +289,16 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @param b Vec3 of Position B
    * @return Euclidean distance between A and B
    */
-  private double getDistance(Pose3d a, Pose3d b){
+  private double getDistance(Pose3d a, Pose3d b) {
     return Math.sqrt(
         Math.pow(a.getX() - b.getX(), 2)
-      + Math.pow(a.getX() - b.getX(), 2)
-      + Math.pow(a.getX() - b.getX(), 2)
-      );
+            + Math.pow(a.getX() - b.getX(), 2)
+            + Math.pow(a.getX() - b.getX(), 2));
   }
 
   /**
    * 
-   * @param grid Selected grid to move to (Range 1-9) 
+   * @param grid Selected grid to move to (Range 1-9)
    */
   public void setGridSelector(int grid) {
     m_gridSelector.setGrid(grid);
@@ -318,17 +329,17 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * Initialize drive subsystem for autonomous
    */
   public void autonomousInit() {
-     // Set all drive motors to coast
-     m_lMasterMotor.setIdleMode(IdleMode.kBrake);
-     m_lSlaveMotor.setIdleMode(IdleMode.kBrake);
-     m_rMasterMotor.setIdleMode(IdleMode.kBrake);
-     m_rSlaveMotor.setIdleMode(IdleMode.kBrake);
+    // Set all drive motors to coast
+    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
   }
 
   /**
    * Initialize drive subsystem for teleop
    */
-public void teleopInit() {
+  public void teleopInit() {
     // Set all drive motors to coast
     m_lMasterMotor.setIdleMode(IdleMode.kCoast);
     m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
@@ -341,11 +352,12 @@ public void teleopInit() {
 
   /**
    * Call this repeatedly to drive without PID during teleoperation
+   * 
    * @param speed Desired speed [-1.0, +1.0]
-   * @param turn Turn input [-1.0, +1.0]
+   * @param turn  Turn input [-1.0, +1.0]
    * @param power exponent for drive response curve. 1 is linear response
    */
-	public void teleop(double speed, double turn, int power) {
+  public void teleop(double speed, double turn, int power) {
     speed = Math.copySign(Math.pow(speed, power), speed);
     turn = Math.copySign(Math.pow(turn, power), turn);
 
@@ -354,16 +366,18 @@ public void teleopInit() {
 
     m_lMasterMotor.set(speed, ControlType.kDutyCycle, -turn, ArbFFUnits.kPercentOut);
     m_rMasterMotor.set(speed, ControlType.kDutyCycle, +turn, ArbFFUnits.kPercentOut);
-	}
+  }
 
   /**
    * Call this repeatedly to drive using PID during teleoperation
+   * 
    * @param speedRequest Desired speed [-1.0, +1.0]
-   * @param turnRequest Turn input [-1.0, +1.0]
+   * @param turnRequest  Turn input [-1.0, +1.0]
    */
   public void teleopPID(double speedRequest, double turnRequest) {
     // Calculate next speed output
-    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest, getAverageWheelSpeed(), isTurning());
+    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest,
+        getAverageWheelSpeed(), isTurning());
 
     // Calculate next PID turn output
     double turnOutput = m_turnPIDController.calculate(getAngle(), getTurnRate(), turnRequest);
@@ -382,7 +396,6 @@ public void teleopInit() {
     m_lMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
     m_rMasterMotor.set(pitchOutput, ControlType.kDutyCycle, 0.0, ArbFFUnits.kPercentOut);
   }
-
 
   /**
    * Toggle traction control
@@ -407,6 +420,7 @@ public void teleopInit() {
 
   /**
    * Turn robot by angleDelta
+   * 
    * @param angleDelta Degrees to turn robot by
    */
   public void aimToAngle(double angleDelta) {
@@ -415,7 +429,8 @@ public void teleopInit() {
 
   /**
    * Turn robot by angleDelta
-   * @param angleDelta Degrees to turn robot by
+   * 
+   * @param angleDelta   Degrees to turn robot by
    * @param speedRequest Desired speed [-1.0, +1.0]
    */
   public void aimToAngle(double angleDelta, double speedRequest) {
@@ -423,7 +438,8 @@ public void teleopInit() {
     m_turnPIDController.setSetpoint(getAngle() + angleDelta);
 
     // Calculate next speed output
-    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest, getAverageWheelSpeed(), isTurning());
+    double speedOutput = m_tractionControlController.calculate(getInertialVelocity(), speedRequest,
+        getAverageWheelSpeed(), isTurning());
 
     double turnOutput = m_turnPIDController.calculate(getAngle());
     m_lMasterMotor.set(speedOutput, ControlType.kDutyCycle, -turnOutput, ArbFFUnits.kPercentOut);
@@ -432,6 +448,7 @@ public void teleopInit() {
 
   /**
    * Whether robot is aimed at target
+   * 
    * @param tolerance tolerance in degrees
    * @return true if robot is aimed at target within tolerance
    */
@@ -452,26 +469,29 @@ public void teleopInit() {
    * Controls the left and right sides of the drive directly with velocities.
    * <p>
    * Only use this method to drive during autonomous!
-   * @param leftVoltage Left side output voltage
+   * 
+   * @param leftVoltage  Left side output voltage
    * @param rightVoltage Right side output voltage
    */
   public void autoTankDrive(double leftVoltage, double rightVoltage) {
     m_lMasterMotor.setVoltage(leftVoltage);
     m_rMasterMotor.setVoltage(rightVoltage);
   }
-  
+
   /**
    * Returns the current wheel speeds of the robot.
+   * 
    * @return The current wheel speeds.
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getRelativeEncoderVelocity(), 
-                                            m_rMasterMotor.getRelativeEncoderVelocity());
+    return new DifferentialDriveWheelSpeeds(m_lMasterMotor.getRelativeEncoderVelocity(),
+        m_rMasterMotor.getRelativeEncoderVelocity());
   }
 
   /**
    * Return current average wheel speeds of the robot
-   * @return 
+   * 
+   * @return
    */
   public double getAverageWheelSpeed() {
     return Math.abs((m_lMasterMotor.getRelativeEncoderVelocity() + m_rMasterMotor.getRelativeEncoderVelocity()) / 2);
@@ -491,19 +511,22 @@ public void teleopInit() {
    * Repeatedly call this method at a steady rate to keep track of robot position
    */
   public void updateOdometry() {
-    m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()), 
-                           m_lMasterMotor.getEncoderPosition(),
-                           m_rMasterMotor.getEncoderPosition());
+    m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()),
+        m_lMasterMotor.getEncoderPosition(),
+        m_rMasterMotor.getEncoderPosition());
     Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
     Pose2d camPose = result.getFirst();
     double camPoseObsTime = result.getSecond();
-    if (camPose != null) m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
+    if (camPose != null)
+      m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
   }
 
   /**
    * Returns the currently estimated pose of the robot
    * <p>
-   * This method is called periodically by the Ramsete command to update and obtain the latest pose
+   * This method is called periodically by the Ramsete command to update and
+   * obtain the latest pose
+   * 
    * @return The pose
    */
   public Pose2d getPose() {
@@ -512,6 +535,7 @@ public void teleopInit() {
 
   /**
    * Returns track width of the robot
+   * 
    * @return track width in meters
    */
   public DifferentialDriveKinematics getKinematics() {
@@ -520,6 +544,7 @@ public void teleopInit() {
 
   /**
    * Returns the turn rate of the robot.
+   * 
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
@@ -528,6 +553,7 @@ public void teleopInit() {
 
   /**
    * Returns inertial velocity of the robot.
+   * 
    * @return Velocity of the robot as measured by the NAVX
    */
   public double getInertialVelocity() {
@@ -544,6 +570,7 @@ public void teleopInit() {
 
   /**
    * Get whether robot is turning or not
+   * 
    * @return true if robot is turning
    */
   public boolean isTurning() {
@@ -552,6 +579,7 @@ public void teleopInit() {
 
   /**
    * Get DriveSubsystem angle as detected by the navX MXP
+   * 
    * @return Total accumulated yaw angle
    */
   public double getAngle() {
@@ -560,6 +588,7 @@ public void teleopInit() {
 
   /**
    * Get DriveSubsystem pitch as detected by the navX MXP
+   * 
    * @return Current pitch angle
    */
   public double getPitch() {
@@ -577,45 +606,55 @@ public void teleopInit() {
 
   /**
    * Get setpoint for drive PID
+   * 
    * @return current setpoint in degrees
    */
   public double getDrivePIDSetpoint() {
     return m_turnPIDController.getSetpoint();
   }
 
-/**
- * 
- * @param grid  Grid labelled 1-9 here https://firstfrc.blob.core.windows.net/frc2023/Manual/2023FRCGameManual.pdf Page 40
- * @param gameObject Cube or Cone Enum
- * @return Command consisting of waypoints orienting and repositioning robot
- */
+  /**
+   * 
+   * @param grid       Grid labelled 1-9 here
+   *                   https://firstfrc.blob.core.windows.net/frc2023/Manual/2023FRCGameManual.pdf
+   *                   Page 40
+   * @param gameObject Cube or Cone Enum
+   * @return Command consisting of waypoints orienting and repositioning robot
+   */
   public Command moveToClosestTarget(GameObject gameObject) {
 
-    if (gameObject == null) return new InstantCommand();
+    if (gameObject == null)
+      return new InstantCommand();
     int grid = Math.min(3, Math.max(m_gridSelector.getGrid(), 1));
 
     AprilTagFieldLayout fieldLayout = VisionSubsystem.getInstance().getAprilTagFieldLayout();
 
     Optional<Pose3d> targetPosition = fieldLayout.getTagPose(grid);
-    
+
     Pose3d[] targets = new Pose3d[] {
-      new Pose3d(targetPosition.get().getX() - GRID_OFFSET_X, targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
-      new Pose3d(targetPosition.get().getX(), targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
-      new Pose3d(targetPosition.get().getX() + GRID_OFFSET_X, targetPosition.get().getY(), targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation())
+        new Pose3d(targetPosition.get().getX() - GRID_OFFSET_X, targetPosition.get().getY(),
+            targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
+        new Pose3d(targetPosition.get().getX(), targetPosition.get().getY(),
+            targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation()),
+        new Pose3d(targetPosition.get().getX() + GRID_OFFSET_X, targetPosition.get().getY(),
+            targetPosition.get().getZ() + GRID_OFFSET_Z, targetPosition.get().getRotation())
     };
 
     Pose3d goToLocation = targets[0];
     Pose3d currentPosition = new Pose3d(getPose());
 
-    if (gameObject.equals(GameObject.Cube)) goToLocation = targets[1];
+    if (gameObject.equals(GameObject.Cube))
+      goToLocation = targets[1];
     else {
-      if (getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2])) goToLocation = targets[2];
+      if (getDistance(currentPosition, targets[0]) >= getDistance(currentPosition, targets[2]))
+        goToLocation = targets[2];
     }
 
-    List<PathPoint> waypoints = List.of( 
-      new PathPoint(new Translation2d(currentPosition.getX(), currentPosition.getY()), new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
-      new PathPoint(new Translation2d(goToLocation.getX(), goToLocation.getY()), new Rotation2d(-goToLocation.getRotation().getX(), -goToLocation.getRotation().getY()))
-    );
+    List<PathPoint> waypoints = List.of(
+        new PathPoint(new Translation2d(currentPosition.getX(), currentPosition.getY()),
+            new Rotation2d(currentPosition.getRotation().getX(), currentPosition.getRotation().getY())),
+        new PathPoint(new Translation2d(goToLocation.getX(), goToLocation.getY()),
+            new Rotation2d(-goToLocation.getRotation().getX(), -goToLocation.getRotation().getY())));
 
     return new AutoTrajectory(this, waypoints, false, getInertialVelocity(), 0.5).getCommandAndStop();
   }
