@@ -56,8 +56,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     None, Up, Down;
 
     public static ArmDirection getArmDirection(ArmState from, ArmState to) {
-      int diff = from.ordinal() - to.ordinal();
-      return diff < 0 ? Down : diff < 0 ? Up : None;
+      int diff = to.ordinal() - from.ordinal();
+      return diff < 0 ? Down : diff > 0 ? Up : None;
     }
   }
 
