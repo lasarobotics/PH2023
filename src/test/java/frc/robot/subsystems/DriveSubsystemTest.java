@@ -31,7 +31,7 @@ public class DriveSubsystemTest {
 
   private final double DELTA = 3e-3;
   private final boolean MOCK_HARDWARE = false;
-  private final double MAX_MOTOR_OUTPUT = 0.749;
+  private final double MAX_MOTOR_OUTPUT = 0.445;
   private DriveSubsystem m_driveSubsystem;
   private DriveSubsystem.Hardware m_drivetrainHardware;
 
@@ -228,9 +228,9 @@ public class DriveSubsystemTest {
     m_driveSubsystem.teleopPID(+MAX_MOTOR_OUTPUT, 0.0);
 
     // Verify that left and right motors are being driven with the expected values
-    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.020, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+    verify(m_lMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.040, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
-    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.020, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
+    verify(m_rMasterMotor, times(1)).set(AdditionalMatchers.eq(+0.040, DELTA), ArgumentMatchers.eq(ControlType.kDutyCycle),
                                          AdditionalMatchers.eq(0.0, DELTA), ArgumentMatchers.eq(ArbFFUnits.kPercentOut));
   }
 
