@@ -106,7 +106,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
 
     m_currentArmState = ArmState.Stowed;
-    m_currentArmDirection = ArmDirection.Up;
+    m_currentArmDirection = ArmDirection.None;
 
     // Set all arm motors to brake
     m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
