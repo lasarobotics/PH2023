@@ -73,11 +73,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkPIDConfig m_elbowPositionConfig;
 
   private final double CONVERSION_FACTOR = 360.0;
-  private final double SHOULDER_FF = 0.011;
-  private final double ELBOW_FF = 0.005;
+  private final double SHOULDER_FF = 0.0;
+  private final double ELBOW_FF = 0.0;
 
-  private final int MOTION_CONFIG_PID_SLOT = 0;
-  private final int POSITION_CONFIG_PID_SLOT = 1;
+  private final double TOLERANCE = 0.01;
 
   private ArmState m_currentArmState;
   private ArmDirection m_currentArmDirection;
@@ -110,24 +109,33 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentArmDirection = ArmDirection.Up;
 
     // Set all arm motors to brake
-    m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
-    m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
-    m_elbowMotor.setIdleMode(IdleMode.kBrake);
+    m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
+    m_shoulderSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_elbowMotor.setIdleMode(IdleMode.kCoast);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
 
     // Initialize moveToPosition Runnable Array
-    m_moveToPosition = new Runnable[] { () -> {
-    }, () -> armUp(), () -> armDown() };
+    m_moveToPosition = new Runnable[] {
+      () -> {},
+      () -> armUp(),
+      () -> armDown()
+    };
+
+    // Set tolerance motion completion
+    m_shoulderMotionConfig.setTolerance(TOLERANCE);
+    m_elbowMotionConfig.setTolerance(TOLERANCE);
+
+    // Reset motion PID
+    m_shoulderMotionConfig.reset(m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+    m_elbowMotionConfig.reset(m_elbowMotor.getAbsoluteEncoderPosition());
 
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
-      // Initialize PID
-      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(),
-          false, false, POSITION_CONFIG_PID_SLOT);
-      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false,
-          POSITION_CONFIG_PID_SLOT);
+      // Initialize onboard position PID
+      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false);
+      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false);
     }
   }
 
@@ -183,8 +191,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Move arm position up (first move shoulder up, then elbow)
-   * 
-   * @param armState
    */
   private void armUp() {
     if (isShoulderMotionComplete() && isElbowMotionComplete())
@@ -199,8 +205,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Move arm position down (first move elbow, then shoulder)
-   * 
-   * @param armState
    */
   private void armDown() {
     if (isShoulderMotionComplete() && isElbowMotionComplete())
@@ -225,15 +229,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState Arm state, which includes shoulder and elbow position
    */
   public void setArmState(ArmState armState) {
-    // Update current state
-    if (armState != m_currentArmState) {
-      m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
-    }
+    // Update current arm direction and state
+    m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
     m_currentArmState = armState;
 
+    // Set motion goal for both joints
     m_shoulderMotionConfig.setGoal(armState.shoulderPosition);
     m_elbowMotionConfig.setGoal(armState.elbowPosition);
-
   }
 
   /**

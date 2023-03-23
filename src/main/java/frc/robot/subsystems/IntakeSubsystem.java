@@ -21,9 +21,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     private SparkMaxLimitSwitch objectDifferentiator;
 
     public Hardware(boolean isHardwareReal,
-                    SparkMax rollerMotor,
-                    SparkMaxLimitSwitch objectPresenceDetector,
-                    SparkMaxLimitSwitch objectDifferentiator) {
+        SparkMax rollerMotor,
+        SparkMaxLimitSwitch objectPresenceDetector,
+        SparkMaxLimitSwitch objectDifferentiator) {
       this.isHardwareReal = isHardwareReal;
       this.rollerMotor = rollerMotor;
       this.objectPresenceDetector = objectPresenceDetector;
@@ -43,6 +43,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Create a new intake subsystem
+   * 
    * @param intakeHardware Intake hardware
    */
   public IntakeSubsystem(Hardware intakeHardware) {
@@ -54,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     m_rollerMotor.restoreFactoryDefaults();
 
     // Set motors to brake
-    m_rollerMotor.setIdleMode(IdleMode.kBrake);
+    m_rollerMotor.setIdleMode(IdleMode.kCoast);
 
     m_rollerMotor.setSmartCurrentLimit(ROLLER_CURRENT_LIMIT);
 
@@ -66,16 +67,16 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     m_objectDifferentiator.enableLimitSwitch(false);
 
     // Only do this stuff if hardware is real
-    if (intakeHardware.isHardwareReal) {}
+    if (intakeHardware.isHardwareReal) {
+    }
   }
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     SparkMax rollerMotor = new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless);
     Hardware intakeHardware = new Hardware(isHardwareReal,
-                                           rollerMotor,
-                                           rollerMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
-                                           rollerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
-      );
+        rollerMotor,
+        rollerMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
+        rollerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed));
     return intakeHardware;
   }
 
@@ -97,6 +98,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Identifies whether a game object is present
+   * 
    * @return true if object is present
    */
   public boolean isObjectPresent() {
@@ -105,12 +107,15 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   /**
    * Identify game object
+   * 
    * @return Game object, null if unidentified
    */
   public GameObject identifyObject() {
     if (isObjectPresent()) {
-      if (m_objectDifferentiator.isPressed()) return GameObject.Cone; 
-      else return GameObject.Cube;
+      if (m_objectDifferentiator.isPressed())
+        return GameObject.Cone;
+      else
+        return GameObject.Cube;
     }
     return null;
   }
