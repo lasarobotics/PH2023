@@ -70,19 +70,20 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion PID settings
-    private static final double MOTION_SHOULDER_kP = 0.001;
+    private static final double MOTION_SHOULDER_kP = 0.1;
     private static final double MOTION_SHOULDER_kI = 0.0;
     private static final double MOTION_SHOULDER_kD = 0.0;
-    private static final double MOTION_SHOULDER_kF = 0.001;
-    private static final double MOTION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double MOTION_SHOULDER_ACCELERATION = Global.NEO_MAX_RPM * 3 / 4;
-
-    public static final double MOTION_SHOULDER_TOLERANCE = 0.01;
+    private static final double MOTION_SHOULDER_VELOCITY = 0.25;
+    private static final double MOTION_SHOULDER_ACCELERATION = 0.5;
 
     // Arm shoulder motion PID config
-    public static final ProfiledPIDController MOTION_SHOULDER_CONFIG = new ProfiledPIDController(MOTION_SHOULDER_kP,
-        MOTION_SHOULDER_kI, MOTION_SHOULDER_kD,
-        new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION));
+    public static final ProfiledPIDController MOTION_SHOULDER_CONFIG = new ProfiledPIDController(
+      MOTION_SHOULDER_kP,
+      MOTION_SHOULDER_kI, 
+      MOTION_SHOULDER_kD,
+      new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION)
+    );
+    
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 0.8;
     private static final double POSITION_SHOULDER_kI = 0.0;
@@ -114,19 +115,19 @@ public final class Constants {
         POSITION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm elbow motion PID settings
-    private static final double MOTION_ELBOW_kP = 0.001;
+    private static final double MOTION_ELBOW_kP = 0.1;
     private static final double MOTION_ELBOW_kI = 0.0;
     private static final double MOTION_ELBOW_kD = 0.0;
-    private static final double MOTION_ELBOW_kF = 0.002;
-    private static final double MOTION_ELBOW_VELOCITY = Global.NEO_MAX_RPM / 2;
-    private static final double MOTION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM / 2;
-
-    public static final double MOTION_ELBOW_TOLERANCE = 0.01;
+    private static final double MOTION_ELBOW_VELOCITY = 0.25;
+    private static final double MOTION_ELBOW_ACCELERATION = 0.5;
 
     // Arm elbow motion PID config
-    public static final ProfiledPIDController MOTION_ELBOW_CONFIG = new ProfiledPIDController(MOTION_ELBOW_kP,
-        MOTION_ELBOW_kI, MOTION_ELBOW_kD,
-        new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION));
+    public static final ProfiledPIDController MOTION_ELBOW_CONFIG = new ProfiledPIDController(
+      MOTION_ELBOW_kP,
+      MOTION_ELBOW_kI, 
+      MOTION_ELBOW_kD,
+      new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION)
+    );
 
     // Arm elbow position PID settings
     private static final double POSITION_ELBOW_kP = 0.1;
