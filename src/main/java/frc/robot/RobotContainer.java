@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.autonomous.Balance;
 import frc.robot.commands.autonomous.BotScoreConeA;
 import frc.robot.commands.autonomous.BotScoreConeB;
 import frc.robot.commands.autonomous.BotScoreCube;
@@ -28,7 +29,8 @@ import frc.robot.commands.autonomous.MidScoreConeBA;
 import frc.robot.commands.autonomous.MidScoreConeBB;
 import frc.robot.commands.autonomous.MidScoreCubeA;
 import frc.robot.commands.autonomous.MidScoreCubeB;
-import frc.robot.commands.autonomous.TestAuto;
+import frc.robot.commands.autonomous.MobilityBalance;
+import frc.robot.commands.autonomous.TestPath;
 import frc.robot.commands.autonomous.TopScoreConeA;
 import frc.robot.commands.autonomous.TopScoreConeB;
 import frc.robot.commands.autonomous.TopScoreCube;
@@ -158,31 +160,8 @@ public class RobotContainer {
    */
   private void autoModeChooser() {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
-    m_automodeChooser.addOption("Bottom score held Cube then pickup new object",
-        new BotScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Bottom score held ConeA then pickup new object",
-        new BotScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Bottom score held ConeB then pickup new object",
-        new BotScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held Cube then pickup ObjectA and go to pad",
-        new MidScoreCubeA(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held ConeA then pickup new ObjectA and go to pad",
-        new MidScoreConeAA(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held ConeB then pickup new ObjectA and go to pad",
-        new MidScoreConeBA(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held Cube then pickup new ObjectB and go to pad",
-        new MidScoreCubeB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held ConeA then pickup new ObjectB and go to pad",
-        new MidScoreConeAB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Middle score held ConeB then pickup new ObjectB and go to pad",
-        new MidScoreConeBB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Top score held Cube then pickup new object",
-        new TopScoreCube(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Top score held ConeA then pickup new object",
-        new TopScoreConeA(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Top score held ConeB then pickup new object",
-        new TopScoreConeB(DRIVE_SUBSYSTEM, EVENT_MAP));
-    m_automodeChooser.addOption("Test auto", new TestPath(DRIVE_SUBSYSTEM));
+    m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
+    m_automodeChooser.addOption("Mobility Balance", new MobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
   }
 
   /**
