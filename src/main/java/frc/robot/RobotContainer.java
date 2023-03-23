@@ -20,20 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autonomous.Balance;
-import frc.robot.commands.autonomous.BotScoreConeA;
-import frc.robot.commands.autonomous.BotScoreConeB;
-import frc.robot.commands.autonomous.BotScoreCube;
-import frc.robot.commands.autonomous.MidScoreConeAA;
-import frc.robot.commands.autonomous.MidScoreConeAB;
-import frc.robot.commands.autonomous.MidScoreConeBA;
-import frc.robot.commands.autonomous.MidScoreConeBB;
-import frc.robot.commands.autonomous.MidScoreCubeA;
-import frc.robot.commands.autonomous.MidScoreCubeB;
 import frc.robot.commands.autonomous.MobilityBalance;
-import frc.robot.commands.autonomous.TestPath;
-import frc.robot.commands.autonomous.TopScoreConeA;
-import frc.robot.commands.autonomous.TopScoreConeB;
-import frc.robot.commands.autonomous.TopScoreCube;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
@@ -66,18 +53,18 @@ public class RobotContainer {
       Constants.Drive.DRIVE_TRACTION_CONTROL_CURVE,
       Constants.Drive.DRIVE_THROTTLE_INPUT_CURVE,
       Constants.Drive.DRIVE_TURN_INPUT_CURVE);
-  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(ArmSubsystem.initializeHardware(REAL_HARDWARE),
-      new Pair<ProfiledPIDController, SparkPIDConfig>(
-          Constants.Arm.MOTION_SHOULDER_CONFIG,
-          Constants.Arm.POSITION_SHOULDER_CONFIG),
-      new Pair<ProfiledPIDController, SparkPIDConfig>(
-          Constants.Arm.MOTION_ELBOW_CONFIG,
-          Constants.Arm.POSITION_ELBOW_CONFIG),
-      new Pair<Runnable, Runnable>(
-          DRIVE_SUBSYSTEM::enableTurnBoost,
-          DRIVE_SUBSYSTEM::disableTurnBoost));
+  private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(
+    ArmSubsystem.initializeHardware(REAL_HARDWARE),
+    new Pair<ProfiledPIDController, SparkPIDConfig>(
+      Constants.Arm.MOTION_SHOULDER_CONFIG,
+      Constants.Arm.POSITION_SHOULDER_CONFIG),
+    new Pair<ProfiledPIDController, SparkPIDConfig>(
+      Constants.Arm.MOTION_ELBOW_CONFIG,
+      Constants.Arm.POSITION_ELBOW_CONFIG)
+  );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
-      IntakeSubsystem.initializeHardware(REAL_HARDWARE));
+    IntakeSubsystem.initializeHardware(REAL_HARDWARE)
+  );
 
   private static final HashMap<String, Command> EVENT_MAP = new HashMap<>() {
     {
@@ -155,8 +142,8 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
     PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
     PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
-    PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableMovementBoost()));
-    PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableMovementBoost()));
+    PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableBoost()));
+    PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableBoost()));
 
   }
 
