@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public enum ArmState {
     Stowed(+0.905, +0.550),
-    Ground(+0.840, +0.300),
+    Ground(+0.589, +0.846),
     Middle(+0.650, +0.280),
     High(+0.550, +0.020);
 
@@ -233,6 +233,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public void periodic() {
     // This method will be called once per scheduler run
     m_moveToPosition[m_currentArmDirection.ordinal()].run();
+    System.out.println("Shoulder position: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+    System.out.println("Elbow position: " + m_elbowMotor.getAbsoluteEncoderPosition());
   }
 
   /**
