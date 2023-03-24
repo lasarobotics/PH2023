@@ -50,6 +50,14 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       this.shoulderPosition = shoulderPosition;
       this.elbowPosition = elbowPosition;
     }
+
+    public String toString() {
+      if (this == Stowed) return "Stowed";
+      if (this == Ground) return "Ground";
+      if (this == Middle) return "Middle";
+      if (this == High) return "High";
+      else return "";
+    }
   }
 
   public enum ArmDirection {
@@ -73,7 +81,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkPIDConfig m_elbowPositionConfig;
 
   private final double CONVERSION_FACTOR = 360.0;
-  private final double SHOULDER_FF = 0.0;
+  private final double SHOULDER_FF = 0.01;
   private final double ELBOW_FF = 0.0;
 
   private final double TOLERANCE = 0.01;
@@ -118,9 +126,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Initialize moveToPosition Runnable Array
     m_moveToPosition = new Runnable[] {
-      () -> {},
-      () -> armUp(),
-      () -> armDown()
+        () -> {},
+        () -> armUp(),
+        () -> armDown()
     };
 
     // Set tolerance motion completion
@@ -134,8 +142,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Only do this stuff if hardware is real
     if (armHardware.isHardwareReal) {
       // Initialize onboard position PID
-      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder(), false, false);
-      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder(), false, false);
+      m_shoulderPositionConfig.initializeSparkPID(m_shoulderMasterMotor, m_shoulderMasterMotor.getAbsoluteEncoder());
+      m_elbowPositionConfig.initializeSparkPID(m_elbowMotor, m_elbowMotor.getAbsoluteEncoder());
     }
   }
 
@@ -195,12 +203,14 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private void armUp() {
     if (isShoulderMotionComplete() && isElbowMotionComplete())
       m_currentArmDirection = ArmDirection.None;
-    if (!isShoulderMotionComplete())
-      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
+    if (!isShoulderMotionComplete()) {
+      System.out.println(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()) + m_shoulderMasterMotor.getAbsoluteEncoderPosition() + " " + m_shoulderMotionConfig.getGoal().position + " " + m_shoulderMasterMotor.getAbsoluteEncoderPosition());
+      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()) + m_shoulderMasterMotor.getAbsoluteEncoderPosition(),
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-    if (!isElbowMotionComplete() && isShoulderMotionComplete())
-      m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
-          calculateElbowFF(), ArbFFUnits.kPercentOut);
+    }
+    // if (!isElbowMotionComplete() && isShoulderMotionComplete())
+    //   m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
+    //       calculateElbowFF(), ArbFFUnits.kPercentOut);
   }
 
   /**
@@ -209,11 +219,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private void armDown() {
     if (isShoulderMotionComplete() && isElbowMotionComplete())
       m_currentArmDirection = ArmDirection.None;
-    if (!isElbowMotionComplete())
-      m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
-          calculateElbowFF(), ArbFFUnits.kPercentOut);
-    if (!isShoulderMotionComplete() && isElbowMotionComplete())
-      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()),
+    // if (!isElbowMotionComplete()) {
+    //   System.out.println(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
+    //   m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition, 
+    //       calculateElbowFF(), ArbFFUnits.kPercentOut);
+    // }
+    if (!isShoulderMotionComplete() /*&& isElbowMotionComplete()*/)
+      m_shoulderMasterMotor.set(m_shoulderMotionConfig.calculate(m_shoulderMasterMotor.getAbsoluteEncoderPosition()) + m_shoulderMasterMotor.getAbsoluteEncoderPosition(),
           ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
 
@@ -234,8 +246,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentArmState = armState;
 
     // Set motion goal for both joints
-    m_shoulderMotionConfig.setGoal(armState.shoulderPosition);
-    m_elbowMotionConfig.setGoal(armState.elbowPosition);
+    m_shoulderMotionConfig.setGoal(m_currentArmState.shoulderPosition);
+    m_elbowMotionConfig.setGoal(m_currentArmState.elbowPosition);
   }
 
   /**
