@@ -81,7 +81,8 @@ public final class Constants {
       MOTION_SHOULDER_kP,
       MOTION_SHOULDER_kI, 
       MOTION_SHOULDER_kD,
-      new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION)
+      new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION),
+      Global.ROBOT_LOOP_PERIOD
     );
     
     // Arm shoulder position PID settings
@@ -126,7 +127,8 @@ public final class Constants {
       MOTION_ELBOW_kP,
       MOTION_ELBOW_kI, 
       MOTION_ELBOW_kD,
-      new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION)
+      new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION),
+      Global.ROBOT_LOOP_PERIOD
     );
 
     // Arm elbow position PID settings
