@@ -12,6 +12,7 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -83,8 +84,8 @@ public final class Constants {
     private static final double POSITION_SHOULDER_kD = 1.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
-    private static final double POSITION_SHOULDER_LOWER_LIMIT = 0.5;
-    private static final double POSITION_SHOULDER_UPPER_LIMIT = 0.91;
+    private static final double POSITION_SHOULDER_LOWER_LIMIT = ArmState.High.shoulderPosition;
+    private static final double POSITION_SHOULDER_UPPER_LIMIT = ArmState.Stowed.shoulderPosition;
     private static final double POSITION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
     private static final double POSITION_SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
     private static final boolean POSITION_SHOULDER_SOFT_LIMITS = true;
@@ -108,8 +109,8 @@ public final class Constants {
         POSITION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm elbow motion PID settings
-    private static final double MOTION_ELBOW_VELOCITY = 0.25;
-    private static final double MOTION_ELBOW_ACCELERATION = 0.5;
+    private static final double MOTION_ELBOW_VELOCITY = 0.5;
+    private static final double MOTION_ELBOW_ACCELERATION = 1.0;
 
     // Arm elbow motion PID config
 
@@ -118,13 +119,13 @@ public final class Constants {
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 0.8;
+    private static final double POSITION_ELBOW_kP = 2.0;
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 0.0;
+    private static final double POSITION_ELBOW_kD = 2.5;
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
-    private static final double POSITION_ELBOW_LOWER_LIMIT = 0.05;
-    private static final double POSITION_ELBOW_UPPER_LIMIT = 0.60;
+    private static final double POSITION_ELBOW_LOWER_LIMIT = ArmState.High.elbowPosition;
+    private static final double POSITION_ELBOW_UPPER_LIMIT = ArmState.Stowed.elbowPosition;
     private static final double POSITION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;
     private static final double POSITION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
     private static final boolean POSITION_ELBOW_SOFT_LIMITS = true;

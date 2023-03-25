@@ -42,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     Stowed(+0.905, +0.550),
     Ground(+0.846, +0.589),
     Middle(+0.650, +0.280),
-    High(+0.550, +0.020);
+    High(+0.550, +0.200);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -84,7 +84,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.01;
   private final double ELBOW_FF = 0.0;
-  private final double TOLERANCE = 0.005;
+  private final double TOLERANCE = 0.02;
 
   private ArmState m_currentArmState;
   private ArmDirection m_currentArmDirection;
@@ -198,28 +198,28 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Move arm position up (first move shoulder up, then elbow)
    */
   private void armUp() {
+    m_timeCounter++;
     if (isShoulderMotionComplete() && isElbowMotionComplete())
       m_currentArmDirection = ArmDirection.None;
     if (!isShoulderMotionComplete()) 
-      m_shoulderMasterMotor.set(m_shoulderMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + ++m_timeCounter).position, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-    // if (!isElbowMotionComplete() && isShoulderMotionComplete())
-    //   m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition,
-    //       calculateElbowFF(), ArbFFUnits.kPercentOut);
+      m_shoulderMasterMotor.set(m_shoulderMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + m_timeCounter).position, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
+    if (!isElbowMotionComplete() && isShoulderMotionComplete()) {
+      m_elbowMotor.set(m_elbowMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + m_timeCounter).position, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
+    }
   }
 
   /**
    * Move arm position down (first move elbow, then shoulder)
    */
   private void armDown() {
+    m_timeCounter++;
     if (isShoulderMotionComplete() && isElbowMotionComplete())
-      m_currentArmDirection = ArmDirection.None;
-    // if (!isElbowMotionComplete()) {
-    //   System.out.println(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()));
-    //   m_elbowMotor.set(m_elbowMotionConfig.calculate(m_elbowMotor.getAbsoluteEncoderPosition()), ControlType.kPosition, 
-    //       calculateElbowFF(), ArbFFUnits.kPercentOut);
-    // }
-    if (!isShoulderMotionComplete() /*&& isElbowMotionComplete()*/) 
-      m_shoulderMasterMotor.set(m_shoulderMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + ++m_timeCounter).position, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
+    m_currentArmDirection = ArmDirection.None;
+    if (!isElbowMotionComplete()) {
+      m_elbowMotor.set(m_elbowMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + m_timeCounter).position, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
+    }
+    if (!isShoulderMotionComplete() && isElbowMotionComplete()) 
+      m_shoulderMasterMotor.set(m_shoulderMotionProfile.calculate(Constants.Global.ROBOT_LOOP_PERIOD + m_timeCounter).position, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
   }
 
   @Override
@@ -232,7 +232,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     ) {
       m_shoulderMasterMotor.stopMotor();
     }
-    
+    System.out.println("SHOULDER STUFF - shoulder position " + m_shoulderMasterMotor.getAbsoluteEncoderPosition() + " go to " + m_currentArmState.shoulderPosition);
+    System.out.println("ELBOW STUFF - elbow position " + m_elbowMotor.getAbsoluteEncoderPosition() + " go to " + m_currentArmState.elbowPosition);
     m_moveToPosition[m_currentArmDirection.ordinal()].run();
   }
 
