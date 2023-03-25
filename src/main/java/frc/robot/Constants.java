@@ -11,6 +11,7 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -70,25 +71,16 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion PID settings
-    private static final double MOTION_SHOULDER_kP = 2.0;
-    private static final double MOTION_SHOULDER_kI = 0.0;
-    private static final double MOTION_SHOULDER_kD = 0.0;
-    private static final double MOTION_SHOULDER_VELOCITY = 1.0;
+    private static final double MOTION_SHOULDER_VELOCITY = 1.5;
     private static final double MOTION_SHOULDER_ACCELERATION = 2.0;
 
     // Arm shoulder motion PID config
-    public static final ProfiledPIDController MOTION_SHOULDER_CONFIG = new ProfiledPIDController(
-      MOTION_SHOULDER_kP,
-      MOTION_SHOULDER_kI, 
-      MOTION_SHOULDER_kD,
-      new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION),
-      Global.ROBOT_LOOP_PERIOD
-    );
+    public static final Constraints MOTION_SHOULDER_CONSTRAINT =  new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 0.8;
+    private static final double POSITION_SHOULDER_kP = 5.0;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 0.0;
+    private static final double POSITION_SHOULDER_kD = 1.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = 0.5;
@@ -116,20 +108,14 @@ public final class Constants {
         POSITION_SHOULDER_ACCEL_STRATEGY);
 
     // Arm elbow motion PID settings
-    private static final double MOTION_ELBOW_kP = 0.1;
-    private static final double MOTION_ELBOW_kI = 0.0;
-    private static final double MOTION_ELBOW_kD = 0.0;
     private static final double MOTION_ELBOW_VELOCITY = 0.25;
     private static final double MOTION_ELBOW_ACCELERATION = 0.5;
 
     // Arm elbow motion PID config
-    public static final ProfiledPIDController MOTION_ELBOW_CONFIG = new ProfiledPIDController(
-      MOTION_ELBOW_kP,
-      MOTION_ELBOW_kI, 
-      MOTION_ELBOW_kD,
-      new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION),
-      Global.ROBOT_LOOP_PERIOD
-    );
+
+    
+    public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
+
 
     // Arm elbow position PID settings
     private static final double POSITION_ELBOW_kP = 0.8;
