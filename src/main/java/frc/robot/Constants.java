@@ -73,8 +73,8 @@ public final class Constants {
     private static final double MOTION_SHOULDER_kP = 2.0;
     private static final double MOTION_SHOULDER_kI = 0.0;
     private static final double MOTION_SHOULDER_kD = 0.0;
-    private static final double MOTION_SHOULDER_VELOCITY = 2.0;
-    private static final double MOTION_SHOULDER_ACCELERATION = 4.0;
+    private static final double MOTION_SHOULDER_VELOCITY = 1.0;
+    private static final double MOTION_SHOULDER_ACCELERATION = 2.0;
 
     // Arm shoulder motion PID config
     public static final ProfiledPIDController MOTION_SHOULDER_CONFIG = new ProfiledPIDController(
