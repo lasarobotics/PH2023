@@ -68,7 +68,6 @@ public class RobotContainer {
 
   private static final HashMap<String, Command> EVENT_MAP = new HashMap<>() {
     {
-      ;
       put(Constants.Auto.EVENT_MAP_INTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
       put(Constants.Auto.EVENT_MAP_OUTAKE, new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
       put(Constants.Auto.EVENT_MAP_PRINT, new PrintCommand("It has crossed the threshold"));
