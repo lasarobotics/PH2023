@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem.ArmDirection;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -47,12 +47,12 @@ public class ArmSubsystemTest {
 
     // Create ArmSubsystem object
     m_armSubsystem = new ArmSubsystem(m_armHardware,
-                                      new Pair<ProfiledPIDController,SparkPIDConfig>(
-                                        Constants.Arm.MOTION_SHOULDER_CONFIG,
+                                      new Pair<TrapezoidProfile.Constraints,SparkPIDConfig>(
+                                        Constants.Arm.MOTION_SHOULDER_CONSTRAINT,
                                         Constants.Arm.POSITION_SHOULDER_CONFIG
                                       ), 
-                                      new Pair<ProfiledPIDController, SparkPIDConfig>(
-                                        Constants.Arm.MOTION_ELBOW_CONFIG,
+                                      new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
+                                        Constants.Arm.MOTION_ELBOW_CONTRAINT,
                                         Constants.Arm.POSITION_ELBOW_CONFIG
                                       )
                                     );
