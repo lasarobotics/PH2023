@@ -7,9 +7,6 @@ package frc.robot;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
-
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -56,10 +53,8 @@ public final class Constants {
     private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.975, 3.95 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_X[] = { 0.0, 1.975, 3.95 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_Y[] = { 0.0, 0.5, 1.0 };
-    private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700,
-        0.800, 0.900, 1.0 };
-    private static final double DRIVE_TURN_INPUT_CURVE_Y[] = { 0.0, 0.008, 0.032, 0.072, 0.128, 0.200, 0.288, 0.392,
-        0.512, 0.768, 1.0 };
+    private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0 };
+    private static final double DRIVE_TURN_INPUT_CURVE_Y[] = { 0.0, 0.008, 0.032, 0.072, 0.128, 0.200, 0.288, 0.392, 0.512, 0.768, 1.0 };
 
     private static final SplineInterpolator SPLINE_INTERPOLATOR = new SplineInterpolator();
     public static final PolynomialSplineFunction DRIVE_THROTTLE_INPUT_CURVE = SPLINE_INTERPOLATOR
@@ -71,11 +66,9 @@ public final class Constants {
   }
 
   public static class Arm {
-    // Arm shoulder motion PID settings
+    // Arm shoulder motion settings
     private static final double MOTION_SHOULDER_VELOCITY = 1.5;
     private static final double MOTION_SHOULDER_ACCELERATION = 2.0;
-
-    // Arm shoulder motion PID config
     public static final Constraints MOTION_SHOULDER_CONSTRAINT =  new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
@@ -86,12 +79,9 @@ public final class Constants {
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = ArmState.High.shoulderPosition;
     private static final double POSITION_SHOULDER_UPPER_LIMIT = ArmState.Stowed.shoulderPosition;
-    private static final double POSITION_SHOULDER_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double POSITION_SHOULDER_ACCELERATION = Global.NEO_MAX_RPM;
     private static final boolean POSITION_SHOULDER_SOFT_LIMITS = true;
     private static final boolean POSITION_SHOULDER_SENSOR_PHASE = false;
     private static final boolean POSITION_SHOULDER_INVERT_MOTOR = false;
-    private static final AccelStrategy POSITION_SHOULDER_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
 
     // Arm shoulder position PID config
     public static final SparkPIDConfig POSITION_SHOULDER_CONFIG = new SparkPIDConfig(POSITION_SHOULDER_SENSOR_PHASE,
@@ -103,18 +93,11 @@ public final class Constants {
         POSITION_SHOULDER_TOLERANCE,
         POSITION_SHOULDER_LOWER_LIMIT,
         POSITION_SHOULDER_UPPER_LIMIT,
-        POSITION_SHOULDER_SOFT_LIMITS,
-        POSITION_SHOULDER_VELOCITY,
-        POSITION_SHOULDER_ACCELERATION,
-        POSITION_SHOULDER_ACCEL_STRATEGY);
+        POSITION_SHOULDER_SOFT_LIMITS);
 
-    // Arm elbow motion PID settings
+    // Arm elbow motion settings
     private static final double MOTION_ELBOW_VELOCITY = 0.5;
     private static final double MOTION_ELBOW_ACCELERATION = 1.0;
-
-    // Arm elbow motion PID config
-
-    
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
 
@@ -126,12 +109,9 @@ public final class Constants {
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = ArmState.High.elbowPosition;
     private static final double POSITION_ELBOW_UPPER_LIMIT = ArmState.Stowed.elbowPosition;
-    private static final double POSITION_ELBOW_VELOCITY = Global.NEO_MAX_RPM;
-    private static final double POSITION_ELBOW_ACCELERATION = Global.NEO_MAX_RPM;
     private static final boolean POSITION_ELBOW_SOFT_LIMITS = true;
     private static final boolean POSITION_ELBOW_SENSOR_PHASE = false;
     private static final boolean POSITION_ELBOW_INVERT_MOTOR = false;
-    private static final AccelStrategy POSITION_ELBOW_ACCEL_STRATEGY = AccelStrategy.kTrapezoidal;
 
     // Arm elbow position PID config
     public static final SparkPIDConfig POSITION_ELBOW_CONFIG = new SparkPIDConfig(POSITION_ELBOW_SENSOR_PHASE,
@@ -143,10 +123,7 @@ public final class Constants {
         POSITION_ELBOW_TOLERANCE,
         POSITION_ELBOW_LOWER_LIMIT,
         POSITION_ELBOW_UPPER_LIMIT,
-        POSITION_ELBOW_SOFT_LIMITS,
-        POSITION_ELBOW_VELOCITY,
-        POSITION_ELBOW_ACCELERATION,
-        POSITION_ELBOW_ACCEL_STRATEGY);
+        POSITION_ELBOW_SOFT_LIMITS);
 
   }
 

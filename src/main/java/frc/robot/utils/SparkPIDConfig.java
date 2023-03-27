@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 /**
  * Automates the configuration of Spark PID and Smart Motion paramaters
@@ -17,8 +16,7 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 public class SparkPIDConfig {
   private static final double MAX_VOLTAGE = 12.0;
   private static final int PID_SLOT = 0;
-
-  private boolean m_smartMotion = false;
+  
   private boolean m_enableSoftLimits = true;
 
   private boolean m_sensorPhase = false;
@@ -31,12 +29,7 @@ public class SparkPIDConfig {
   private double m_lowerLimit = 0.0;
   private double m_upperLimit = 0.0;
 
-  private double m_velocityRPM = 1.0;
-  private double m_accelerationRPMPerSec = 1.0;
-
-  private AccelStrategy m_accelStrategy =  AccelStrategy.kTrapezoidal;
-
-   /**
+  /**
    * Create a SparkPIDConfig, without Smart Motion parameters
    * <p>
    * USE FOR VELOCITY PID ONLY!
@@ -59,8 +52,6 @@ public class SparkPIDConfig {
     this.m_tolerance = tolerance;
 
     this.m_enableSoftLimits = false;
-
-    this.m_smartMotion = false;
   }
 
   /**
@@ -83,8 +74,7 @@ public class SparkPIDConfig {
    */
   public SparkPIDConfig(boolean sensorPhase, boolean invertMotor,
                         double kP, double kI, double kD, double kF, double tolerance, 
-                        double lowerLimit, double upperLimit, boolean enableSoftLimits,
-                        double velocityRPM, double accelerationRPMPerSec, AccelStrategy accelStrategy) {
+                        double lowerLimit, double upperLimit, boolean enableSoftLimits) {
     this.m_sensorPhase = sensorPhase;
     this.m_invertMotor = invertMotor;
     this.m_kP = kP;
@@ -95,13 +85,6 @@ public class SparkPIDConfig {
     this.m_lowerLimit = lowerLimit;
     this.m_upperLimit = upperLimit;
     this.m_enableSoftLimits = enableSoftLimits;
-    
-    this.m_velocityRPM = velocityRPM;
-    this.m_accelerationRPMPerSec = accelerationRPMPerSec;
-
-    this.m_accelStrategy = accelStrategy;
-
-    this.m_smartMotion = true;
   }
 
   /**
@@ -160,13 +143,6 @@ public class SparkPIDConfig {
     // Enable voltage compensation
     spark.enableVoltageCompensation(MAX_VOLTAGE);
 
-    // Configure Smart Motion values
-    if (m_smartMotion) {  
-      pidController.setSmartMotionMaxVelocity(m_velocityRPM, PID_SLOT);
-      pidController.setSmartMotionMaxAccel(m_accelerationRPMPerSec, PID_SLOT);
-      pidController.setSmartMotionAccelStrategy(m_accelStrategy, PID_SLOT);
-    }
-
     // Write settings to onboard flash
     for (int i = 0; i < 10; i++) spark.burnFlash();
   }
@@ -224,13 +200,6 @@ public class SparkPIDConfig {
 
     // Enable voltage compensation
     spark.enableVoltageCompensation(MAX_VOLTAGE);
-
-    // Configure Smart Motion values
-    if (m_smartMotion) {  
-      pidController.setSmartMotionMaxVelocity(m_velocityRPM, PID_SLOT);
-      pidController.setSmartMotionMaxAccel(m_accelerationRPMPerSec, PID_SLOT);
-      pidController.setSmartMotionAccelStrategy(m_accelStrategy, PID_SLOT);
-    }
 
     // Write settings to onboard flash
     for (int i = 0; i < 10; i++) spark.burnFlash();
@@ -310,19 +279,5 @@ public class SparkPIDConfig {
    */
   public double getUpperLimit() {
     return m_upperLimit;
-  }
-
-  /**
-   * @return MotionMagic cruise velocity in RPM
-   */
-  public double getVelocityRPM() {
-    return m_velocityRPM;
-  }
-
-  /**
-   * @return MotionMagic acceleration in RPM per sec
-   */
-  public double getAccelerationRPMPerSec() {
-    return m_accelerationRPMPerSec;
   }
 }
