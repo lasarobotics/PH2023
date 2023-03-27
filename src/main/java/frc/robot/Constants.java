@@ -69,7 +69,7 @@ public final class Constants {
     // Arm shoulder motion settings
     private static final double MOTION_SHOULDER_VELOCITY = 1.5;
     private static final double MOTION_SHOULDER_ACCELERATION = 2.0;
-    public static final Constraints MOTION_SHOULDER_CONSTRAINT =  new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
+    public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 5.0;
@@ -84,16 +84,18 @@ public final class Constants {
     private static final boolean POSITION_SHOULDER_INVERT_MOTOR = false;
 
     // Arm shoulder position PID config
-    public static final SparkPIDConfig POSITION_SHOULDER_CONFIG = new SparkPIDConfig(POSITION_SHOULDER_SENSOR_PHASE,
-        POSITION_SHOULDER_INVERT_MOTOR,
-        POSITION_SHOULDER_kP,
-        POSITION_SHOULDER_kI,
-        POSITION_SHOULDER_kD,
-        POSITION_SHOULDER_kF,
-        POSITION_SHOULDER_TOLERANCE,
-        POSITION_SHOULDER_LOWER_LIMIT,
-        POSITION_SHOULDER_UPPER_LIMIT,
-        POSITION_SHOULDER_SOFT_LIMITS);
+    public static final SparkPIDConfig POSITION_SHOULDER_CONFIG = new SparkPIDConfig(
+      POSITION_SHOULDER_SENSOR_PHASE,
+      POSITION_SHOULDER_INVERT_MOTOR,
+      POSITION_SHOULDER_kP,
+      POSITION_SHOULDER_kI,
+      POSITION_SHOULDER_kD,
+      POSITION_SHOULDER_kF,
+      POSITION_SHOULDER_TOLERANCE,
+      POSITION_SHOULDER_LOWER_LIMIT,
+      POSITION_SHOULDER_UPPER_LIMIT,
+      POSITION_SHOULDER_SOFT_LIMITS
+    );
 
     // Arm elbow motion settings
     private static final double MOTION_ELBOW_VELOCITY = 0.5;
@@ -114,17 +116,18 @@ public final class Constants {
     private static final boolean POSITION_ELBOW_INVERT_MOTOR = false;
 
     // Arm elbow position PID config
-    public static final SparkPIDConfig POSITION_ELBOW_CONFIG = new SparkPIDConfig(POSITION_ELBOW_SENSOR_PHASE,
-        POSITION_ELBOW_INVERT_MOTOR,
-        POSITION_ELBOW_kP,
-        POSITION_ELBOW_kI,
-        POSITION_ELBOW_kD,
-        POSITION_ELBOW_kF,
-        POSITION_ELBOW_TOLERANCE,
-        POSITION_ELBOW_LOWER_LIMIT,
-        POSITION_ELBOW_UPPER_LIMIT,
-        POSITION_ELBOW_SOFT_LIMITS);
-
+    public static final SparkPIDConfig POSITION_ELBOW_CONFIG = new SparkPIDConfig(
+      POSITION_ELBOW_SENSOR_PHASE,
+      POSITION_ELBOW_INVERT_MOTOR,
+      POSITION_ELBOW_kP,
+      POSITION_ELBOW_kI,
+      POSITION_ELBOW_kD,
+      POSITION_ELBOW_kF,
+      POSITION_ELBOW_TOLERANCE,
+      POSITION_ELBOW_LOWER_LIMIT,
+      POSITION_ELBOW_UPPER_LIMIT,
+      POSITION_ELBOW_SOFT_LIMITS
+    );
   }
 
   public static class Intake {

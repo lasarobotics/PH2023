@@ -14,7 +14,6 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -190,6 +189,18 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Hold position of arm when both joint motions are complete
+   */
+  private void armHoldIfComplete() {
+    // Hold position when both joints are complete
+    if (isShoulderMotionComplete() && isElbowMotionComplete()) {
+      m_shoulderMasterMotor.set(m_currentArmState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
+      m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
+      m_currentArmDirection = ArmDirection.None;
+    }
+  }
+
+  /**
    * Move arm position up (first move shoulder up, then elbow)
    */
   private void armUp() {
@@ -218,12 +229,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       );
     }
 
-    // Hold position when both joints are complete
-    if (isShoulderMotionComplete() && isElbowMotionComplete()) {
-      m_shoulderMasterMotor.set(m_currentArmState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-      m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
-      m_currentArmDirection = ArmDirection.None;
-    }
+    // Hold arm position if complete
+    armHoldIfComplete();
   }
 
   /**
@@ -255,12 +262,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       );
     }
 
-    // Hold position when both joints are complete
-    if (isShoulderMotionComplete() && isElbowMotionComplete()) {
-      m_shoulderMasterMotor.set(m_currentArmState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-      m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
-      m_currentArmDirection = ArmDirection.None;
-    }
+    // Hold arm position if complete
+    armHoldIfComplete();
   }
 
   @Override
@@ -280,10 +283,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentArmState = armState;
 
     // Generate states
-    State desiredShoulderState = new State(armState.shoulderPosition, 0.0);
-    State currentShoulderState = new State(m_shoulderMasterMotor.getAbsoluteEncoderPosition(), m_shoulderMasterMotor.getAbsoluteEncoderVelocity() / 60);
-    State desiredElbowState = new State(armState.elbowPosition, 0.0);
-    State currentElbowState = new State(m_elbowMotor.getAbsoluteEncoderPosition(), m_elbowMotor.getAbsoluteEncoderVelocity() / 60);
+    TrapezoidProfile.State desiredShoulderState = new TrapezoidProfile.State(armState.shoulderPosition, 0.0);
+    TrapezoidProfile.State currentShoulderState = new TrapezoidProfile.State(m_shoulderMasterMotor.getAbsoluteEncoderPosition(), m_shoulderMasterMotor.getAbsoluteEncoderVelocity() / 60);
+    TrapezoidProfile.State desiredElbowState = new TrapezoidProfile.State(armState.elbowPosition, 0.0);
+    TrapezoidProfile.State currentElbowState = new TrapezoidProfile.State(m_elbowMotor.getAbsoluteEncoderPosition(), m_elbowMotor.getAbsoluteEncoderVelocity() / 60);
 
     // Generate motion profile for both joints
     m_shoulderStartTime = Instant.now();
