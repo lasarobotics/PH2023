@@ -102,7 +102,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @return true if object is present
    */
   public boolean isObjectPresent() {
-    return m_objectPresenceDetector.isPressed();
+    return m_rollerMotor.getEncoderVelocity() < 0.1;
   }
 
   /**
