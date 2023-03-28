@@ -61,7 +61,11 @@ public class RobotContainer {
       Constants.Arm.POSITION_SHOULDER_CONFIG),
     new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
       Constants.Arm.MOTION_ELBOW_CONTRAINT,
-      Constants.Arm.POSITION_ELBOW_CONFIG)
+      Constants.Arm.POSITION_ELBOW_CONFIG),
+    new Pair<Runnable, Runnable>(
+      DRIVE_SUBSYSTEM::enableTurnBoost,
+      DRIVE_SUBSYSTEM::disableTurnBoost
+    )
   );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
     IntakeSubsystem.initializeHardware(REAL_HARDWARE)
