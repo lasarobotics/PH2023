@@ -89,6 +89,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private Instant m_shoulderStartTime;
   private Instant m_elbowStartTime;
 
+  private final double SHOULDER_STRAIGHT_POSITION = 0.0;
+  private final double ELBOW_STRAIGHT_POSITION = 0.0;
+
   /**
    * Create an instance of ArmSubsystem
    * <p>
@@ -158,8 +161,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on shoulder angle
    */
   private double calculateShoulderFF() {
-    return SHOULDER_FF
-        * Math.sin(Math.toRadians(m_shoulderMasterMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
+      return SHOULDER_FF * Math.cos(Math.toRadians((m_shoulderMasterMotor.getAbsoluteEncoderPosition() - SHOULDER_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
@@ -168,7 +170,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return ELBOW_FF * Math.sin(Math.toRadians(m_elbowMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
+    return ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
