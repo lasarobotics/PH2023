@@ -335,6 +335,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     return m_currentArmState;
   }
 
+  
+  /**
+   * Stop elbow motor
+   */
+  public void elbowStop() {
+    m_elbowMotor.stopMotor();
+  }
+  
+  /**
+   * Stop shoulder motor
+   */
+  public void shoulderStop() {
+    m_shoulderMasterMotor.stopMotor();
+  }
+
   @Override
   public void close() {
     m_shoulderMasterMotor.close();

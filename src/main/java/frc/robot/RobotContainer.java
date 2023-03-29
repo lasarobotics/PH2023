@@ -148,9 +148,12 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.rightBumper().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
     PRIMARY_CONTROLLER.rightBumper().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
-    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, 0.1).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualElbowRequest(SECONDARY_CONTROLLER.getLeftY()), ARM_SUBSYSTEM));
-    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, 0.1).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM));
+    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualElbowRequest(SECONDARY_CONTROLLER.getLeftY()), ARM_SUBSYSTEM)).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.elbowStop()));
+    SECONDARY_CONTROLLER.axisLessThan(XboxController.Axis.kLeftY.value, -Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualElbowRequest(SECONDARY_CONTROLLER.getLeftY()), ARM_SUBSYSTEM)).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.elbowStop()));
 
+
+    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kRightY.value, Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM)).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.shoulderStop()));
+    SECONDARY_CONTROLLER.axisLessThan(XboxController.Axis.kRightY.value, -Constants.HID.CONTROLLER_DEADBAND).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM)).onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.shoulderStop()));
     
   }
 
