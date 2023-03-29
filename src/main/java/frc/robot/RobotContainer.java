@@ -9,6 +9,7 @@ import java.util.HashMap;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -120,7 +121,9 @@ public class RobotContainer {
    */
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
-    SECONDARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
+
+    SECONDARY_CONTROLLER.start().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.toggleManualControl()));
+    SECONDARY_CONTROLLER.start().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.toggleManualControl()));
 
     PRIMARY_CONTROLLER.back().whileTrue(new RunCommand(() -> DRIVE_SUBSYSTEM.autoBalance(), DRIVE_SUBSYSTEM));
 
@@ -144,6 +147,11 @@ public class RobotContainer {
 
     PRIMARY_CONTROLLER.rightBumper().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
     PRIMARY_CONTROLLER.rightBumper().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
+
+    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, 0.1).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualElbowRequest(SECONDARY_CONTROLLER.getLeftY()), ARM_SUBSYSTEM));
+    SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, 0.1).onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM));
+
+    
   }
 
   /**

@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.SparkMax;
@@ -94,6 +95,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private Runnable m_enableTurnRateLimit;
   private Runnable m_disableTurnRateLimit;
+
+  private boolean m_enableManualControl = false;
 
   /**
    * Create an instance of ArmSubsystem
@@ -263,10 +266,38 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     armHoldIfComplete();
   }
 
+  /**
+   * Enable manual motor control
+   */
+  public void toggleManualControl() {
+    m_enableManualControl = !m_enableManualControl;
+  }
+
+  /**
+   * Manually control elbow motor
+   * @param elbowRequest
+   */
+  public void manualElbowRequest(double elbowRequest) {
+    m_elbowMotor.set(elbowRequest, ControlType.kDutyCycle);
+  }
+
+  /**
+   * Manually control shoulder motor
+   * @param shoulderRequest
+   */
+  public void manualShoulderRequest(double shoulderRequest) {
+    m_shoulderMasterMotor.set(shoulderRequest, ControlType.kDutyCycle);
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    smartDashboard();
+    if (m_enableManualControl) return;
     m_moveToPosition[m_currentArmDirection.ordinal()].run();
+  }
+
+  public void smartDashboard() {
+    SmartDashboard.putBoolean("Manual Control", m_enableManualControl);
   }
 
   /**
