@@ -47,15 +47,10 @@ public class ArmSubsystemTest {
 
     // Create ArmSubsystem object
     m_armSubsystem = new ArmSubsystem(m_armHardware,
-                                      new Pair<TrapezoidProfile.Constraints,SparkPIDConfig>(
-                                        Constants.Arm.MOTION_SHOULDER_CONSTRAINT,
-                                        Constants.Arm.POSITION_SHOULDER_CONFIG
-                                      ), 
-                                      new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
-                                        Constants.Arm.MOTION_ELBOW_CONTRAINT,
-                                        Constants.Arm.POSITION_ELBOW_CONFIG
-                                      )
-                                    );
+      new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_SHOULDER_CONSTRAINT, Constants.Arm.POSITION_SHOULDER_CONFIG),
+      new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_ELBOW_CONTRAINT, Constants.Arm.POSITION_ELBOW_CONFIG),
+      new Pair<Runnable, Runnable>(() -> {}, () -> {})
+    );
   }
 
   @AfterEach
