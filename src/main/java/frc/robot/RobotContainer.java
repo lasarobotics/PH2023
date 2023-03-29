@@ -56,16 +56,9 @@ public class RobotContainer {
       Constants.Drive.DRIVE_TURN_INPUT_CURVE);
   private static final ArmSubsystem ARM_SUBSYSTEM = new ArmSubsystem(
     ArmSubsystem.initializeHardware(REAL_HARDWARE),
-    new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
-      Constants.Arm.MOTION_SHOULDER_CONSTRAINT,
-      Constants.Arm.POSITION_SHOULDER_CONFIG),
-    new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
-      Constants.Arm.MOTION_ELBOW_CONTRAINT,
-      Constants.Arm.POSITION_ELBOW_CONFIG),
-    new Pair<Runnable, Runnable>(
-      DRIVE_SUBSYSTEM::enableTurnBoost,
-      DRIVE_SUBSYSTEM::disableTurnBoost
-    )
+    new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_SHOULDER_CONSTRAINT, Constants.Arm.POSITION_SHOULDER_CONFIG),
+    new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_ELBOW_CONTRAINT, Constants.Arm.POSITION_ELBOW_CONFIG),
+    new Pair<Runnable, Runnable>(DRIVE_SUBSYSTEM::enableTurnBoost, DRIVE_SUBSYSTEM::disableTurnBoost)
   );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
     IntakeSubsystem.initializeHardware(REAL_HARDWARE)
@@ -97,9 +90,11 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure default commands
     DRIVE_SUBSYSTEM.setDefaultCommand(
-        new RunCommand(
-            () -> DRIVE_SUBSYSTEM.teleopPID(PRIMARY_CONTROLLER.getLeftY(), PRIMARY_CONTROLLER.getRightX()),
-            DRIVE_SUBSYSTEM));
+      new RunCommand(
+        () -> DRIVE_SUBSYSTEM.teleopPID(PRIMARY_CONTROLLER.getLeftY(), PRIMARY_CONTROLLER.getRightX()),
+        DRIVE_SUBSYSTEM
+      )
+    );
 
     // Configure the trigger bindings
     configureBindings();
@@ -148,7 +143,6 @@ public class RobotContainer {
 
     PRIMARY_CONTROLLER.rightBumper().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
     PRIMARY_CONTROLLER.rightBumper().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
-    
   }
 
   /**
