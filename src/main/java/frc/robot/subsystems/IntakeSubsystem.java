@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMaxLimitSwitch m_objectPresenceDetector;
   private SparkMaxLimitSwitch m_objectDifferentiator;
 
-  private final int ROLLER_CURRENT_LIMIT = 20;
+  private final int ROLLER_CURRENT_LIMIT = 25;
 
   /**
    * Create a new intake subsystem
@@ -102,7 +102,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * @return true if object is present
    */
   public boolean isObjectPresent() {
-    return m_objectPresenceDetector.isPressed();
+    return m_rollerMotor.getEncoderVelocity() < 0.1;
   }
 
   /**

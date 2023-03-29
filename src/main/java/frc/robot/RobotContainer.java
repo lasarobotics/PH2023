@@ -61,7 +61,11 @@ public class RobotContainer {
       Constants.Arm.POSITION_SHOULDER_CONFIG),
     new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(
       Constants.Arm.MOTION_ELBOW_CONTRAINT,
-      Constants.Arm.POSITION_ELBOW_CONFIG)
+      Constants.Arm.POSITION_ELBOW_CONFIG),
+    new Pair<Runnable, Runnable>(
+      DRIVE_SUBSYSTEM::enableTurnBoost,
+      DRIVE_SUBSYSTEM::disableTurnBoost
+    )
   );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
     IntakeSubsystem.initializeHardware(REAL_HARDWARE)
@@ -139,9 +143,9 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.rightTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
-    PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
-    PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
-    PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
+    // PRIMARY_CONTROLLER.povLeft().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(0)));
+    // PRIMARY_CONTROLLER.povUp().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(1)));
+    // PRIMARY_CONTROLLER.povRight().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.setGridSelector(2)));
 
     PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableBoost()));
     PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableBoost()));

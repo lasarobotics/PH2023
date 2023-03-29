@@ -89,6 +89,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private Instant m_shoulderStartTime;
   private Instant m_elbowStartTime;
 
+  private final double SHOULDER_STRAIGHT_POSITION = 0.0;
+  private final double ELBOW_STRAIGHT_POSITION = 0.0;
+
+  private Runnable m_enableTurnBoost;
+  private Runnable m_disableTurnBoost;
+
   /**
    * Create an instance of ArmSubsystem
    * <p>
@@ -103,7 +109,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
 
   public ArmSubsystem(Hardware armHardware, Pair<TrapezoidProfile.Constraints, SparkPIDConfig> shoulderConfigs,
-      Pair<TrapezoidProfile.Constraints, SparkPIDConfig> elbowConfigs) {
+      Pair<TrapezoidProfile.Constraints, SparkPIDConfig> elbowConfigs, Pair<Runnable, Runnable> turnBoost) {
     this.m_shoulderMasterMotor = armHardware.shoulderMasterMotor;
     this.m_shoulderSlaveMotor = armHardware.shoulderSlaveMotor;
     this.m_elbowMotor = armHardware.elbowMotor;
@@ -112,6 +118,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_shoulderPositionConfig = shoulderConfigs.getSecond();
     this.m_elbowMotionConstraint = elbowConfigs.getFirst();
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
+
+    this.m_enableTurnBoost = turnBoost.getFirst();
+    this.m_disableTurnBoost = turnBoost.getSecond();
 
     m_currentArmState = ArmState.Stowed;
     m_currentArmDirection = ArmDirection.None;
@@ -158,8 +167,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on shoulder angle
    */
   private double calculateShoulderFF() {
-    return SHOULDER_FF
-        * Math.sin(Math.toRadians(m_shoulderMasterMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
+      return SHOULDER_FF * Math.cos(Math.toRadians((m_shoulderMasterMotor.getAbsoluteEncoderPosition() - SHOULDER_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
@@ -168,7 +176,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return ELBOW_FF * Math.sin(Math.toRadians(m_elbowMotor.getAbsoluteEncoderPosition() * CONVERSION_FACTOR));
+    return ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
@@ -273,6 +281,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Update current arm direction and state
     m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
     m_currentArmState = armState;
+
+    if (!armState.equals(ArmState.Stowed)) {
+      m_enableTurnBoost.run();
+    }
+    else {
+      m_disableTurnBoost.run();
+    }
 
     // Generate states
     TrapezoidProfile.State desiredShoulderState = new TrapezoidProfile.State(armState.shoulderPosition, 0.0);
