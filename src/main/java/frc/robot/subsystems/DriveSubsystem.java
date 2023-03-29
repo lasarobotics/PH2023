@@ -132,13 +132,13 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final double MOVE_BOOST_SCALAR = 1.0;
   private final double MOVE_NORMAL_SCALAR = 0.5;
 
-  private final double TURN_BOOST_SCALAR = 0.5;
+  private final double TURN_LIMIT_SCALAR = 0.5;
   private final double TURN_NORMAL_SCALAR = 1.0;
 
   private double m_deadband = 0.0;
 
-  private double m_driveMultiplier = MOVE_BOOST_SCALAR;
-  private double m_turnMultiplier = TURN_BOOST_SCALAR;
+  private double m_driveMultiplier = MOVE_NORMAL_SCALAR;
+  private double m_turnMultiplier = TURN_NORMAL_SCALAR;
 
   // Drive specs, these numbers use the motor shaft encoder
   private static final double DRIVE_TRACK_WIDTH = 0.57221;
@@ -426,16 +426,16 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
 
   /**
-   * Slow turn scalar
+   * Enable turn slowdown
    */
-  public void enableTurnBoost() {
-    m_turnMultiplier = TURN_BOOST_SCALAR;
+  public void enableTurnRateLimit() {
+    m_turnMultiplier = TURN_LIMIT_SCALAR;
   }
 
   /**
    * Disable turn slowdown
    */
-  public void disableTurnBoost() {
+  public void disableTurnRateLimit() {
     m_turnMultiplier = TURN_NORMAL_SCALAR;
   }
 
