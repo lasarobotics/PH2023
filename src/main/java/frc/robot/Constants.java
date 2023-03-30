@@ -67,18 +67,18 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion settings
-    private static final double MOTION_SHOULDER_VELOCITY = 1.5;
-    private static final double MOTION_SHOULDER_ACCELERATION = 2.0;
+    private static final double MOTION_SHOULDER_VELOCITY = 3.0;
+    private static final double MOTION_SHOULDER_ACCELERATION = 6.0;
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 5.0;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 1.0;
+    private static final double POSITION_SHOULDER_kD = 1.5;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
-    private static final double POSITION_SHOULDER_LOWER_LIMIT = ArmState.High.shoulderPosition;
-    private static final double POSITION_SHOULDER_UPPER_LIMIT = ArmState.Stowed.shoulderPosition;
+    private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
+    private static final double POSITION_SHOULDER_UPPER_LIMIT = Math.max(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
     private static final boolean POSITION_SHOULDER_SOFT_LIMITS = true;
     private static final boolean POSITION_SHOULDER_SENSOR_PHASE = false;
     private static final boolean POSITION_SHOULDER_INVERT_MOTOR = false;
@@ -104,13 +104,13 @@ public final class Constants {
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 2.0;
+    private static final double POSITION_ELBOW_kP = 1.0; // 2.0
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 2.5;
+    private static final double POSITION_ELBOW_kD = 1.75; // 2.5
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
-    private static final double POSITION_ELBOW_LOWER_LIMIT = ArmState.High.elbowPosition;
-    private static final double POSITION_ELBOW_UPPER_LIMIT = ArmState.Stowed.elbowPosition;
+    private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
+    private static final double POSITION_ELBOW_UPPER_LIMIT = Math.max(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
     private static final boolean POSITION_ELBOW_SOFT_LIMITS = true;
     private static final boolean POSITION_ELBOW_SENSOR_PHASE = false;
     private static final boolean POSITION_ELBOW_INVERT_MOTOR = false;

@@ -42,10 +42,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.905, +0.550),
-    Ground(+0.846, +0.589),
-    Middle(+0.650, +0.280),
-    High(+0.550, +0.200);
+    Stowed(+0.905, +0.919),
+    Ground(+0.905, +0.693),
+    Middle(+0.562, +0.178),
+    High(+0.561, +0.285);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -76,7 +76,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private TrapezoidProfile.Constraints m_elbowMotionConstraint;
   private SparkPIDConfig m_elbowPositionConfig;
 
-  private final double SHOULDER_THRESHOLD = 0.7;
+  private final double SHOULDER_STRAIGHT_POSITION = 0.665;
+  private final double ELBOW_STRAIGHT_POSITION = 0.552;
+  private final double SHOULDER_THRESHOLD = 0.2;
+  
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.01;
   private final double ELBOW_FF = 0.0;
@@ -89,9 +92,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private Instant m_shoulderStartTime;
   private Instant m_elbowStartTime;
-
-  private final double SHOULDER_STRAIGHT_POSITION = 0.0;
-  private final double ELBOW_STRAIGHT_POSITION = 0.0;
 
   private Runnable m_enableTurnRateLimit;
   private Runnable m_disableTurnRateLimit;
@@ -122,6 +122,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     this.m_enableTurnRateLimit = turnLimit.getFirst();
     this.m_disableTurnRateLimit = turnLimit.getSecond();
 
+    // Initialize arm state and direction
     m_currentArmState = ArmState.Stowed;
     m_currentArmDirection = ArmDirection.None;
 
@@ -224,11 +225,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       );
 
       // Advance elbow start time
-      if (m_shoulderMasterMotor.getAbsoluteEncoderPosition() > SHOULDER_THRESHOLD) m_elbowStartTime = Instant.now();
+      if (Math.abs(m_shoulderMasterMotor.getAbsoluteEncoderPosition() - m_currentArmState.shoulderPosition) > SHOULDER_THRESHOLD) m_elbowStartTime = Instant.now();
     }
 
     // Move elbow once shoulder is past threshold
-    if (m_shoulderMasterMotor.getAbsoluteEncoderPosition() < SHOULDER_THRESHOLD) {
+    if (!isElbowMotionComplete() && 
+        Math.abs(m_shoulderMasterMotor.getAbsoluteEncoderPosition() - m_currentArmState.shoulderPosition) < SHOULDER_THRESHOLD) {
       // Set elbow position
       m_elbowMotor.set(
         m_elbowMotionProfile.calculate(Duration.between(m_elbowStartTime, Instant.now()).getSeconds()).position,
@@ -320,6 +322,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     TrapezoidProfile.State currentElbowState = new TrapezoidProfile.State(m_elbowMotor.getAbsoluteEncoderPosition(), m_elbowMotor.getAbsoluteEncoderVelocity() / 60);
 
     // Generate motion profile for both joints
+
     m_shoulderStartTime = Instant.now();
     m_elbowStartTime = Instant.now();
     m_shoulderMotionProfile = new TrapezoidProfile(m_shoulderMotionConstraint, desiredShoulderState, currentShoulderState);

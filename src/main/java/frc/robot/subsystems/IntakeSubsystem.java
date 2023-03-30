@@ -39,8 +39,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMaxLimitSwitch m_objectPresenceDetector;
   private SparkMaxLimitSwitch m_objectDifferentiator;
 
-  private final int ROLLER_CURRENT_LIMIT = 25;
+  private final int ROLLER_CURRENT_LIMIT = 30;
   private final double ROLLER_STOPPED_THRESHOLD = 0.2;
+  private final double ROLLER_CREEP = 0.1;
 
   /**
    * Create a new intake subsystem
@@ -61,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
     m_rollerMotor.setSmartCurrentLimit(ROLLER_CURRENT_LIMIT);
 
     // Inver roller motor
-    m_rollerMotor.setInverted(false);
+    m_rollerMotor.setInverted(true);
 
     // Reset presence detection limit switches to default
     m_objectPresenceDetector.enableLimitSwitch(true);
@@ -125,7 +126,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Stops motor
    */
   public void stop() {
-    m_rollerMotor.stopMotor();
+    m_rollerMotor.set(ROLLER_CREEP);
   }
 
   @Override
