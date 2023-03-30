@@ -79,6 +79,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double SHOULDER_STRAIGHT_POSITION = 0.665;
   private final double ELBOW_STRAIGHT_POSITION = 0.552;
   private final double SHOULDER_THRESHOLD = 0.2;
+  private final double ELBOW_THRESHOLD = 0.2;
 
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.01;
@@ -219,7 +220,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Move shoulder first
     if (!isShoulderMotionComplete()) {
       double target = m_currentArmState.shoulderPosition;
-      double time = (((double) Instant.now().toEpochMilli() - m_shoulderStartTime.toEpochMilli() )/ (double)(1000.0));
+      double time = (( (double) Instant.now().toEpochMilli() - m_shoulderStartTime.toEpochMilli() )/ (double)(1000.0));
       System.out.println("T: " + time + " Shoulder start time: " + m_shoulderStartTime + " " + "IN: " + Instant.now() + " Going to : " + m_shoulderMotionProfile.calculate(Duration.between(m_shoulderStartTime, Instant.now()).toMillis() / 1000).position + " Target: " + target);
       // Set shoulder position
       m_shoulderMasterMotor.set(
@@ -256,8 +257,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private void armDown() {
     // Move elbow first
     if (!isElbowMotionComplete()) {
+
+      double time = (( (double) Instant.now().toEpochMilli() - m_shoulderStartTime.toEpochMilli() )/ (double)(1000.0));
       double target = m_currentArmState.elbowPosition;
-      double time = (((double) Instant.now().toEpochMilli() - m_elbowStartTime.toEpochMilli() )/ (double)(1000.0));
       System.out.println("T: " + time + " Elbow start time: " + m_elbowStartTime + " " + "IN: " + Instant.now() + " Going to : " + m_elbowMotionProfile.calculate(Duration.between(m_elbowStartTime, Instant.now()).toMillis() / 1000).position + " Target: " + target);
       // Set elbow position
       m_elbowMotor.set(
@@ -268,13 +270,13 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       );
 
       // Advance shoulder start time
-      if (Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) > SHOULDER_THRESHOLD) 
+      if (Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) > ELBOW_THRESHOLD) 
         m_shoulderStartTime = Instant.now();
     }
 
     // Move elbow once shoulder is past threshold
     if (!isShoulderMotionComplete() &&
-        Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) < SHOULDER_THRESHOLD) {
+        Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) < ELBOW_THRESHOLD) {
       // Set elbow position
       m_shoulderMasterMotor.set(
         m_shoulderMotionProfile.calculate(Duration.between(m_shoulderStartTime, Instant.now()).toMillis() / 1000).position,
