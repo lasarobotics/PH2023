@@ -26,28 +26,18 @@ public class VisionSubsystem {
   public static class Hardware {
     private PhotonCamera forwardCamera, reverseCamera;
 
-    public Hardware(PhotonCamera forwardCamera, PhotonCamera reverseCamera) {
+    public Hardware(PhotonCamera forwardCamera) {
       this.forwardCamera = forwardCamera;
-      this.reverseCamera = reverseCamera;
     }
   }
 
   static class ForwardCamera {
     static final Transform3d LOCATION =
       new Transform3d(
-        new Translation3d(0.0, 0.0, 1.0),
+        new Translation3d(0.0, -0.3, 1.0),
         new Rotation3d(0, 0,0)
       );
     static final String NAME = "forwardCamera";
-  }
-
-  static class ReverseCamera {
-    static final Transform3d LOCATION =
-      new Transform3d(
-        new Translation3d(0.0, 0.0, 1.0),
-        new Rotation3d(0, 0,180)
-      );
-    static final String NAME = "reverseCamera";
   }
   
   private static VisionSubsystem m_subsystem;
@@ -71,7 +61,6 @@ public class VisionSubsystem {
 
     var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
     camList.add(new Pair<PhotonCamera, Transform3d>(m_forwardCamera, ForwardCamera.LOCATION));
-    camList.add(new Pair<PhotonCamera, Transform3d>(m_reverseCamera, ReverseCamera.LOCATION));
 
     m_poseEstimator = new RobotPoseEstimator(m_fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
   }
@@ -86,7 +75,7 @@ public class VisionSubsystem {
   }
 
   public static Hardware initializeHardware() {
-    Hardware visionHardware = new Hardware(new PhotonCamera(ForwardCamera.NAME), new PhotonCamera(ReverseCamera.NAME));
+    Hardware visionHardware = new Hardware(new PhotonCamera(ForwardCamera.NAME));
 
     return visionHardware;
   }
