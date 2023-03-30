@@ -67,8 +67,8 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion settings
-    private static final double MOTION_SHOULDER_VELOCITY = 3.0;
-    private static final double MOTION_SHOULDER_ACCELERATION = 6.0;
+    private static final double MOTION_SHOULDER_VELOCITY = 0.125; // 3.0
+    private static final double MOTION_SHOULDER_ACCELERATION = 0.25; // 6.0
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
@@ -98,8 +98,8 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 0.5;
-    private static final double MOTION_ELBOW_ACCELERATION = 1.0;
+    private static final double MOTION_ELBOW_VELOCITY = 0.15; // 0.5
+    private static final double MOTION_ELBOW_ACCELERATION = 0.1;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
 
