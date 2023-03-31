@@ -40,7 +40,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMaxLimitSwitch m_objectDifferentiator;
 
   private final int ROLLER_CURRENT_LIMIT = 30;
-  private final double ROLLER_STOPPED_THRESHOLD = 0.2;
+  private final double ROLLER_STOPPED_THRESHOLD = 0.25;
   private final double ROLLER_CREEP = 0.1;
 
   /**

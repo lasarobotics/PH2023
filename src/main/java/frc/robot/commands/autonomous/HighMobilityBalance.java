@@ -20,9 +20,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.AutoTrajectory;
 
 public class HighMobilityBalance extends SequentialCommandGroup {
-  private final boolean REVERSED = false;
-  private final double MAX_VELOCITY = 3.0;
-  private final double MAX_ACCELERATION = 4.0;
   
   // construct a new auto command object
   public HighMobilityBalance(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem) {
@@ -45,9 +42,9 @@ public class HighMobilityBalance extends SequentialCommandGroup {
       new RunCommand(() -> intakeSubsystem.outtake(), intakeSubsystem).withTimeout(0.75),
       new ArmCommand(ArmState.Stowed, armSubsystem),
       new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem),
-      new AutoTrajectory(driveSubsystem, path1, REVERSED, MAX_VELOCITY, MAX_ACCELERATION).getCommandAndStop(true),
-      new AutoTrajectory(driveSubsystem, path2, REVERSED, MAX_VELOCITY / 2, MAX_ACCELERATION / 2).getCommandAndStop(),
-      new AutoTrajectory(driveSubsystem, path3, !REVERSED, MAX_VELOCITY, MAX_ACCELERATION).getCommandAndStop(),
+      new AutoTrajectory(driveSubsystem, path1, false, 3.0, 4.0).getCommandAndStop(true),
+      new AutoTrajectory(driveSubsystem, path2, false, 1.5, 2.0).getCommandAndStop(),
+      new AutoTrajectory(driveSubsystem, path3, true, 3.0, 4.0).getCommandAndStop(),
       new RunCommand(() -> driveSubsystem.autoBalance(), driveSubsystem)
     );
   }
