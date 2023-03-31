@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.SimpleIntakeCommand;
 import frc.robot.commands.autonomous.Balance;
 import frc.robot.commands.autonomous.HighMobilityBalance;
 import frc.robot.commands.autonomous.MobilityBalance;
@@ -137,14 +138,14 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
 
     PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightBumper().whileTrue(new SimpleIntakeCommand(INTAKE_SUBSYSTEM, PRIMARY_CONTROLLER));
+
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
     PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableBoost()));
     PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableBoost()));
 
-    PRIMARY_CONTROLLER.rightBumper().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.intake()));
-    PRIMARY_CONTROLLER.rightBumper().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
     SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, +Constants.HID.CONTROLLER_DEADBAND)
       .onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualElbowRequest(SECONDARY_CONTROLLER.getLeftY()), ARM_SUBSYSTEM))
