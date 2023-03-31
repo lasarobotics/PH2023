@@ -79,13 +79,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double SHOULDER_STRAIGHT_POSITION = 0.665;
   private final double ELBOW_STRAIGHT_POSITION = 0.552;
   private final double SHOULDER_THRESHOLD = 0.3;
-  private final double ELBOW_THRESHOLD = 0.4;
 
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.04;
   private final double ELBOW_FF = 0.00;
-
-  private final double ELBOW_SAFE_POSITION = 0.526;
 
   private ArmState m_currentArmState;
   private ArmDirection m_currentArmDirection;
@@ -200,8 +197,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if elbow motion is complete
    */
   public boolean isElbowMotionComplete() {
-    //return m_elbowMotionProfile.isFinished(Duration.between(m_elbowStartTime, Instant.now()).toMillis() / 1000.0);
-    return Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) < 0.02;
+    return m_elbowMotionProfile.isFinished(Duration.between(m_elbowStartTime, Instant.now()).toMillis() / 1000.0);
   }
 
   /**
@@ -255,41 +251,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Move arm position down (first move elbow, then shoulder)
    */
   private void armDown() {
-    // Move elbow first
-    // if (!isElbowMotionComplete()) {
-    //   // Set elbow position
-    //   // m_elbowMotor.set(
-    //   //   m_elbowMotionProfile.calculate(Duration.between(m_elbowStartTime, Instant.now()).toMillis() / 1000.0).position,
-    //   //   ControlType.kPosition,
-    //   //   calculateElbowFF(),
-    //   //   ArbFFUnits.kPercentOut
-    //   // );
-      
+    // Move elbow
+    m_elbowMotor.set(
+      m_elbowMotionProfile.calculate(Duration.between(m_elbowStartTime, Instant.now()).toMillis() / 1000.0).position,
+      ControlType.kPosition,
+      calculateElbowFF(),
+      ArbFFUnits.kPercentOut
+    );
 
-    //   // Advance shoulder start time
-    //   // if (Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) > ELBOW_THRESHOLD) 
-    //   //   m_shoulderStartTime = Instant.now();
-    // }
-
-    m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition);
+    // Move shoulder
     m_shoulderMasterMotor.set(
       m_shoulderMotionProfile.calculate(Duration.between(m_shoulderStartTime, Instant.now()).toMillis() / 1000.0).position,
       ControlType.kPosition,
       calculateShoulderFF(),
       ArbFFUnits.kPercentOut
     );
-
-    // Move elbow once shoulder is past threshold
-    // if (!isShoulderMotionComplete() &&
-    //     Math.abs(m_elbowMotor.getAbsoluteEncoderPosition() - m_currentArmState.elbowPosition) < ELBOW_THRESHOLD) {
-    //   // Set elbow position
-    //   m_shoulderMasterMotor.set(
-    //     m_shoulderMotionProfile.calculate(Duration.between(m_shoulderStartTime, Instant.now()).toMillis() / 1000.0).position,
-    //     ControlType.kPosition,
-    //     calculateShoulderFF(),
-    //     ArbFFUnits.kPercentOut
-    //   );
-    // }
 
     // Hold arm position if complete
     armHoldIfComplete();

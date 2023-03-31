@@ -122,7 +122,7 @@ public class RobotContainer {
   private void configureBindings() {
     PRIMARY_CONTROLLER.start().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.toggleTractionControl()));
 
-    SECONDARY_CONTROLLER.start().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.toggleManualControl()));
+    SECONDARY_CONTROLLER.start().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.toggleManualControl(), ARM_SUBSYSTEM));
 
     PRIMARY_CONTROLLER.back().whileTrue(new RunCommand(() -> DRIVE_SUBSYSTEM.autoBalance(), DRIVE_SUBSYSTEM));
 
