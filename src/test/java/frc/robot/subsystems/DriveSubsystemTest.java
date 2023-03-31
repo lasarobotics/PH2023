@@ -31,7 +31,7 @@ public class DriveSubsystemTest {
 
   private final double DELTA = 3e-3;
   private final boolean MOCK_HARDWARE = false;
-  private final double MAX_MOTOR_OUTPUT = 0.444;
+  private final double MAX_MOTOR_OUTPUT = 0.432;
   private DriveSubsystem m_driveSubsystem;
   private DriveSubsystem.Hardware m_drivetrainHardware;
 
