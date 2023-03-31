@@ -38,7 +38,7 @@ public final class Constants {
   public static class HID {
     public static final int PRIMARY_CONTROLLER_PORT = 0;
     public static final int SECONDARY_CONTROLLER_PORT = 1;
-    public static final double CONTROLLER_DEADBAND = 0.1;
+    public static final double CONTROLLER_DEADBAND = 0.12;
   }
 
   public static class Drive {
@@ -46,7 +46,6 @@ public final class Constants {
     public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
     public static final double DRIVE_SLIP_RATIO = 0.15;
     public static final double DEFAULT_DRIVE_TURN_SCALAR = 40.0;
-    public static final double SLOW_DRIVE_TURN_SCALAR = 20.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
     private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5, 1.0 };
@@ -67,14 +66,14 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion settings
-    private static final double MOTION_SHOULDER_VELOCITY = 0.125; // 3.0
-    private static final double MOTION_SHOULDER_ACCELERATION = 0.25; // 6.0
+    private static final double MOTION_SHOULDER_VELOCITY = 0.25; // 3.0
+    private static final double MOTION_SHOULDER_ACCELERATION = 0.5; // 6.0
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 5.0;
+    private static final double POSITION_SHOULDER_kP = 4.5;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 1.5;
+    private static final double POSITION_SHOULDER_kD = 12.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
@@ -98,15 +97,15 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 0.15; // 0.5
-    private static final double MOTION_ELBOW_ACCELERATION = 0.1;
+    private static final double MOTION_ELBOW_VELOCITY = 0.8; 
+    private static final double MOTION_ELBOW_ACCELERATION = 1.0;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 1.0; // 2.0
+    private static final double POSITION_ELBOW_kP = 3.5; 
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 1.75; // 2.5
+    private static final double POSITION_ELBOW_kD = 8.0; 
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
@@ -131,7 +130,7 @@ public final class Constants {
   }
 
   public static class Intake {
-    public static final double SPIN_MOTOR_SPEED = 1.0;
+    public static final double SPIN_MOTOR_SPEED = 0.9;
   }
 
   public static class DriveHardware {

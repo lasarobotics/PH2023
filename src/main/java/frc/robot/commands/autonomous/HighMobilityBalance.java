@@ -10,7 +10,7 @@ import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ArmSubsystem;
@@ -32,23 +32,19 @@ public class HighMobilityBalance extends SequentialCommandGroup {
     );
     List<PathPoint> path2 = List.of(
       new PathPoint(new Translation2d(3.2, 0.0), new Rotation2d()),
-      new PathPoint(new Translation2d(5.5, 0.0), new Rotation2d())
+      new PathPoint(new Translation2d(6.0, 0.0), new Rotation2d())
     );
     List<PathPoint> path3 = List.of(
-      new PathPoint(new Translation2d(5.5, 0.0), new Rotation2d()),
-      new PathPoint(new Translation2d(3.0, 0.0), new Rotation2d())
+      new PathPoint(new Translation2d(6.0, 0.0), new Rotation2d()),
+      new PathPoint(new Translation2d(2.0, 0.0), new Rotation2d())
     );
 
     addCommands(
-      new RunCommand(() -> armSubsystem.setArmState(ArmState.High), armSubsystem),
-      new RunCommand(() -> intakeSubsystem.outtake(), intakeSubsystem),
-      new FunctionalCommand(
-        () -> armSubsystem.setArmState(ArmState.Stowed),
-        null, 
-        null,
-        () -> armSubsystem.isShoulderMotionComplete() && armSubsystem.isElbowMotionComplete(), 
-        armSubsystem
-      ),
+      new ArmCommand(ArmState.High, armSubsystem),
+      // new WaitCommand(0.5),
+      new RunCommand(() -> intakeSubsystem.outtake(), intakeSubsystem).withTimeout(0.75),
+      new ArmCommand(ArmState.Stowed, armSubsystem),
+      new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem),
       new AutoTrajectory(driveSubsystem, path1, REVERSED, MAX_VELOCITY, MAX_ACCELERATION).getCommandAndStop(true),
       new AutoTrajectory(driveSubsystem, path2, REVERSED, MAX_VELOCITY / 2, MAX_ACCELERATION / 2).getCommandAndStop(),
       new AutoTrajectory(driveSubsystem, path3, !REVERSED, MAX_VELOCITY, MAX_ACCELERATION).getCommandAndStop(),

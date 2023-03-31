@@ -7,7 +7,6 @@ package frc.robot;
 import java.util.HashMap;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.autonomous.Balance;
+import frc.robot.commands.autonomous.HighMobilityBalance;
 import frc.robot.commands.autonomous.MobilityBalance;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -170,6 +170,8 @@ public class RobotContainer {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
     m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
     m_automodeChooser.addOption("Mobility Balance", new MobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
+    m_automodeChooser.addOption("High Mobility Balance", new HighMobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
+    
   }
 
   /**
