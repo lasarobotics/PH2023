@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public enum ArmState {
     Stowed(+0.905, +0.905),
-    Ground(+0.905, +0.690),
+    Ground(+0.905, +0.685),
     Middle(+0.540, +0.172),
     High(+0.552, +0.262);
 
@@ -129,9 +129,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     m_currentArmDirection = ArmDirection.None;
 
     // Set all arm motors to brake
-    m_shoulderMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_shoulderSlaveMotor.setIdleMode(IdleMode.kCoast);
-    m_elbowMotor.setIdleMode(IdleMode.kCoast);
+    m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_shoulderSlaveMotor.setIdleMode(IdleMode.kBrake);
+    m_elbowMotor.setIdleMode(IdleMode.kBrake);
 
     // Make slave follow master
     m_shoulderSlaveMotor.follow(m_shoulderMasterMotor);
