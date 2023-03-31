@@ -160,7 +160,6 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.axisLessThan(XboxController.Axis.kRightY.value, -Constants.HID.CONTROLLER_DEADBAND)
       .onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM))
       .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.shoulderStop()));
-    
   }
 
   /**
