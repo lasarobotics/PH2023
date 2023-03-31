@@ -66,14 +66,14 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion settings
-    private static final double MOTION_SHOULDER_VELOCITY = 0.25; // 3.0
-    private static final double MOTION_SHOULDER_ACCELERATION = 0.5; // 6.0
+    private static final double MOTION_SHOULDER_VELOCITY = 0.4;
+    private static final double MOTION_SHOULDER_ACCELERATION = 0.5;
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 4.5;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 12.0;
+    private static final double POSITION_SHOULDER_kD = 15.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
