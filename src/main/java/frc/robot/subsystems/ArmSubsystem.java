@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public enum ArmState {
     Stowed(+0.905, +0.905),
-    Ground(+0.905, +0.685),
+    Ground(+0.905, +0.688),
     Middle(+0.540, +0.172),
     High(+0.552, +0.262);
 
@@ -303,7 +303,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   public void smartDashboard() {
-    System.out.println("SP: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition() +  " EP: " + m_elbowMotor.getAbsoluteEncoderPosition() );
+    //System.out.println("SP: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition() +  " EP: " + m_elbowMotor.getAbsoluteEncoderPosition() );
     SmartDashboard.putBoolean("Arm Manual", m_enableManualControl);
   }
 
