@@ -39,7 +39,7 @@ public class MobilityBalance extends SequentialCommandGroup {
       new StartEndCommand(() -> intakeSubsystem.outtake(), () -> intakeSubsystem.stop(), intakeSubsystem).withTimeout(1),
       new AutoTrajectory(driveSubsystem, path1, false, 3.0, 4.0).getCommandAndStop(true),
       new AutoTrajectory(driveSubsystem, path2, false, 1.5, 2.0).getCommandAndStop(),
-      new AutoTrajectory(driveSubsystem, path3, true, 3.0, 4.0).getCommandAndStop(),
+      new AutoTrajectory(driveSubsystem, path3, true, 4.0, 4.0).getCommandAndStop(),
       new RunCommand(() -> driveSubsystem.autoBalance(), driveSubsystem)
     );
   }
