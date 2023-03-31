@@ -21,7 +21,7 @@ public class TurnCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_driveSubsystem.aimToAngle(180);
+    m_driveSubsystem.aimToAngle(-m_driveSubsystem.getAngle());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

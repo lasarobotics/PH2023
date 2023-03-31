@@ -259,7 +259,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_turnPIDController.setSetpoint(0.0);
 
     // Set drive PID tolerance
-    m_turnPIDController.setTolerance(TOLERANCE, 1);
+    m_turnPIDController.setTolerance(TOLERANCE);
 
     // Initialise odometry
     m_poseEstimator = new DifferentialDrivePoseEstimator(m_kinematics,

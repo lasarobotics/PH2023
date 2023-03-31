@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.TurnCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.DriveSubsystem;
@@ -44,6 +45,7 @@ public class HighMobilityBalance extends SequentialCommandGroup {
       new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem),
       new AutoTrajectory(driveSubsystem, path1, false, 3.0, 4.0).getCommandAndStop(true),
       new AutoTrajectory(driveSubsystem, path2, false, 1.5, 2.0).getCommandAndStop(),
+      new TurnCommand(driveSubsystem),
       new AutoTrajectory(driveSubsystem, path3, true, 3.0, 4.0).getCommandAndStop(),
       new RunCommand(() -> driveSubsystem.autoBalance(), driveSubsystem)
     );
