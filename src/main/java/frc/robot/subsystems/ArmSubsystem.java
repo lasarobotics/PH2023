@@ -44,8 +44,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public enum ArmState {
     Stowed(+0.905, +0.905),
     Ground(+0.905, +0.688),
-    Middle(+0.540, +0.172),
-    High(+0.552, +0.262);
+    Middle(+0.552, +0.168),
+    High(+0.550, +0.301);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -83,6 +83,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.04;
   private final double ELBOW_FF = 0.00;
+  private final double GROUND_ARM_FF = -0.6;
+
+  private final double MANUAL_CONTROL_SCALAR = 0.1;
+
+  private final double AUTO_SHOULDER_POSITION = 0.758;
+  private final double AUTO_ELBOW_POSITION = 0.670;
 
   private ArmState m_currentArmState;
   private ArmDirection m_currentArmDirection;
@@ -179,7 +185,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
+
+    return m_currentArmState == ArmState.Ground && !isElbowMotionComplete() ? 
+       GROUND_ARM_FF :
+       ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
@@ -272,6 +281,32 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Set desired arm state
+   * 
+   * @param armState Arm state, which includes shoulder and elbow position
+   */
+  private void setArmState(double shoulderPosition, double elbowPosition) {
+    // Generate states
+    TrapezoidProfile.State desiredShoulderState = new TrapezoidProfile.State(shoulderPosition, 0.0);
+    TrapezoidProfile.State currentShoulderState = new TrapezoidProfile.State(m_shoulderMasterMotor.getAbsoluteEncoderPosition(), m_shoulderMasterMotor.getAbsoluteEncoderVelocity() / 60);
+    TrapezoidProfile.State desiredElbowState = new TrapezoidProfile.State(elbowPosition, 0.0);
+    TrapezoidProfile.State currentElbowState = new TrapezoidProfile.State(m_elbowMotor.getAbsoluteEncoderPosition(), m_elbowMotor.getAbsoluteEncoderVelocity() / 60);
+
+    // Generate motion profile for both joints
+    m_shoulderStartTime = Instant.now();
+    m_elbowStartTime = Instant.now();
+    m_shoulderMotionProfile = new TrapezoidProfile(m_shoulderMotionConstraint, desiredShoulderState, currentShoulderState);
+    m_elbowMotionProfile = new TrapezoidProfile(m_elbowMotionConstraint, desiredElbowState, currentElbowState);
+  }
+
+  /**
+   * Set arm to auto position
+   */
+  public void setAutoPosition() {
+   setArmState(AUTO_SHOULDER_POSITION, AUTO_ELBOW_POSITION);
+  }
+
+  /**
    * Enable manual motor control
    */
   public void toggleManualControl() {
@@ -284,7 +319,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param elbowRequest
    */
   public void manualElbowRequest(double elbowRequest) {
-    m_elbowMotor.set(elbowRequest, ControlType.kDutyCycle);
+    if (m_enableManualControl) m_elbowMotor.set(elbowRequest * MANUAL_CONTROL_SCALAR, ControlType.kDutyCycle);
   }
 
   /**
@@ -293,7 +328,22 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param shoulderRequest
    */
   public void manualShoulderRequest(double shoulderRequest) {
-    m_shoulderMasterMotor.set(shoulderRequest, ControlType.kDutyCycle);
+    if (m_enableManualControl) m_shoulderMasterMotor.set(shoulderRequest * MANUAL_CONTROL_SCALAR, ControlType.kDutyCycle);
+  }
+
+  public void manualHoldPosition() {
+    m_shoulderMasterMotor.set(
+      m_shoulderMasterMotor.getAbsoluteEncoderPosition(),
+      ControlType.kPosition,
+      calculateShoulderFF(),
+      ArbFFUnits.kPercentOut
+    );
+    m_elbowMotor.set(
+      m_elbowMotor.getAbsoluteEncoderPosition(),
+      ControlType.kPosition,
+      calculateElbowFF(),
+      ArbFFUnits.kPercentOut
+    );
   }
 
   @Override
@@ -301,9 +351,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     smartDashboard();
     if (!m_enableManualControl) m_moveToPosition[m_currentArmDirection.ordinal()].run();
   }
-
+  
   public void smartDashboard() {
-    //System.out.println("SP: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition() +  " EP: " + m_elbowMotor.getAbsoluteEncoderPosition() );
+    // System.out.println("SP: " + m_shoulderMasterMotor.getAbsoluteEncoderPosition() +  " EP: " + m_elbowMotor.getAbsoluteEncoderPosition() );
     SmartDashboard.putBoolean("Arm Manual", m_enableManualControl);
   }
 
@@ -313,24 +363,15 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState Arm state, which includes shoulder and elbow position
    */
   public void setArmState(ArmState armState) {
-    // Update current arm state
     m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
     m_currentArmState = armState;
+    System.out.println("Going to " + armState.elbowPosition);
+    // Update current arm state
 
     if (!armState.equals(ArmState.Stowed)) m_enableTurnRateLimit.run();
     else m_disableTurnRateLimit.run();
 
-    // Generate states
-    TrapezoidProfile.State desiredShoulderState = new TrapezoidProfile.State(armState.shoulderPosition, 0.0);
-    TrapezoidProfile.State currentShoulderState = new TrapezoidProfile.State(m_shoulderMasterMotor.getAbsoluteEncoderPosition(), m_shoulderMasterMotor.getAbsoluteEncoderVelocity() / 60);
-    TrapezoidProfile.State desiredElbowState = new TrapezoidProfile.State(armState.elbowPosition, 0.0);
-    TrapezoidProfile.State currentElbowState = new TrapezoidProfile.State(m_elbowMotor.getAbsoluteEncoderPosition(), m_elbowMotor.getAbsoluteEncoderVelocity() / 60);
-
-    // Generate motion profile for both joints
-    m_shoulderStartTime = Instant.now();
-    m_elbowStartTime = Instant.now();
-    m_shoulderMotionProfile = new TrapezoidProfile(m_shoulderMotionConstraint, desiredShoulderState, currentShoulderState);
-    m_elbowMotionProfile = new TrapezoidProfile(m_elbowMotionConstraint, desiredElbowState, currentElbowState);
+    setArmState(m_currentArmState.shoulderPosition, m_currentArmState.elbowPosition);
   }
 
   /**

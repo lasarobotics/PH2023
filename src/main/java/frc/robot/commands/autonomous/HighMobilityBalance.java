@@ -39,9 +39,10 @@ public class HighMobilityBalance extends SequentialCommandGroup {
 
     addCommands(
       new ArmCommand(ArmState.High, armSubsystem),
+      // new InstantCommand(() -> armSubsystem.setAutoPosition(), armSubsystem).withTimeout(1.5),
       // new WaitCommand(0.5),
       new RunCommand(() -> intakeSubsystem.outtake(), intakeSubsystem).withTimeout(0.75),
-      new ArmCommand(ArmState.Stowed, armSubsystem),
+      new InstantCommand(() -> armSubsystem.setArmState(ArmState.Stowed), armSubsystem),
       new InstantCommand(() -> intakeSubsystem.stop(), intakeSubsystem),
       new AutoTrajectory(driveSubsystem, path1, false, 3.0, 4.0).getCommandAndStop(true),
       new AutoTrajectory(driveSubsystem, path2, false, 1.5, 2.0).getCommandAndStop(),

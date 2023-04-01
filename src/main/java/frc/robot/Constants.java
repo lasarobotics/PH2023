@@ -38,14 +38,14 @@ public final class Constants {
   public static class HID {
     public static final int PRIMARY_CONTROLLER_PORT = 0;
     public static final int SECONDARY_CONTROLLER_PORT = 1;
-    public static final double CONTROLLER_DEADBAND = 0.12;
+    public static final double CONTROLLER_DEADBAND = 0.10;
   }
 
   public static class Drive {
     public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.019, 0.0, 0.0012, 0.0);
     public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
     public static final double DRIVE_SLIP_RATIO = 0.15;
-    public static final double DEFAULT_DRIVE_TURN_SCALAR = 40.0;
+    public static final double DEFAULT_DRIVE_TURN_SCALAR = 35.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
     private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5, 1.0 };
@@ -97,7 +97,7 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 0.8; 
+    private static final double MOTION_ELBOW_VELOCITY = 1.5; 
     private static final double MOTION_ELBOW_ACCELERATION = 1.0;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
@@ -130,7 +130,9 @@ public final class Constants {
   }
 
   public static class Intake {
-    public static final double SPIN_MOTOR_SPEED = 0.9;
+    public static final double INTAKE_SPIN_MOTOR_SPEED = 1.0;
+    public static final double OUTTAKE_SPIN_MOTOR_SPEED = -0.5;
+
   }
 
   public static class DriveHardware {

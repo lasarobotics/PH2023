@@ -136,9 +136,11 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.b().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Ground)));
     SECONDARY_CONTROLLER.x().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.Middle)));
     SECONDARY_CONTROLLER.y().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.setArmState(ArmState.High)));
+    
+    SECONDARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.manualHoldPosition(), ARM_SUBSYSTEM));
 
-    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
-    PRIMARY_CONTROLLER.rightBumper().whileTrue(new SimpleIntakeCommand(INTAKE_SUBSYSTEM, PRIMARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new SimpleIntakeCommand(INTAKE_SUBSYSTEM, PRIMARY_CONTROLLER));
 
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));

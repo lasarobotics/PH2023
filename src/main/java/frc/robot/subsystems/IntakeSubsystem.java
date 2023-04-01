@@ -87,7 +87,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void intake() {
     m_objectPresenceDetector.enableLimitSwitch(true);
-    m_rollerMotor.set(+Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+    m_rollerMotor.set(Constants.Intake.INTAKE_SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   /**
@@ -95,7 +95,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void outtake() {
     m_objectPresenceDetector.enableLimitSwitch(false);
-    m_rollerMotor.set(-Constants.Intake.SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+    m_rollerMotor.set(Constants.Intake.OUTTAKE_SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
   }
 
   /**
