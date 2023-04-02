@@ -42,7 +42,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    Stowed(+0.905, +0.905),
+    //Stowed(+0.905, +0.905),
+    // Stowed(+0.905, +0.890),
+    Stowed(+0.905, +0.880),
     Ground(+0.905, +0.688),
     Middle(+0.552, +0.168),
     High(+0.550, +0.301);
@@ -78,7 +80,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final double SHOULDER_STRAIGHT_POSITION = 0.665;
   private final double ELBOW_STRAIGHT_POSITION = 0.552;
-  private final double SHOULDER_THRESHOLD = 0.3;
+  private final double SHOULDER_THRESHOLD = 0.35;
 
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.04;

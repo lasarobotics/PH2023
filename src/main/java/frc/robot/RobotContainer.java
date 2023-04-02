@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.SimpleIntakeCommand;
 import frc.robot.commands.autonomous.Balance;
+import frc.robot.commands.autonomous.HighMobility;
 import frc.robot.commands.autonomous.HighMobilityBalance;
+import frc.robot.commands.autonomous.LowMobility;
 import frc.robot.commands.autonomous.MobilityBalance;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -139,8 +141,8 @@ public class RobotContainer {
     
     SECONDARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> ARM_SUBSYSTEM.manualHoldPosition(), ARM_SUBSYSTEM));
 
-    PRIMARY_CONTROLLER.rightBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER));
-    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new SimpleIntakeCommand(INTAKE_SUBSYSTEM, PRIMARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightBumper().whileTrue(new IntakeCommand(INTAKE_SUBSYSTEM, ARM_SUBSYSTEM, PRIMARY_CONTROLLER, SECONDARY_CONTROLLER));
+    PRIMARY_CONTROLLER.rightTrigger().whileTrue(new SimpleIntakeCommand(INTAKE_SUBSYSTEM, PRIMARY_CONTROLLER, SECONDARY_CONTROLLER));
 
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
@@ -172,8 +174,9 @@ public class RobotContainer {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
     m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
     m_automodeChooser.addOption("Mobility Balance", new MobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
+    m_automodeChooser.addOption("Low Mobility", new LowMobility(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
+    m_automodeChooser.addOption("High Mobility", new HighMobility(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
     m_automodeChooser.addOption("High Mobility Balance", new HighMobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
-    
   }
 
   /**

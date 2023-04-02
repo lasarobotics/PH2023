@@ -11,12 +11,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class SimpleIntakeCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
-  private CommandXboxController m_controller;
+  private CommandXboxController m_primaryController;
+  private CommandXboxController m_secondaryController;
 
   /** Creates a new IntakeCommand. */
-  public SimpleIntakeCommand(IntakeSubsystem intakeSubsystem, CommandXboxController controller) {
+  public SimpleIntakeCommand(IntakeSubsystem intakeSubsystem, CommandXboxController primaryController, CommandXboxController secondaryController) {
     this.m_intakeSubsystem = intakeSubsystem;
-    this.m_controller = controller;
+    this.m_primaryController = primaryController;
+    this.m_secondaryController = secondaryController;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intakeSubsystem);
@@ -32,20 +34,26 @@ public class SimpleIntakeCommand extends CommandBase {
   @Override
   public void execute() {    
     if (m_intakeSubsystem.isObjectPresent()) {
-      m_controller.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
-      m_controller.getHID().setRumble(RumbleType.kRightRumble, 1.0);
+      m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+      m_primaryController.getHID().setRumble(RumbleType.kRightRumble, 1.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 1.0);
 
     } else {
-      m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
-      m_controller.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+      m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+      m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
-    m_controller.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+    m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+    m_primaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+    m_secondaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+    m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
 
 
     m_intakeSubsystem.stop();

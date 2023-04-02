@@ -42,9 +42,9 @@ public final class Constants {
   }
 
   public static class Drive {
-    public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.019, 0.0, 0.0012, 0.0);
-    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.007, 0.0, 0.00002, 0.0);
-    public static final double DRIVE_SLIP_RATIO = 0.15;
+    public static final PIDConstants DRIVE_TURN_PID = new PIDConstants(0.018, 0.0, 0.0012, 0.0);
+    public static final PIDConstants DRIVE_BALANCE_PID = new PIDConstants(0.006, 0.0, 0.00002, 0.0);
+    public static final double DRIVE_SLIP_RATIO = 0.18;
     public static final double DEFAULT_DRIVE_TURN_SCALAR = 35.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
@@ -71,9 +71,9 @@ public final class Constants {
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 4.5;
+    private static final double POSITION_SHOULDER_kP = 6.0;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 15.0;
+    private static final double POSITION_SHOULDER_kD = 18.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
@@ -103,9 +103,9 @@ public final class Constants {
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 3.5; 
+    private static final double POSITION_ELBOW_kP = 3.5;
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 8.0; 
+    private static final double POSITION_ELBOW_kD = 9.0;
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);

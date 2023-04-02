@@ -63,6 +63,9 @@ public class VisionSubsystem {
     camList.add(new Pair<PhotonCamera, Transform3d>(m_forwardCamera, ForwardCamera.LOCATION));
 
     m_poseEstimator = new RobotPoseEstimator(m_fieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, camList);
+
+    // Set vision pipeline
+   m_forwardCamera.setPipelineIndex(0);
   }
 
   public static VisionSubsystem getInstance() {

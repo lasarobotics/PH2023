@@ -132,7 +132,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final double MOVE_BOOST_SCALAR = 1.0;
   private final double MOVE_NORMAL_SCALAR = 0.5;
 
-  private final double TURN_LIMIT_SCALAR = 0.6;
+  private final double TURN_LIMIT_SCALAR = 0.7;
   private final double TURN_NORMAL_SCALAR = 1.0;
 
   private double m_deadband = 0.0;

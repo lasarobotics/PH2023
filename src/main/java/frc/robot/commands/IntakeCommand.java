@@ -15,13 +15,15 @@ public class IntakeCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
   private ArmSubsystem m_armSubsystem;
   private ArmState m_prevArmState;
-  private CommandXboxController m_controller;
+  private CommandXboxController m_primaryController;
+  private CommandXboxController m_secondaryController;
 
   /** Creates a new IntakeCommand. */
-  public IntakeCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, CommandXboxController controller) {
+  public IntakeCommand(IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, CommandXboxController primaryController, CommandXboxController secondaryController) {
     this.m_intakeSubsystem = intakeSubsystem;
     this.m_armSubsystem = armSubsystem;
-    this.m_controller = controller;
+    this.m_primaryController = primaryController;
+    this.m_secondaryController = secondaryController;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_intakeSubsystem);
@@ -42,27 +44,32 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void execute() {    
     if (m_intakeSubsystem.isObjectPresent()) {
-      m_controller.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
-      m_controller.getHID().setRumble(RumbleType.kRightRumble, 1.0);
+      m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+      m_primaryController.getHID().setRumble(RumbleType.kRightRumble, 1.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kLeftRumble, 1.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 1.0);
 
       if (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High) {
         m_armSubsystem.setArmState(ArmState.Stowed);
         end(false);
       }
     } else {
-      m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
-      m_controller.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+      m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+      m_primaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+      m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_controller.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
-    m_controller.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+    m_primaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+    m_primaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
+    m_secondaryController.getHID().setRumble(RumbleType.kLeftRumble, 0.0);
+    m_secondaryController.getHID().setRumble(RumbleType.kRightRumble, 0.0);
 
-    if (interrupted && (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High))
-      m_armSubsystem.setArmState(ArmState.Stowed);
+    if (m_prevArmState != ArmState.Middle && m_prevArmState != ArmState.High) m_armSubsystem.setArmState(ArmState.Stowed);
 
     m_intakeSubsystem.stop();
   }
