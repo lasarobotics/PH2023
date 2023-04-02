@@ -24,7 +24,7 @@ import frc.robot.commands.SimpleIntakeCommand;
 import frc.robot.commands.autonomous.Balance;
 import frc.robot.commands.autonomous.HighMobility;
 import frc.robot.commands.autonomous.HighMobilityBalance;
-import frc.robot.commands.autonomous.LowMobility;
+import frc.robot.commands.autonomous.HighMobilityRotate;
 import frc.robot.commands.autonomous.MobilityBalance;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -63,7 +63,8 @@ public class RobotContainer {
     ArmSubsystem.initializeHardware(REAL_HARDWARE),
     new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_SHOULDER_CONSTRAINT, Constants.Arm.POSITION_SHOULDER_CONFIG),
     new Pair<TrapezoidProfile.Constraints, SparkPIDConfig>(Constants.Arm.MOTION_ELBOW_CONTRAINT, Constants.Arm.POSITION_ELBOW_CONFIG),
-    new Pair<Runnable, Runnable>(DRIVE_SUBSYSTEM::enableTurnRateLimit, DRIVE_SUBSYSTEM::disableTurnRateLimit)
+    new Pair<Runnable, Runnable>(DRIVE_SUBSYSTEM::enableTurnRateLimit, DRIVE_SUBSYSTEM::disableTurnRateLimit),
+    new Pair<Runnable, Runnable>(DRIVE_SUBSYSTEM::enableSlow, DRIVE_SUBSYSTEM::disableSlow)
   );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
     IntakeSubsystem.initializeHardware(REAL_HARDWARE)
@@ -174,7 +175,7 @@ public class RobotContainer {
     m_automodeChooser.setDefaultOption("Do nothing", new SequentialCommandGroup());
     m_automodeChooser.addOption("Balance", new Balance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
     m_automodeChooser.addOption("Mobility Balance", new MobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM));
-    m_automodeChooser.addOption("Low Mobility", new LowMobility(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
+    m_automodeChooser.addOption("Low Mobility", new HighMobilityRotate(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
     m_automodeChooser.addOption("High Mobility", new HighMobility(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
     m_automodeChooser.addOption("High Mobility Balance", new HighMobilityBalance(DRIVE_SUBSYSTEM, INTAKE_SUBSYSTEM, ARM_SUBSYSTEM));
   }

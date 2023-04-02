@@ -104,6 +104,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private Runnable m_enableTurnRateLimit;
   private Runnable m_disableTurnRateLimit;
 
+  private Runnable m_enableDriveSlow;
+  private Runnable m_disableDriveSlow;
+
   private boolean m_enableManualControl = false;
 
   /**
@@ -119,7 +122,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    *                        limiter (enable, disable)
    */
   public ArmSubsystem(Hardware armHardware, Pair<TrapezoidProfile.Constraints, SparkPIDConfig> shoulderConfigs,
-      Pair<TrapezoidProfile.Constraints, SparkPIDConfig> elbowConfigs, Pair<Runnable, Runnable> turnLimit) {
+      Pair<TrapezoidProfile.Constraints, SparkPIDConfig> elbowConfigs, Pair<Runnable, Runnable> turnLimit, Pair<Runnable, Runnable> moveLimit) {
     this.m_shoulderMasterMotor = armHardware.shoulderMasterMotor;
     this.m_shoulderSlaveMotor = armHardware.shoulderSlaveMotor;
     this.m_elbowMotor = armHardware.elbowMotor;
@@ -131,6 +134,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     this.m_enableTurnRateLimit = turnLimit.getFirst();
     this.m_disableTurnRateLimit = turnLimit.getSecond();
+
+    this.m_enableDriveSlow = moveLimit.getFirst();
+    this.m_disableDriveSlow = moveLimit.getSecond();
 
     // Initialize arm state and direction
     m_currentArmState = ArmState.Stowed;
@@ -372,6 +378,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     if (!armState.equals(ArmState.Stowed)) m_enableTurnRateLimit.run();
     else m_disableTurnRateLimit.run();
+    
+    if (armState.equals(ArmState.High) || armState.equals(ArmState.Middle)) m_enableDriveSlow.run();
+    else m_disableDriveSlow.run();
 
     setArmState(m_currentArmState.shoulderPosition, m_currentArmState.elbowPosition);
   }

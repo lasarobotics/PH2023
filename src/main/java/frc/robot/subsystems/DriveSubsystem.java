@@ -131,6 +131,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final double MOVE_BOOST_SCALAR = 1.0;
   private final double MOVE_NORMAL_SCALAR = 0.5;
+  private final double MOVE_SLOW_SCALAR = 0.25;
 
   private final double TURN_LIMIT_SCALAR = 0.7;
   private final double TURN_NORMAL_SCALAR = 1.0;
@@ -424,6 +425,19 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_driveMultiplier = MOVE_NORMAL_SCALAR;
   }
 
+  /**
+   * Slow down drive when arm is high or mid
+   */
+  public void enableSlow() {
+    m_driveMultiplier = MOVE_SLOW_SCALAR;
+  }
+
+  /**
+   * Disable slow mode
+   */
+  public void disableSlow() {
+    m_driveMultiplier = MOVE_NORMAL_SCALAR;
+  }
 
   /**
    * Enable turn slowdown
@@ -431,7 +445,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public void enableTurnRateLimit() {
     m_turnMultiplier = TURN_LIMIT_SCALAR;
   }
-
+  
   /**
    * Disable turn slowdown
    */
