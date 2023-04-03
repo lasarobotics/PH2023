@@ -276,12 +276,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    * @return hardware object containing all necessary devices for this subsystem
    */
   public static Hardware initializeHardware(boolean isHardwareReal) {
-    Hardware drivetrainHardware = new Hardware(isHardwareReal,
-        new SparkMax(Constants.DriveHardware.FRONT_LEFT_MOTOR_ID, MotorType.kBrushless),
-        new SparkMax(Constants.DriveHardware.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless),
-        new SparkMax(Constants.DriveHardware.REAR_LEFT_MOTOR_ID, MotorType.kBrushless),
-        new SparkMax(Constants.DriveHardware.REAR_RIGHT_MOTOR_ID, MotorType.kBrushless),
-        new AHRS(SPI.Port.kMXP));
+    Hardware drivetrainHardware = new Hardware(
+      isHardwareReal,
+      new SparkMax(Constants.DriveHardware.FRONT_LEFT_MOTOR_ID, MotorType.kBrushless),
+      new SparkMax(Constants.DriveHardware.FRONT_RIGHT_MOTOR_ID, MotorType.kBrushless),
+      new SparkMax(Constants.DriveHardware.REAR_LEFT_MOTOR_ID, MotorType.kBrushless),
+      new SparkMax(Constants.DriveHardware.REAR_RIGHT_MOTOR_ID, MotorType.kBrushless),
+      new AHRS(SPI.Port.kMXP)
+    );
 
     return drivetrainHardware;
   }
