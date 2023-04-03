@@ -82,10 +82,13 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
 
   public static Hardware initializeHardware(boolean isHardwareReal) {
     SparkMax rollerMotor = new SparkMax(Constants.IntakeHardware.ROLLER_MOTOR_ID, MotorType.kBrushless);
-    Hardware intakeHardware = new Hardware(isHardwareReal,
-        rollerMotor,
-        rollerMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
-        rollerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed));
+    Hardware intakeHardware = new Hardware(
+      isHardwareReal,
+      rollerMotor,
+      rollerMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed),
+      rollerMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyClosed)
+    );
+    
     return intakeHardware;
   }
 
