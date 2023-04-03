@@ -171,10 +171,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return hardware object containing all necessary devices for this subsystem
    */
   public static Hardware initializeHardware(boolean isHardwareReal) {
-    Hardware armHardware = new Hardware(isHardwareReal,
-        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MASTER_MOTOR_ID, MotorType.kBrushless),
-        new SparkMax(Constants.ArmHardware.ARM_SHOULDER_SLAVE_MOTOR_ID, MotorType.kBrushless),
-        new SparkMax(Constants.ArmHardware.ARM_ELBOW_MOTOR_ID, MotorType.kBrushless));
+    Hardware armHardware = new Hardware(
+      isHardwareReal,
+      new SparkMax(Constants.ArmHardware.ARM_SHOULDER_MASTER_MOTOR_ID, MotorType.kBrushless),
+      new SparkMax(Constants.ArmHardware.ARM_SHOULDER_SLAVE_MOTOR_ID, MotorType.kBrushless),
+      new SparkMax(Constants.ArmHardware.ARM_ELBOW_MOTOR_ID, MotorType.kBrushless)
+    );
     return armHardware;
   }
 
@@ -193,7 +195,6 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-
     return m_currentArmState == ArmState.Ground && !isElbowMotionComplete() ? 
        GROUND_ARM_FF :
        ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
@@ -339,6 +340,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     if (m_enableManualControl) m_shoulderMasterMotor.set(shoulderRequest * MANUAL_CONTROL_SCALAR, ControlType.kDutyCycle);
   }
 
+  /**
+   * Hold current position
+   */
   public void manualHoldPosition() {
     m_shoulderMasterMotor.set(
       m_shoulderMasterMotor.getAbsoluteEncoderPosition(),
@@ -371,17 +375,19 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @param armState Arm state, which includes shoulder and elbow position
    */
   public void setArmState(ArmState armState) {
+    // Update current arm state
     m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
     m_currentArmState = armState;
-    System.out.println("Going to " + armState.elbowPosition);
-    // Update current arm state
 
+    // Limit turn rate if arm is not stowed
     if (!armState.equals(ArmState.Stowed)) m_enableTurnRateLimit.run();
     else m_disableTurnRateLimit.run();
     
+    // Limit drive speed if arm is at high or middle position
     if (armState.equals(ArmState.High) || armState.equals(ArmState.Middle)) m_enableDriveSlow.run();
     else m_disableDriveSlow.run();
 
+    // Set arm state
     setArmState(m_currentArmState.shoulderPosition, m_currentArmState.elbowPosition);
   }
 
