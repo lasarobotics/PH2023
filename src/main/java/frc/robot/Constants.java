@@ -130,8 +130,8 @@ public final class Constants {
   }
 
   public static class Intake {
-    public static final double INTAKE_SPIN_MOTOR_SPEED = 1.0;
-    public static final double OUTTAKE_SPIN_MOTOR_SPEED = -0.5;
+    public static final double ROLLER_INTAKE_SPEED = 1.0;
+    public static final double ROLLER_OUTTAKE_SPEED = -0.5;
 
   }
 

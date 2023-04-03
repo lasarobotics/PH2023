@@ -66,7 +66,9 @@ public class RobotContainer {
     new Pair<Runnable, Runnable>(DRIVE_SUBSYSTEM::enableSlow, DRIVE_SUBSYSTEM::disableSlow)
   );
   private static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem(
-    IntakeSubsystem.initializeHardware(REAL_HARDWARE)
+    IntakeSubsystem.initializeHardware(REAL_HARDWARE),
+    Constants.Intake.ROLLER_INTAKE_SPEED,
+    Constants.Intake.ROLLER_OUTTAKE_SPEED
   );
 
   private static final HashMap<String, Command> EVENT_MAP = new HashMap<>() {

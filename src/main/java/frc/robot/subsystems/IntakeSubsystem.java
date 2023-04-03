@@ -39,6 +39,9 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
   private SparkMaxLimitSwitch m_objectPresenceDetector;
   private SparkMaxLimitSwitch m_objectDifferentiator;
 
+  private double m_intakeSpeed;
+  private double m_outtakeSpeed;
+
   private final int ROLLER_CURRENT_LIMIT = 30;
   private final double ROLLER_STOPPED_THRESHOLD = 0.25;
   private final double ROLLER_CREEP = 0.1;
@@ -47,11 +50,15 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    * Create a new intake subsystem
    * 
    * @param intakeHardware Intake hardware
+   * @param intakeSpeed Intake speed (duty cycle, positive)
+   * @param outtakeSpeed Outtake Speed (duty cycle, negative)
    */
-  public IntakeSubsystem(Hardware intakeHardware) {
+  public IntakeSubsystem(Hardware intakeHardware, double intakeSpeed, double outtakeSpeed) {
     this.m_rollerMotor = intakeHardware.rollerMotor;
     this.m_objectPresenceDetector = intakeHardware.objectPresenceDetector;
     this.m_objectDifferentiator = intakeHardware.objectDifferentiator;
+    this.m_intakeSpeed = (intakeSpeed > 0.0) ? intakeSpeed : intakeSpeed * -1;
+    this.m_outtakeSpeed = (outtakeSpeed < 0.0) ? outtakeSpeed : outtakeSpeed * -1;
 
     // Reset motors to default
     m_rollerMotor.restoreFactoryDefaults();
@@ -87,7 +94,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void intake() {
     m_objectPresenceDetector.enableLimitSwitch(true);
-    m_rollerMotor.set(Constants.Intake.INTAKE_SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+    m_rollerMotor.set(m_intakeSpeed, ControlType.kDutyCycle);
   }
 
   /**
@@ -95,7 +102,7 @@ public class IntakeSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void outtake() {
     m_objectPresenceDetector.enableLimitSwitch(false);
-    m_rollerMotor.set(Constants.Intake.OUTTAKE_SPIN_MOTOR_SPEED, ControlType.kDutyCycle);
+    m_rollerMotor.set(m_outtakeSpeed, ControlType.kDutyCycle);
   }
 
   /**
