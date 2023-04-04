@@ -6,9 +6,12 @@ package frc.robot;
 
 import java.util.HashMap;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -167,6 +170,10 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.axisLessThan(XboxController.Axis.kRightY.value, -Constants.HID.CONTROLLER_DEADBAND)
       .onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM))
       .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.shoulderStop()));
+
+    Trigger rumbleControllerTrigger = new Trigger(DRIVE_SUBSYSTEM::isCloseToSingleSubstation);
+    rumbleControllerTrigger.onTrue(new InstantCommand(() -> PRIMARY_CONTROLLER.getHID().setRumble(RumbleType.kBothRumble, 1.0)));
+    rumbleControllerTrigger.onFalse(new InstantCommand(() -> PRIMARY_CONTROLLER.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
   }
 
   /**
