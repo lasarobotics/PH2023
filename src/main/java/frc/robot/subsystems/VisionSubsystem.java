@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class VisionSubsystem {
   public static class Hardware {
-    private PhotonCamera forwardCamera, reverseCamera;
+    private PhotonCamera forwardCamera;
 
     public Hardware(PhotonCamera forwardCamera) {
       this.forwardCamera = forwardCamera;
@@ -34,7 +34,7 @@ public class VisionSubsystem {
   static class ForwardCamera {
     static final Transform3d LOCATION =
       new Transform3d(
-        new Translation3d(0.0, -0.3, 1.0),
+        new Translation3d(0.0, 0.2032, 0.9144),
         new Rotation3d(0, 0,0)
       );
     static final String NAME = "forwardCamera";
@@ -43,7 +43,6 @@ public class VisionSubsystem {
   private static VisionSubsystem m_subsystem;
 
   private PhotonCamera m_forwardCamera;
-  private PhotonCamera m_reverseCamera;
   private AprilTagFieldLayout m_fieldLayout;
   private RobotPoseEstimator m_poseEstimator;
 
@@ -53,7 +52,6 @@ public class VisionSubsystem {
    */
   private VisionSubsystem(Hardware visionHardware) {
     this.m_forwardCamera = visionHardware.forwardCamera;
-    this.m_reverseCamera = visionHardware.reverseCamera;
 
     try {
       m_fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();

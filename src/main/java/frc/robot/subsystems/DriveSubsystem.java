@@ -120,6 +120,13 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private AHRS m_navx;
 
+  // Single Substation Location
+  private final double BLUE_SINGLE_SUBSTATION_X = 13.32;
+  private final double BLUE_SINGLE_SUBSTATION_Y =  8.00;
+  private final double RED_SINGLE_SUBSTATION_X  =  2.68;
+  private final double RED_SINGLE_SUBSTATION_Y  =  8.00;
+  private final double SUBSTATION_LOADING_THRESHOLD = 0.125;
+
   private final int CURRENT_LIMIT = 55;
   private final double TOLERANCE = 0.125;
   private final double MAX_VOLTAGE = 12.0;
@@ -586,6 +593,20 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Returns the amount to rumble the controllers based off of the distance of the robot to the single subtation
+   * @return
+   */
+  public boolean isCloseToSingleSubstation() {
+    Pose2d currentPose = getPose();
+    double targetSubstationPositionX = DriverStation.getAlliance().equals(Alliance.Blue) ? BLUE_SINGLE_SUBSTATION_X : RED_SINGLE_SUBSTATION_X;
+    double distance = Math.abs(currentPose.getX() - targetSubstationPositionX);
+    if (currentPose.getY() < 5.50 || distance > 0.29) 
+      return false;
+    else 
+      return true;
   }
 
   /**
