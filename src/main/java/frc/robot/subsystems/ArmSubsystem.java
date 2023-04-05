@@ -42,9 +42,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * Arm States
    */
   public enum ArmState {
-    //Stowed(+0.905, +0.905),
-    // Stowed(+0.905, +0.890),
-    Stowed(+0.905, +0.880),
+    Stowed(+0.905, +0.890),
     Ground(+0.905, +0.688),
     Middle(+0.552, +0.168),
     High(+0.550, +0.301);
