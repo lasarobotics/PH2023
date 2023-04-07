@@ -120,14 +120,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private AHRS m_navx;
 
-  // Single Substation Location
-  private final double BLUE_SINGLE_SUBSTATION_X = 13.32;
-  private final double BLUE_SINGLE_SUBSTATION_Y =  8.00;
-  private final double RED_SINGLE_SUBSTATION_X  =  2.68;
-  private final double RED_SINGLE_SUBSTATION_Y  =  8.00;
-  private final double SUBSTATION_LOADING_THRESHOLD = 0.125;
-
-  private final int CURRENT_LIMIT = 55;
+  private final int CURRENT_LIMIT = 45;
   private final double TOLERANCE = 0.125;
   private final double MAX_VOLTAGE = 12.0;
   private final double GRID_OFFSET_X = 0.5588;
@@ -137,7 +130,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final double BALANCE_OFFSET = 0.5;
 
   private final double MOVE_BOOST_SCALAR = 1.0;
-  private final double MOVE_NORMAL_SCALAR = 0.5;
+  private final double MOVE_NORMAL_SCALAR = 1.0;
   private final double MOVE_SLOW_SCALAR = 0.25;
 
   private final double TURN_LIMIT_SCALAR = 0.7;
@@ -217,10 +210,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_rSlaveMotor.restoreFactoryDefaults();
 
     // Set all drive motors to coast
-    m_lMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_lSlaveMotor.setIdleMode(IdleMode.kCoast);
-    m_rMasterMotor.setIdleMode(IdleMode.kCoast);
-    m_rSlaveMotor.setIdleMode(IdleMode.kCoast);
+    m_lMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_lSlaveMotor.setIdleMode(IdleMode.kBrake);
+    m_rMasterMotor.setIdleMode(IdleMode.kBrake);
+    m_rSlaveMotor.setIdleMode(IdleMode.kBrake);
 
     // Make rear left motor controllers follow left master
     m_lSlaveMotor.follow(m_lMasterMotor);
@@ -592,11 +585,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()),
         m_lMasterMotor.getEncoderPosition(),
         m_rMasterMotor.getEncoderPosition());
-    Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
-    Pose2d camPose = result.getFirst();
-    double camPoseObsTime = result.getSecond();
-    if (camPose != null)
-      m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
+    // Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
+    // Pose2d camPose = result.getFirst();
+    // double camPoseObsTime = result.getSecond();
+    // if (camPose != null)
+    //   m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
   }
 
   /**
@@ -609,20 +602,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public Pose2d getPose() {
     return m_poseEstimator.getEstimatedPosition();
-  }
-
-  /**
-   * Returns the amount to rumble the controllers based off of the distance of the robot to the single subtation
-   * @return
-   */
-  public boolean isCloseToSingleSubstation() {
-    Pose2d currentPose = getPose();
-    double targetSubstationPositionX = DriverStation.getAlliance().equals(Alliance.Blue) ? BLUE_SINGLE_SUBSTATION_X : RED_SINGLE_SUBSTATION_X;
-    double distance = Math.abs(currentPose.getX() - targetSubstationPositionX);
-    if (currentPose.getY() < 5.50 || distance > 0.29) 
-      return false;
-    else 
-      return true;
   }
 
   /**

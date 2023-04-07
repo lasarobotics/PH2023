@@ -73,7 +73,7 @@ public final class Constants {
     // Arm shoulder position PID settings
     private static final double POSITION_SHOULDER_kP = 6.0;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 18.0;
+    private static final double POSITION_SHOULDER_kD = 20.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
@@ -97,7 +97,7 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 1.5; 
+    private static final double MOTION_ELBOW_VELOCITY = 1.5;
     private static final double MOTION_ELBOW_ACCELERATION = 1.0;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
@@ -105,7 +105,7 @@ public final class Constants {
     // Arm elbow position PID settings
     private static final double POSITION_ELBOW_kP = 3.5;
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 9.0;
+    private static final double POSITION_ELBOW_kD = 11.0;
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
@@ -131,7 +131,7 @@ public final class Constants {
 
   public static class Intake {
     public static final double ROLLER_INTAKE_SPEED = 1.0;
-    public static final double ROLLER_OUTTAKE_SPEED = -0.5;
+    public static final double ROLLER_OUTTAKE_SPEED = -1.0;
 
   }
 

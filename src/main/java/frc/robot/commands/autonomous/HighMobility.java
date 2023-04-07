@@ -26,7 +26,7 @@ public class HighMobility extends SequentialCommandGroup {
   public HighMobility(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem) {
     List<PathPoint> path1 = List.of(
       new PathPoint(new Translation2d(0.0, 0.0), new Rotation2d()),
-      new PathPoint(new Translation2d(3.2, 0.0), new Rotation2d())
+      new PathPoint(new Translation2d(3.7, 0.0), new Rotation2d())
     );
 
     addCommands(

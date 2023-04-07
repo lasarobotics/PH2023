@@ -152,8 +152,8 @@ public class RobotContainer {
     PRIMARY_CONTROLLER.leftTrigger().onTrue(new InstantCommand(() -> INTAKE_SUBSYSTEM.outtake()));
     PRIMARY_CONTROLLER.leftTrigger().onFalse(new InstantCommand(() -> INTAKE_SUBSYSTEM.stop()));
 
-    PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableBoost()));
-    PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableBoost()));
+    PRIMARY_CONTROLLER.leftBumper().onTrue(new InstantCommand(() -> DRIVE_SUBSYSTEM.enableSlow()));
+    PRIMARY_CONTROLLER.leftBumper().onFalse(new InstantCommand(() -> DRIVE_SUBSYSTEM.disableSlow()));
 
 
     SECONDARY_CONTROLLER.axisGreaterThan(XboxController.Axis.kLeftY.value, +Constants.HID.CONTROLLER_DEADBAND)
@@ -170,10 +170,6 @@ public class RobotContainer {
     SECONDARY_CONTROLLER.axisLessThan(XboxController.Axis.kRightY.value, -Constants.HID.CONTROLLER_DEADBAND)
       .onTrue(new RunCommand(() -> ARM_SUBSYSTEM.manualShoulderRequest(SECONDARY_CONTROLLER.getRightY()), ARM_SUBSYSTEM))
       .onFalse(new InstantCommand(() -> ARM_SUBSYSTEM.shoulderStop()));
-
-    Trigger rumbleControllerTrigger = new Trigger(DRIVE_SUBSYSTEM::isCloseToSingleSubstation);
-    rumbleControllerTrigger.onTrue(new InstantCommand(() -> PRIMARY_CONTROLLER.getHID().setRumble(RumbleType.kBothRumble, 1.0)));
-    rumbleControllerTrigger.onFalse(new InstantCommand(() -> PRIMARY_CONTROLLER.getHID().setRumble(RumbleType.kBothRumble, 0.0)));
   }
 
   /**

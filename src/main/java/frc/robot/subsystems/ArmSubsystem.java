@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -44,8 +45,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public enum ArmState {
     Stowed(+0.905, +0.890),
     Ground(+0.905, +0.688),
-    Middle(+0.552, +0.168),
-    High(+0.550, +0.301);
+    Middle(+0.539, +0.072),
+    High(+0.555, +0.320);
 
     public final double shoulderPosition;
     public final double elbowPosition;
@@ -83,7 +84,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.04;
   private final double ELBOW_FF = 0.00;
-  private final double GROUND_ARM_FF = -0.6;
+  private final double GROUND_ARM_FF = -0.8;
+  private final double STOW_ARM_FF = +0.8;
 
   private final double MANUAL_CONTROL_SCALAR = 0.1;
 
@@ -91,6 +93,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double AUTO_ELBOW_POSITION = 0.670;
 
   private ArmState m_currentArmState;
+  private ArmState m_prevArmState;
   private ArmDirection m_currentArmDirection;
 
   private TrapezoidProfile m_shoulderMotionProfile;
@@ -127,6 +130,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     this.m_shoulderMotionConstraint = shoulderConfigs.getFirst();
     this.m_shoulderPositionConfig = shoulderConfigs.getSecond();
+
     this.m_elbowMotionConstraint = elbowConfigs.getFirst();
     this.m_elbowPositionConfig = elbowConfigs.getSecond();
 
@@ -139,6 +143,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Initialize arm state and direction
     m_currentArmState = ArmState.Stowed;
     m_currentArmDirection = ArmDirection.None;
+    m_prevArmState = m_currentArmState;
 
     // Set all arm motors to brake
     m_shoulderMasterMotor.setIdleMode(IdleMode.kBrake);
@@ -193,9 +198,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return Correctly scaled feed forward based on elbow angle
    */
   private double calculateElbowFF() {
-    return m_currentArmState == ArmState.Ground && !isElbowMotionComplete() ? 
-       GROUND_ARM_FF :
-       ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
+    if (m_currentArmState == ArmState.Ground && !isElbowMotionComplete()) return GROUND_ARM_FF;
+    if (m_prevArmState == ArmState.Ground && m_currentArmState == ArmState.Stowed && !isElbowMotionComplete()) return STOW_ARM_FF;
+
+    return ELBOW_FF * Math.cos(Math.toRadians((m_elbowMotor.getAbsoluteEncoderPosition() - ELBOW_STRAIGHT_POSITION) * CONVERSION_FACTOR));
   }
 
   /**
@@ -375,6 +381,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public void setArmState(ArmState armState) {
     // Update current arm state
     m_currentArmDirection = ArmDirection.getArmDirection(m_currentArmState, armState);
+    m_prevArmState = m_currentArmState;
     m_currentArmState = armState;
 
     // Limit turn rate if arm is not stowed

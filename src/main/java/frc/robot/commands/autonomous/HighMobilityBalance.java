@@ -34,7 +34,7 @@ public class HighMobilityBalance extends SequentialCommandGroup {
     );
     List<PathPoint> path3 = List.of(
       new PathPoint(new Translation2d(6.0, 0.0), new Rotation2d()),
-      new PathPoint(new Translation2d(3.0, 0.0), new Rotation2d())
+      new PathPoint(new Translation2d(2.8, 0.0), new Rotation2d())
     );
 
     addCommands(
