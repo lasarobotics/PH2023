@@ -33,6 +33,8 @@ public final class Constants {
     public static final int NEO_MAX_RPM = 5880;
     public static final int NEO_ENCODER_TICKS_PER_ROTATION = 42;
     public static final int REV_ENCODER_TICKS_PER_ROTATION = 8192;
+    public static final int SHOULDER_GEAR_RATIO = 480;
+    public static final int ELBOW_GEAR_RATIO = 192;
   }
 
   public static class HID {
@@ -66,14 +68,14 @@ public final class Constants {
 
   public static class Arm {
     // Arm shoulder motion settings
-    private static final double MOTION_SHOULDER_VELOCITY = 0.4;
-    private static final double MOTION_SHOULDER_ACCELERATION = 0.5;
+    private static final double MOTION_SHOULDER_VELOCITY = 0.4 * Global.SHOULDER_GEAR_RATIO;
+    private static final double MOTION_SHOULDER_ACCELERATION = 0.2 * Global.SHOULDER_GEAR_RATIO;
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 6.0;
+    private static final double POSITION_SHOULDER_kP = 1.5;
     private static final double POSITION_SHOULDER_kI = 0.0;
-    private static final double POSITION_SHOULDER_kD = 20.0;
+    private static final double POSITION_SHOULDER_kD = 0.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
     private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
@@ -97,15 +99,15 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 1.5;
-    private static final double MOTION_ELBOW_ACCELERATION = 1.0;
+    private static final double MOTION_ELBOW_VELOCITY = 2.0 * Global.ELBOW_GEAR_RATIO;
+    private static final double MOTION_ELBOW_ACCELERATION = 0.5 * Global.ELBOW_GEAR_RATIO;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 3.5;
+    private static final double POSITION_ELBOW_kP = 1.5;
     private static final double POSITION_ELBOW_kI = 0.0;
-    private static final double POSITION_ELBOW_kD = 11.0;
+    private static final double POSITION_ELBOW_kD = 0.0;
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
     private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
