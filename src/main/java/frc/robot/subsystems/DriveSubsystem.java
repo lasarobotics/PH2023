@@ -21,7 +21,6 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -585,11 +584,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     m_poseEstimator.update(Rotation2d.fromDegrees(getAngle()),
         m_lMasterMotor.getEncoderPosition(),
         m_rMasterMotor.getEncoderPosition());
-    // Pair<Pose2d, Double> result = VisionSubsystem.getInstance().getEstimatedGlobalPose(getPose());
-    // Pose2d camPose = result.getFirst();
-    // double camPoseObsTime = result.getSecond();
-    // if (camPose != null)
-    //   m_poseEstimator.addVisionMeasurement(camPose, camPoseObsTime);
   }
 
   /**
