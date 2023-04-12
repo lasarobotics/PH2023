@@ -254,10 +254,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       );
 
       // Advance elbow start time
-      if (Math.abs(m_shoulderMasterMotor.getEncoderPosition() - m_currentArmState.shoulderPosition) < SHOULDER_THRESHOLD) {
-        m_elbowMotionTimer.reset();
-        m_elbowMotionTimer.start();
-      }
+      if (Math.abs(m_shoulderMasterMotor.getEncoderPosition() - m_currentArmState.shoulderPosition) < SHOULDER_THRESHOLD)
+        m_elbowMotionTimer.restart();
     }
 
     // Move elbow once shoulder is past threshold
@@ -312,11 +310,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     TrapezoidProfile.State desiredElbowState = new TrapezoidProfile.State(elbowPosition, 0.0);
     TrapezoidProfile.State currentElbowState = new TrapezoidProfile.State(m_elbowMotor.getEncoderPosition(), m_elbowMotor.getEncoderVelocity() / 60);
 
-    // Start motion timers
-    m_shoulderMotionTimer.reset();
-    m_shoulderMotionTimer.start();
-    m_elbowMotionTimer.reset();
-    m_elbowMotionTimer.start();
+    // Restart motion timers
+    m_shoulderMotionTimer.restart();
+    m_elbowMotionTimer.restart();
 
     // Generate motion profile for both joints
     m_shoulderMotionProfile = new TrapezoidProfile(m_shoulderMotionConstraint, desiredShoulderState, currentShoulderState);
