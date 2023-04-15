@@ -275,7 +275,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
-   * Move arm position down (first move elbow, then shoulder)
+   * Move arm position down
    */
   private void armDown() {
     // Move elbow
@@ -301,7 +301,8 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   /**
    * Set desired arm state
    * 
-   * @param armState Arm state, which includes shoulder and elbow position
+   * @param shoulderPosition Desired shoulder position
+   * @param elbowPosition Desired elbow position
    */
   private void setArmState(double shoulderPosition, double elbowPosition) {
     // Generate states
