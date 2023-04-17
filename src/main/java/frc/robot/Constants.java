@@ -50,8 +50,8 @@ public final class Constants {
     public static final double DEFAULT_DRIVE_TURN_SCALAR = 35.0;
     public static final double DRIVE_LOOKAHEAD = 3;
 
-    private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.5, 1.0 };
-    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 1.975, 3.95 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.00 };
+    private static final double DRIVE_THROTTLE_INPUT_CURVE_Y[] = { 0.0, 0.004, 0.032, 0.107, 0.253, 0.494, 0.853, 1.355, 2.022, 2.878, 3.95  };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_X[] = { 0.0, 1.975, 3.95 };
     private static final double DRIVE_TRACTION_CONTROL_CURVE_Y[] = { 0.0, 0.5, 1.0 };
     private static final double DRIVE_TURN_INPUT_CURVE_X[] = { 0.0, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.0 };
@@ -73,13 +73,13 @@ public final class Constants {
     public static final Constraints MOTION_SHOULDER_CONSTRAINT = new TrapezoidProfile.Constraints(MOTION_SHOULDER_VELOCITY, MOTION_SHOULDER_ACCELERATION);
     
     // Arm shoulder position PID settings
-    private static final double POSITION_SHOULDER_kP = 1.5;
+    private static final double POSITION_SHOULDER_kP = 0.2;
     private static final double POSITION_SHOULDER_kI = 0.0;
     private static final double POSITION_SHOULDER_kD = 0.0;
     private static final double POSITION_SHOULDER_kF = 0.0;
     private static final double POSITION_SHOULDER_TOLERANCE = 0.01;
-    private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
-    private static final double POSITION_SHOULDER_UPPER_LIMIT = Math.max(ArmState.Stowed.shoulderPosition, ArmState.High.shoulderPosition);
+    private static final double POSITION_SHOULDER_LOWER_LIMIT = Math.min(ArmState.Stowed.shoulderPosition, ArmState.Middle.shoulderPosition);
+    private static final double POSITION_SHOULDER_UPPER_LIMIT = Math.max(ArmState.Stowed.shoulderPosition, ArmState.Middle.shoulderPosition);
     private static final boolean POSITION_SHOULDER_SOFT_LIMITS = true;
     private static final boolean POSITION_SHOULDER_SENSOR_PHASE = false;
     private static final boolean POSITION_SHOULDER_INVERT_MOTOR = false;
@@ -99,19 +99,19 @@ public final class Constants {
     );
 
     // Arm elbow motion settings
-    private static final double MOTION_ELBOW_VELOCITY = 2.0 * Global.ELBOW_GEAR_RATIO;
-    private static final double MOTION_ELBOW_ACCELERATION = 0.5 * Global.ELBOW_GEAR_RATIO;
+    private static final double MOTION_ELBOW_VELOCITY = 1.5 * Global.ELBOW_GEAR_RATIO;
+    private static final double MOTION_ELBOW_ACCELERATION = 1.0 * Global.ELBOW_GEAR_RATIO;
     public static final Constraints MOTION_ELBOW_CONTRAINT = new TrapezoidProfile.Constraints(MOTION_ELBOW_VELOCITY, MOTION_ELBOW_ACCELERATION);
 
 
     // Arm elbow position PID settings
-    private static final double POSITION_ELBOW_kP = 1.5;
+    private static final double POSITION_ELBOW_kP = 0.2;
     private static final double POSITION_ELBOW_kI = 0.0;
     private static final double POSITION_ELBOW_kD = 0.0;
     private static final double POSITION_ELBOW_kF = 0.0;
     private static final double POSITION_ELBOW_TOLERANCE = 0.01;
-    private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
-    private static final double POSITION_ELBOW_UPPER_LIMIT = Math.max(ArmState.Stowed.elbowPosition, ArmState.High.elbowPosition);
+    private static final double POSITION_ELBOW_LOWER_LIMIT = Math.min(ArmState.Stowed.elbowPosition, ArmState.Middle.elbowPosition);
+    private static final double POSITION_ELBOW_UPPER_LIMIT = Math.max(ArmState.Stowed.elbowPosition, ArmState.Middle.elbowPosition);
     private static final boolean POSITION_ELBOW_SOFT_LIMITS = true;
     private static final boolean POSITION_ELBOW_SENSOR_PHASE = false;
     private static final boolean POSITION_ELBOW_INVERT_MOTOR = false;
