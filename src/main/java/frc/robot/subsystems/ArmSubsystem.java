@@ -11,6 +11,10 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -101,6 +105,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
   private boolean m_enableManualControl = false;
 
+  private static final String ARM_STATE_LOG_ENTRY = "Arm State";
+  private static final String ARM_MANUAL_CONTROL_LOG_ENTRY = "Arm Manual Control";
+
+  private StringLogEntry m_armStateLogEntry;
+  private BooleanLogEntry m_armManualControlLogEntry;
+
   /**
    * Create an instance of ArmSubsystem
    * <p>
@@ -161,6 +171,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
       m_shoulderMasterMotor.resetEncoder();
       m_elbowMotor.resetEncoder();
     }
+
+    // Initialize logs
+    DataLog log = DataLogManager.getLog();
+    m_armStateLogEntry = new StringLogEntry(log, ARM_STATE_LOG_ENTRY);
+    m_armManualControlLogEntry = new BooleanLogEntry(log, ARM_MANUAL_CONTROL_LOG_ENTRY);
   }
 
   /**
@@ -319,6 +334,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public void toggleManualControl() {
     m_enableManualControl = !m_enableManualControl;
+    m_armManualControlLogEntry.append(m_enableManualControl);
   }
 
   /**
@@ -385,6 +401,9 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
 
     // Set arm state
     setArmState(m_currentArmState.shoulderPosition, m_currentArmState.elbowPosition);
+
+    // Log new arm state
+    m_armStateLogEntry.append(armState.toString());
   }
 
   /**

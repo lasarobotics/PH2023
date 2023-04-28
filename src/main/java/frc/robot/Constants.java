@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.utils.PIDConstants;
+import frc.robot.utils.SparkMax;
 import frc.robot.utils.SparkPIDConfig;
 
 /**
@@ -138,20 +139,20 @@ public final class Constants {
   }
 
   public static class DriveHardware {
-    public static final int FRONT_LEFT_MOTOR_ID = 2;
-    public static final int FRONT_RIGHT_MOTOR_ID = 3;
-    public static final int REAR_LEFT_MOTOR_ID = 4;
-    public static final int REAR_RIGHT_MOTOR_ID = 5;
+    public static final SparkMax.ID FRONT_LEFT_MOTOR_ID = new SparkMax.ID(2, "FL drive motor"); 
+    public static final SparkMax.ID FRONT_RIGHT_MOTOR_ID = new SparkMax.ID(3, "FR drive motor"); 
+    public static final SparkMax.ID REAR_LEFT_MOTOR_ID = new SparkMax.ID(4, "RL drive motor");
+    public static final SparkMax.ID REAR_RIGHT_MOTOR_ID = new SparkMax.ID(5, "RR drive motor"); 
   }
 
   public static class ArmHardware {
-    public static final int ARM_SHOULDER_MASTER_MOTOR_ID = 6;
-    public static final int ARM_SHOULDER_SLAVE_MOTOR_ID = 7;
-    public static final int ARM_ELBOW_MOTOR_ID = 8;
+    public static final SparkMax.ID ARM_SHOULDER_MASTER_MOTOR_ID = new SparkMax.ID(6, "ASM drive motor"); 
+    public static final SparkMax.ID ARM_SHOULDER_SLAVE_MOTOR_ID = new SparkMax.ID(7, "ASS drive motor"); 
+    public static final SparkMax.ID ARM_ELBOW_MOTOR_ID = new SparkMax.ID(8, "AE drive motor"); 
   }
 
   public static class IntakeHardware {
-    public static final int ROLLER_MOTOR_ID = 9;
+    public static final SparkMax.ID ROLLER_MOTOR_ID = new SparkMax.ID(9, "R drive motor"); 
   }
 
   public static class AccessoryHardware {

@@ -6,12 +6,12 @@ package frc.robot;
 
 import java.util.HashMap;
 
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -97,6 +97,10 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    // Start logging, include DS control and controller data
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+
     // Configure default commands
     DRIVE_SUBSYSTEM.setDefaultCommand(
       new RunCommand(
