@@ -146,13 +146,13 @@ public final class Constants {
   }
 
   public static class ArmHardware {
-    public static final SparkMax.ID ARM_SHOULDER_MASTER_MOTOR_ID = new SparkMax.ID(6, "ASM drive motor"); 
-    public static final SparkMax.ID ARM_SHOULDER_SLAVE_MOTOR_ID = new SparkMax.ID(7, "ASS drive motor"); 
-    public static final SparkMax.ID ARM_ELBOW_MOTOR_ID = new SparkMax.ID(8, "AE drive motor"); 
+    public static final SparkMax.ID ARM_SHOULDER_MASTER_MOTOR_ID = new SparkMax.ID(6, "Arm shoulder master motor"); 
+    public static final SparkMax.ID ARM_SHOULDER_SLAVE_MOTOR_ID = new SparkMax.ID(7, "Arm shoulder slave motor"); 
+    public static final SparkMax.ID ARM_ELBOW_MOTOR_ID = new SparkMax.ID(8, "Arm elbow motor"); 
   }
 
   public static class IntakeHardware {
-    public static final SparkMax.ID ROLLER_MOTOR_ID = new SparkMax.ID(9, "R drive motor"); 
+    public static final SparkMax.ID ROLLER_MOTOR_ID = new SparkMax.ID(9, "Intake roller motor"); 
   }
 
   public static class AccessoryHardware {
