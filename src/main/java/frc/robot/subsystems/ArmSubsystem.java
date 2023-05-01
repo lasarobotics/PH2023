@@ -217,7 +217,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if shoulder motion is complete
    */
   public boolean isShoulderMotionComplete() {
-    return m_shoulderMotionProfile.isFinished(m_shoulderMotionTimer.get());
+    if (m_shoulderMotionProfile.isFinished(m_shoulderMotionTimer.get())) {
+      DataLogManager.log("Shoulder motion completed.");
+      return true;
+    }
+    
+    return false;
   }
 
   /**
@@ -226,7 +231,12 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    * @return True if elbow motion is complete
    */
   public boolean isElbowMotionComplete() {
-    return m_elbowMotionProfile.isFinished(m_elbowMotionTimer.get());
+    if (m_elbowMotionProfile.isFinished(m_elbowMotionTimer.get())) {
+      DataLogManager.log("Elbow motion completed.");
+      return true;
+    }
+    
+    return false;
   }
 
   /**
