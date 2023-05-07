@@ -11,14 +11,15 @@ import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.StringLogEntry;
+import frc.robot.utils.DataLogger.BooleanLogEntry;
+import frc.robot.utils.DataLogger.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utils.DataLogger;
 import frc.robot.utils.SparkMax;
 import frc.robot.utils.SparkPIDConfig;
 
@@ -218,7 +219,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public boolean isShoulderMotionComplete() {
     if (m_shoulderMotionProfile.isFinished(m_shoulderMotionTimer.get())) {
-      DataLogManager.log("Shoulder motion completed.");
+      DataLogger.log("Shoulder motion completed.");
       return true;
     }
     
@@ -232,7 +233,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public boolean isElbowMotionComplete() {
     if (m_elbowMotionProfile.isFinished(m_elbowMotionTimer.get())) {
-      DataLogManager.log("Elbow motion completed.");
+      DataLogger.log("Elbow motion completed.");
       return true;
     }
     
