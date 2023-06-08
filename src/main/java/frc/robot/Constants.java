@@ -7,6 +7,9 @@ package frc.robot;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
@@ -153,6 +156,14 @@ public final class Constants {
 
   public static class IntakeHardware {
     public static final SparkMax.ID ROLLER_MOTOR_ID = new SparkMax.ID(9, "Intake roller motor"); 
+  }
+
+  public static class VisionHardware {
+    public static final String CAMERA_0_NAME = "camera0";
+    public static final Transform3d CAMERA_0_LOCATION = new Transform3d(
+      new Translation3d(0.0, 0.0, 0.0),
+      new Rotation3d(0.0, 0.0, 0.0)
+    );
   }
 
   public static class AccessoryHardware {
