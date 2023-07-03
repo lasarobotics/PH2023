@@ -16,20 +16,31 @@ Key points:
 * Closed loop drive control system with traction control
 * Odometry for accurate positioning during autonomous and teleop
 
-## [Arm Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/ArmSubsystem.java)
+### [Arm Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/ArmSubsystem.java)
 
 This arm subsystem consists of a virtual four-bar lift mechanism. The arm extending from the vertical post of the robot has two degrees of rotation: a smaller "wrist" at the end of the elongated component of the arm (dubbed "arm"). We implement two proportional-integral-derivative (PID) controllers for each segment of the arm controlling motion to a given position and remaining there. The moment to switch between the two controllers is dependent on both the velocity and position of the arm component. In general, these PID controlers employ a feedback to contoniuously calculate error and correct for it. To correct for error due to gravity, a feed-forward mechanism adjusts for the vertical component. To gain even greater dexterity of the motor positions and velocities, we use motion profiling to outline a position, velocity, and acceleration profile to be followed. With this, we can define any given movement as a series of steps, which allows for smoother and more accurate motions.
 
 To construct this mechanism, we use a set of three brushless NEO motors with absolute encoders, which allows for tracking position more accurately and eliminating the necessity to reset the arm after each match. We use SparkMax motor controllers for motor motion management.
 
-Keypoints:
-- Virtual four bar with two degrees of movement (arm and wrist)
-- PID controllers handling position and motion for each part of the arm, correcting for error due to gravity and other factors
-- Switching between the two PID controllers based on position and velocity
-- Motion profiling to gain greater dexterity of motor position and velocity.
+Key points:
+* Virtual four bar with two degrees of movement (arm and wrist)
+* PID controllers handling position and motion for each part of the arm, correcting for error due to gravity and other factors
+* Switching between the two PID controllers based on position and velocity
+* Motion profiling to gain greater dexterity of motor position and velocity.
 
-## [Vision Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/VisionSubsystem.java)
+### [Vision Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/VisionSubsystem.java)
 
-We utilize a forward and rear facing PhotonCamera (a Raspberry Pi camera module) to scan AprilTags across the field. By using this method, we are able to correct our pose relative to detected AprilTags on opposite sides of the field using visual simultaneous location and mapping (vSLAM). The field layout of the AprilTags' pose is saved and read, providing a virtual map in the field useful throughout the competition.  
+We utilize a forward and rear facing PhotonCamera (a Raspberry Pi camera module) to scan AprilTags across the field. By using this method, we are able to correct our pose relative to detected AprilTags on opposite sides of the field using visual simultaneous location and mapping (vSLAM). The field layout of the AprilTags' pose is saved and read, providing a virtual map in the field useful throughout the competition.
 
-## [Intake Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/IntakeSubsystem.java)
+Key points:
+* PhotonCameras to scan AprilTags
+* Pose correction using vSLAM
+* Field layout of AprilTags used as a virtual map
+
+### [Intake Subsystem](https://github.com/lasarobotics/PH2023/blob/master/src/main/java/frc/robot/subsystems/IntakeSubsystem.java)
+
+The intake subsystem utilizes two Spark Max limit switches, with one used to detect the presence of a game object and the other used to the determine the type. Additionally, a Spark Max motor is used to handle the actual intake and outtake of game objects.
+
+Key points:
+* Limit switches to determine object presence and type
+* Motor to handle actual intake/outtake
