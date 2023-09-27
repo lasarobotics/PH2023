@@ -388,6 +388,10 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public void periodic() {
     // Sebastian wuz here ;)
     smartDashboard();
+    if (m_currentArmDirection == ArmDirection.Down && 
+        m_shoulderMasterMotor.getAbsoluteEncoderPosition() < ArmState.Stowed.shoulderPosition) {
+      m_shoulderMasterMotor.stopMotor();
+    }
     if (!m_enableManualControl) m_moveToPosition[m_currentArmDirection.ordinal()].run();
   }
   
