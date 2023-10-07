@@ -83,6 +83,11 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private final double ELBOW_STRAIGHT_POSITION = 0.552;
   private final double SHOULDER_THRESHOLD = 40.0;
 
+  private final double SHOULDER_UPPER_DANGER_THRESHOLD = 0.0;
+  private final double SHOULDER_LOWER_DANGER_THRESHOLD = 0.0;
+  private final double ELBOW_UPPER_DANGER_THRESHOLD = 0.0;
+  private final double ELBOW_LOWER_DANGER_THRESHOLD = 0.0;
+
   private final double CONVERSION_FACTOR = 360.0;
   private final double SHOULDER_FF = 0.03;
   private final double ELBOW_FF = 0.00;
@@ -227,6 +232,21 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Check if shoulder SparkMax is in danger
+   * 
+   * @return True if shoulder SparkMax is in danger
+   */
+  public boolean isShoulderInDanger() {
+    if (m_shoulderMasterMotor.getAbsoluteEncoderPosition() < SHOULDER_LOWER_DANGER_THRESHOLD ||
+        m_shoulderMasterMotor.getAbsoluteEncoderPosition() > SHOULDER_UPPER_DANGER_THRESHOLD) {
+      DataLogger.log("Shoulder motor in danger.");
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Check if motion is complete
    * 
    * @return True if elbow motion is complete
@@ -241,13 +261,26 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   }
 
   /**
+   * Check if elbow SparkMax is in danger
+   * 
+   * @return True if elbow SparkMax is in danger
+   */
+  public boolean isElbowInDanger() {
+    if (m_elbowMotor.getAbsoluteEncoderPosition() < ELBOW_LOWER_DANGER_THRESHOLD ||
+        m_elbowMotor.getAbsoluteEncoderPosition() > ELBOW_UPPER_DANGER_THRESHOLD) {
+      DataLogger.log("Elbow motor in danger.");
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Hold position of arm when both joint motions are complete
    */
   private void armHoldIfComplete() {
     // Hold position when both joints are complete
     if (isShoulderMotionComplete() && isElbowMotionComplete()) {
-      m_shoulderMasterMotor.set(m_currentArmState.shoulderPosition, ControlType.kPosition, calculateShoulderFF(), ArbFFUnits.kPercentOut);
-      m_elbowMotor.set(m_currentArmState.elbowPosition, ControlType.kPosition, calculateElbowFF(), ArbFFUnits.kPercentOut);
       m_currentArmDirection = ArmDirection.None;
     }
   }
@@ -259,6 +292,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     // Move shoulder first
     if (!isShoulderMotionComplete() && !m_currentArmState.equals(ArmState.Ground)) {
       // Set shoulder position
+      if (isShoulderInDanger()) m_shoulderMasterMotor.stopMotor();
       m_shoulderMasterMotor.set(
         m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
         ControlType.kPosition,
@@ -275,6 +309,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     if (!isElbowMotionComplete() &&
         Math.abs(m_shoulderMasterMotor.getEncoderPosition() - m_currentArmState.shoulderPosition) < SHOULDER_THRESHOLD) {
       // Set elbow position
+      if (isElbowInDanger()) m_elbowMotor.stopMotor();
       m_elbowMotor.set(
         m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
         ControlType.kPosition,
@@ -292,6 +327,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
    */
   private void armDown() {
     // Move elbow
+    if (isElbowInDanger()) m_elbowMotor.stopMotor();
     m_elbowMotor.set(
       m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
       ControlType.kPosition,
@@ -300,6 +336,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     );
 
     // Move shoulder
+    if (isShoulderInDanger()) m_shoulderMasterMotor.stopMotor();
     m_shoulderMasterMotor.set(
       m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
       ControlType.kPosition,
@@ -388,10 +425,7 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   public void periodic() {
     // Sebastian wuz here ;)
     smartDashboard();
-    if (m_currentArmDirection == ArmDirection.Down && 
-        m_shoulderMasterMotor.getAbsoluteEncoderPosition() < ArmState.Stowed.shoulderPosition) {
-      m_shoulderMasterMotor.stopMotor();
-    }
+
     if (!m_enableManualControl) m_moveToPosition[m_currentArmDirection.ordinal()].run();
   }
   
