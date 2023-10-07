@@ -293,12 +293,14 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
     if (!isShoulderMotionComplete() && !m_currentArmState.equals(ArmState.Ground)) {
       // Set shoulder position
       if (isShoulderInDanger()) m_shoulderMasterMotor.stopMotor();
-      m_shoulderMasterMotor.set(
-        m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
-        ControlType.kPosition,
-        calculateShoulderFF(),
-        ArbFFUnits.kPercentOut
-      );
+      else {
+        m_shoulderMasterMotor.set(
+          m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
+          ControlType.kPosition,
+          calculateShoulderFF(),
+          ArbFFUnits.kPercentOut
+        );
+      }
 
       // Advance elbow start time
       if (Math.abs(m_shoulderMasterMotor.getEncoderPosition() - m_currentArmState.shoulderPosition) > SHOULDER_THRESHOLD)
@@ -310,12 +312,14 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
         Math.abs(m_shoulderMasterMotor.getEncoderPosition() - m_currentArmState.shoulderPosition) < SHOULDER_THRESHOLD) {
       // Set elbow position
       if (isElbowInDanger()) m_elbowMotor.stopMotor();
-      m_elbowMotor.set(
-        m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
-        ControlType.kPosition,
-        calculateElbowFF(),
-        ArbFFUnits.kPercentOut
-      );
+      else {
+        m_elbowMotor.set(
+          m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
+          ControlType.kPosition,
+          calculateElbowFF(),
+          ArbFFUnits.kPercentOut
+        );
+      }
     }
 
     // Hold arm position if complete
@@ -328,21 +332,25 @@ public class ArmSubsystem extends SubsystemBase implements AutoCloseable {
   private void armDown() {
     // Move elbow
     if (isElbowInDanger()) m_elbowMotor.stopMotor();
-    m_elbowMotor.set(
-      m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
-      ControlType.kPosition,
-      calculateElbowFF(),
-      ArbFFUnits.kPercentOut
-    );
+    else {
+      m_elbowMotor.set(
+        m_elbowMotionProfile.calculate(m_elbowMotionTimer.get()).position,
+        ControlType.kPosition,
+        calculateElbowFF(),
+        ArbFFUnits.kPercentOut
+      );
+    }
 
     // Move shoulder
     if (isShoulderInDanger()) m_shoulderMasterMotor.stopMotor();
-    m_shoulderMasterMotor.set(
-      m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
-      ControlType.kPosition,
-      calculateShoulderFF(),
-      ArbFFUnits.kPercentOut
-    );
+    else {
+      m_shoulderMasterMotor.set(
+        m_shoulderMotionProfile.calculate(m_shoulderMotionTimer.get()).position,
+        ControlType.kPosition,
+        calculateShoulderFF(),
+        ArbFFUnits.kPercentOut
+      );
+    }
 
     // Hold arm position if complete
     armHoldIfComplete();
